@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { Group, Item, ItemUpdate, Label } from "@/lib/board-data";
-import { boardPeople, initials, itemProgress } from "@/lib/board-data";
+import { initials, itemProgress } from "@/lib/board-data";
 import { cn } from "@/lib/utils";
 
 const CURRENT_USER = "Arlene Lane";
