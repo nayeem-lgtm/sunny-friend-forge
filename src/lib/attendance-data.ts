@@ -13,7 +13,7 @@ export type AttendanceRecord = {
   status: "Present" | "Late" | "On Break" | "Absent";
 };
 
-const people = [
+const people: [string, string][] = [
   ["Arlene Lane", "Management"],
   ["Devon Reed", "Creative"],
   ["Marvin Hall", "Media Buying"],
