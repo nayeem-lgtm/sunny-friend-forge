@@ -13,7 +13,6 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AnnouncementsRouteImport } from './routes/announcements'
 import { Route as AttendanceRouteImport } from './routes/attendance'
 import { Route as DepartmentsRouteImport } from './routes/departments'
-import { Route as DesignationsRouteImport } from './routes/designations'
 import { Route as EmployeesRouteImport } from './routes/employees'
 import { Route as HolidaysRouteImport } from './routes/holidays'
 import { Route as KpiReportsRouteImport } from './routes/kpi-reports'
@@ -44,11 +43,6 @@ const AttendanceRoute = AttendanceRouteImport.update({
 const DepartmentsRoute = DepartmentsRouteImport.update({
   id: '/departments',
   path: '/departments',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DesignationsRoute = DesignationsRouteImport.update({
-  id: '/designations',
-  path: '/designations',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EmployeesRoute = EmployeesRouteImport.update({
@@ -112,7 +106,6 @@ export interface FileRoutesByFullPath {
   '/announcements': typeof AnnouncementsRoute
   '/attendance': typeof AttendanceRoute
   '/departments': typeof DepartmentsRoute
-  '/designations': typeof DesignationsRoute
   '/employees': typeof EmployeesRoute
   '/holidays': typeof HolidaysRoute
   '/kpi-reports': typeof KpiReportsRoute
@@ -130,7 +123,6 @@ export interface FileRoutesByTo {
   '/announcements': typeof AnnouncementsRoute
   '/attendance': typeof AttendanceRoute
   '/departments': typeof DepartmentsRoute
-  '/designations': typeof DesignationsRoute
   '/employees': typeof EmployeesRoute
   '/holidays': typeof HolidaysRoute
   '/kpi-reports': typeof KpiReportsRoute
@@ -149,7 +141,6 @@ export interface FileRoutesById {
   '/announcements': typeof AnnouncementsRoute
   '/attendance': typeof AttendanceRoute
   '/departments': typeof DepartmentsRoute
-  '/designations': typeof DesignationsRoute
   '/employees': typeof EmployeesRoute
   '/holidays': typeof HolidaysRoute
   '/kpi-reports': typeof KpiReportsRoute
@@ -169,7 +160,6 @@ export interface FileRouteTypes {
     | '/announcements'
     | '/attendance'
     | '/departments'
-    | '/designations'
     | '/employees'
     | '/holidays'
     | '/kpi-reports'
@@ -187,7 +177,6 @@ export interface FileRouteTypes {
     | '/announcements'
     | '/attendance'
     | '/departments'
-    | '/designations'
     | '/employees'
     | '/holidays'
     | '/kpi-reports'
@@ -205,7 +194,6 @@ export interface FileRouteTypes {
     | '/announcements'
     | '/attendance'
     | '/departments'
-    | '/designations'
     | '/employees'
     | '/holidays'
     | '/kpi-reports'
@@ -224,7 +212,6 @@ export interface RootRouteChildren {
   AnnouncementsRoute: typeof AnnouncementsRoute
   AttendanceRoute: typeof AttendanceRoute
   DepartmentsRoute: typeof DepartmentsRoute
-  DesignationsRoute: typeof DesignationsRoute
   EmployeesRoute: typeof EmployeesRoute
   HolidaysRoute: typeof HolidaysRoute
   KpiReportsRoute: typeof KpiReportsRoute
@@ -266,13 +253,6 @@ declare module '@tanstack/react-router' {
       path: '/departments'
       fullPath: '/departments'
       preLoaderRoute: typeof DepartmentsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/designations': {
-      id: '/designations'
-      path: '/designations'
-      fullPath: '/designations'
-      preLoaderRoute: typeof DesignationsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/employees': {
@@ -360,7 +340,6 @@ const rootRouteChildren: RootRouteChildren = {
   AnnouncementsRoute: AnnouncementsRoute,
   AttendanceRoute: AttendanceRoute,
   DepartmentsRoute: DepartmentsRoute,
-  DesignationsRoute: DesignationsRoute,
   EmployeesRoute: EmployeesRoute,
   HolidaysRoute: HolidaysRoute,
   KpiReportsRoute: KpiReportsRoute,
