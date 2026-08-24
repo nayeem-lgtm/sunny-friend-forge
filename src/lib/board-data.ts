@@ -119,7 +119,7 @@ export const seedFolders: Folder[] = [
 const people = employees.slice(0, 14);
 
 function pid(i: number) {
-  return people[i % people.length].id;
+  return people[i % people.length]!.id;
 }
 
 let seq = 0;
@@ -151,7 +151,7 @@ function makeItem(
     dueDate: iso(offset + span),
     estimatedHours: opts.estimatedHours ?? 12,
     actualHours: opts.actualHours ?? 0,
-    department: opts.department ?? departments[0],
+    department: opts.department ?? departments[0]!,
     tags: opts.tags ?? [],
     notes: opts.notes ?? "",
     subitems: opts.subitems ?? [],

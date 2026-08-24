@@ -41,7 +41,7 @@ export const Route = createFileRoute("/projects")({
 function Page() {
   const [boards, setBoards] = useState<Board[]>(() => createSeedBoards());
   const [folders, setFolders] = useState<FolderType[]>(() => seedFolders);
-  const [workspaceId, setWorkspaceId] = useState(workspaces[4].id);
+  const [workspaceId, setWorkspaceId] = useState(workspaces[4]!.id);
   const [activeBoardId, setActiveBoardId] = useState("bd-roadmap");
   const [openFolders, setOpenFolders] = useState<Record<string, boolean>>({ "fd-q1": true });
   const [query, setQuery] = useState("");
@@ -52,7 +52,7 @@ function Page() {
   );
   const wsFolders = folders.filter((f) => f.workspaceId === workspaceId);
   const looseBoards = wsBoards.filter((b) => !b.folderId);
-  const activeBoard = boards.find((b) => b.id === activeBoardId) ?? boards[0];
+  const activeBoard = boards.find((b) => b.id === activeBoardId) ?? boards[0]!;
 
   const filteredBoard = useMemo(() => {
     if (!query.trim()) return activeBoard;
