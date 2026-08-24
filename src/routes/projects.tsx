@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { ChevronDown, ChevronRight, Folder, FolderPlus, Layout, Plus, Search, Star } from "lucide-react";
+import { ChevronDown, ChevronRight, Folder, FolderPlus, Layout, Pencil, Plus, Search, Star, Trash2 } from "lucide-react";
 
 import { WorkBoard } from "@/components/board/WorkBoard";
 import { AppShell } from "@/components/layout/AppShell";
@@ -52,6 +52,8 @@ function Page() {
   const [workspaceId, setWorkspaceId] = useState("ws-it");
   const [addingDept, setAddingDept] = useState(false);
   const [newDept, setNewDept] = useState("");
+  const [renaming, setRenaming] = useState(false);
+  const [renameValue, setRenameValue] = useState("");
   const [activeBoardId, setActiveBoardId] = useState("bd-roadmap");
   const [openFolders, setOpenFolders] = useState<Record<string, boolean>>({ "fd-q1": true });
   const [query, setQuery] = useState("");
