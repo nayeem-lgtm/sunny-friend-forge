@@ -4,7 +4,7 @@ import {
   ChevronsUpDown,
   ClipboardList,
   FileWarning,
-  Timer,
+  FileText,
   UserSearch,
   Users,
 } from "lucide-react";
@@ -36,7 +36,6 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 import {
-  formatDuration,
   generateWorklogs,
   rangePresets,
   resolveRange,
@@ -52,12 +51,12 @@ export const Route = createFileRoute("/worklogs")({
       {
         name: "description",
         content:
-          "Daily work reports submitted by employees, filterable by day, week, month or a custom range.",
+          "Daily EOD reports submitted by employees, filterable by day, week, month or a custom range.",
       },
       { property: "og:title", content: "Worklogs — Ray ERP" },
       {
         property: "og:description",
-        content: "Employee daily work submissions with tasks, projects and logged hours.",
+        content: "Employee end-of-day report submissions with submit time and status.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -112,11 +111,10 @@ function Page() {
   );
 
   const totals = useMemo(() => {
-    const submitted = rows.filter((r) => r.status !== "Missing");
+    const submitted = rows.filter((r) => r.status === "Submitted");
     return {
       submitted: submitted.length,
       missing: rows.length - submitted.length,
-      minutes: submitted.reduce((s, r) => s + r.totalMinutes, 0),
       people: new Set(submitted.map((r) => r.employee)).size,
     };
   }, [rows]);
@@ -135,43 +133,34 @@ function Page() {
     },
     { key: "date", header: "Date", accessor: (r) => r.date },
     {
-      key: "summary",
-      header: "Report",
+      key: "report",
+      header: "EOD Report",
       searchable: true,
-      accessor: (r) => r.summary,
+      accessor: (r) => r.report,
       cell: (r) => (
-        <span className="line-clamp-2 max-w-md text-muted-foreground">{r.summary}</span>
+        <span className="line-clamp-2 max-w-lg text-muted-foreground">
+          {r.status === "Submitted" ? r.report : "—"}
+        </span>
       ),
     },
     {
-      key: "tasks",
-      header: "Tasks",
-      accessor: (r) => r.tasks.length,
-      cell: (r) => r.tasks.length || "—",
+      key: "submittedAt",
+      header: "Submitted At",
+      accessor: (r) => r.submittedAt ?? "",
+      cell: (r) => r.submittedAt ?? "—",
     },
     {
-      key: "projects",
-      header: "Projects",
-      cell: (r) =>
-        r.tasks.length ? Array.from(new Set(r.tasks.map((t) => t.project))).join(", ") : "—",
+      key: "status",
+      header: "Status",
+      cell: (r) => <StatusPill status={r.status} />,
     },
-    {
-      key: "totalMinutes",
-      header: "Logged",
-      accessor: (r) => r.totalMinutes,
-      cell: (r) => (
-        <span className="font-medium text-foreground">{formatDuration(r.totalMinutes)}</span>
-      ),
-    },
-    { key: "submittedAt", header: "Submitted", cell: (r) => r.submittedAt ?? "—" },
-    { key: "status", header: "Status", cell: (r) => <StatusPill status={r.status} /> },
   ];
 
   return (
     <AppShell>
       <PageHeader
         title="Worklogs"
-        description="Daily work reports submitted by employees — tasks, projects and hours logged."
+        description="Daily EOD reports submitted by employees — paragraph submissions with submit time and status."
       />
 
       <div className="mb-5 flex flex-wrap items-center gap-2">
@@ -264,9 +253,24 @@ function Page() {
           caption={`${rows.length} expected`}
           highlight
         />
-        <StatCard icon={Timer} label="Hours Logged" value={formatDuration(totals.minutes)} caption="Across selected range" />
-        <StatCard icon={Users} label="Employees Reporting" value={totals.people} caption="Unique submitters" />
-        <StatCard icon={FileWarning} label="Missing Reports" value={totals.missing} caption="Not submitted" />
+        <StatCard
+          icon={Users}
+          label="Employees Reporting"
+          value={totals.people}
+          caption="Unique submitters"
+        />
+        <StatCard
+          icon={FileWarning}
+          label="Missing Reports"
+          value={totals.missing}
+          caption="Not submitted"
+        />
+        <StatCard
+          icon={FileText}
+          label="Submission Rate"
+          value={rows.length ? `${Math.round((totals.submitted / rows.length) * 100)}%` : "0%"}
+          caption="Across selected range"
+        />
       </div>
 
       {!today ? (
@@ -278,9 +282,7 @@ function Page() {
           data={rows}
           columns={columns}
           onRowClick={(r) => setDetail(r)}
-          filters={[
-            { key: "status", label: "Status", options: ["Approved", "Submitted", "Late", "Missing"] },
-          ]}
+          filters={[{ key: "status", label: "Status", options: ["Submitted", "Not Submitted"] }]}
           emptyMessage={
             preset === "custom" && !custom?.from
               ? "Pick a custom date range to see work reports."
@@ -301,46 +303,24 @@ function Page() {
 
           {detail && (
             <div className="space-y-4">
-              <p className="rounded-lg border border-border bg-secondary/40 p-3 text-sm text-muted-foreground">
-                {detail.summary}
-              </p>
-
-              <div className="scrollbar-slim max-h-[45vh] overflow-auto rounded-lg border border-border">
-                <table className="w-full text-sm">
-                  <thead className="sticky top-0 bg-secondary/70 text-xs uppercase tracking-wide text-muted-foreground">
-                    <tr>
-                      {["Task", "Project", "Time"].map((h) => (
-                        <th key={h} className="px-3 py-2 text-left font-medium">
-                          {h}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {detail.tasks.map((t, i) => (
-                      <tr key={`${t.title}-${i}`} className="border-t border-border/60">
-                        <td className="px-3 py-2 text-foreground">{t.title}</td>
-                        <td className="px-3 py-2 text-muted-foreground">{t.project}</td>
-                        <td className="px-3 py-2 font-medium">{formatDuration(t.minutes)}</td>
-                      </tr>
-                    ))}
-                    {detail.tasks.length === 0 && (
-                      <tr>
-                        <td colSpan={3} className="px-3 py-8 text-center text-muted-foreground">
-                          No tasks reported for this day.
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
+              {detail.status === "Submitted" ? (
+                <div className="max-h-[50vh] overflow-auto rounded-lg border border-border bg-secondary/40 p-4">
+                  <p className="whitespace-pre-wrap text-sm leading-relaxed text-foreground">
+                    {detail.report}
+                  </p>
+                </div>
+              ) : (
+                <div className="rounded-lg border border-border bg-secondary/40 p-8 text-center text-sm text-muted-foreground">
+                  No EOD report was submitted for this day.
+                </div>
+              )}
 
               <div className="flex items-center justify-between">
                 <StatusPill status={detail.status} />
                 <p className="text-sm text-muted-foreground">
-                  Total logged:{" "}
+                  Submitted at:{" "}
                   <span className="font-semibold text-foreground">
-                    {formatDuration(detail.totalMinutes)}
+                    {detail.submittedAt ?? "—"}
                   </span>
                 </p>
               </div>
