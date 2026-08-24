@@ -48,7 +48,10 @@ export const Route = createFileRoute("/projects")({
 function Page() {
   const [boards, setBoards] = useState<Board[]>(() => createSeedBoards());
   const [folders, setFolders] = useState<FolderType[]>(() => seedFolders);
-  const [workspaceId, setWorkspaceId] = useState(workspaces[4]!.id);
+  const [depts, setDepts] = useState(() => workspaces);
+  const [workspaceId, setWorkspaceId] = useState("ws-it");
+  const [addingDept, setAddingDept] = useState(false);
+  const [newDept, setNewDept] = useState("");
   const [activeBoardId, setActiveBoardId] = useState("bd-roadmap");
   const [openFolders, setOpenFolders] = useState<Record<string, boolean>>({ "fd-q1": true });
   const [query, setQuery] = useState("");
