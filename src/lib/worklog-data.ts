@@ -1,19 +1,13 @@
-export type WorklogTask = {
-  title: string;
-  project: string;
-  minutes: number;
-};
+export type WorklogStatus = "Submitted" | "Not Submitted";
 
 export type WorklogEntry = {
   id: string;
   date: string; // yyyy-MM-dd
   employee: string;
   department: string;
-  summary: string;
-  tasks: WorklogTask[];
-  totalMinutes: number;
+  report: string; // free-form EOD paragraph
   submittedAt: string | null; // HH:mm
-  status: "Approved" | "Submitted" | "Late" | "Missing";
+  status: WorklogStatus;
 };
 
 const people: [string, string][] = [
@@ -29,25 +23,52 @@ const people: [string, string][] = [
   ["Courtney Henry", "Finance"],
 ];
 
-const projects = [
-  "Northwind Retail",
-  "Lumen Fitness",
-  "Bluepeak Travel",
-  "Verta Skincare",
-  "Orion Motors",
-  "Internal — Ray ERP",
-];
-
-const taskBank: Record<string, string[]> = {
-  Management: ["Weekly leadership sync", "Resource planning", "Client escalation review"],
-  Creative: ["Storyboard revisions", "Static ad batch", "Concept deck for launch"],
-  "Media Buying": ["Campaign budget pacing", "Audience testing setup", "Weekly spend report"],
-  Content: ["Blog draft", "Caption batch", "Editorial calendar update"],
-  Development: ["Landing page build", "Bug triage", "API integration"],
-  "Client Services": ["Client status call", "Monthly report prep", "Scope clarification"],
-  SEO: ["Keyword gap analysis", "On-page fixes", "Backlink outreach"],
-  Design: ["Brand refresh explorations", "Social template kit", "UI polish pass"],
-  Finance: ["Invoice reconciliation", "Payroll prep", "Vendor payments"],
+const reportBank: Record<string, string[]> = {
+  Management: [
+    "Spent the day aligning Q3 priorities with department heads and clearing blockers for the upcoming campaign sprints.",
+    "Reviewed resource allocation, approved two new project kick-offs, and updated leadership on financial forecasts.",
+    "Facilitated cross-functional syncs and drafted the monthly operations review for the executive team.",
+  ],
+  Creative: [
+    "Finalized three ad concepts for the retail client and supported the social team with fresh visual directions.",
+    "Worked on storyboard revisions and presented two campaign directions for internal feedback.",
+    "Polished the brand refresh deck and collaborated with copy on headline options.",
+  ],
+  "Media Buying": [
+    "Optimized audience targeting for the travel account and reallocated budget toward top-performing placements.",
+    "Paced weekly spend across four active campaigns and flagged any underperforming ad sets.",
+    "Ran performance reports and adjusted bids to stay within CPA targets.",
+  ],
+  Content: [
+    "Drafted two long-form blog posts, scheduled social captions for the week, and updated the editorial calendar.",
+    "Researched SEO briefs and produced a batch of product descriptions for the e-commerce launch.",
+    "Edited partner submissions and prepared newsletter copy for final review.",
+  ],
+  Development: [
+    "Shipped the landing page builder update, resolved frontend bugs, and reviewed peer pull requests.",
+    "Built API integrations for the new reporting dashboard and wrote supporting documentation.",
+    "Debugged production issues and deployed a hotfix for the analytics module.",
+  ],
+  "Client Services": [
+    "Led status calls with two key accounts, gathered feedback, and circulated meeting notes to stakeholders.",
+    "Prepared monthly performance decks and coordinated timelines with the project management team.",
+    "Responded to client requests, updated scopes, and set expectations for deliverables next week.",
+  ],
+  SEO: [
+    "Completed a keyword gap analysis, implemented on-page fixes, and tracked ranking movements.",
+    "Audited site health issues and prioritized technical recommendations for the dev queue.",
+    "Reached out to publishers for backlink opportunities and updated the link-building tracker.",
+  ],
+  Design: [
+    "Explored new visual directions for the skincare rebrand and delivered social template kits.",
+    "Polished UI screens for the internal dashboard and prepared assets for handoff.",
+    "Created presentation layouts and refined iconography across two active projects.",
+  ],
+  Finance: [
+    "Reconciled vendor invoices, processed payroll inputs, and updated cash-flow projections.",
+    "Reviewed expense reports and followed up on outstanding client payments.",
+    "Prepared monthly financial summaries and supported audit documentation requests.",
+  ],
 };
 
 function rand(seed: number) {
@@ -57,16 +78,11 @@ function rand(seed: number) {
 
 const pad = (n: number) => String(n).padStart(2, "0");
 
-export function formatDuration(mins: number) {
-  if (mins <= 0) return "0m";
-  return `${Math.floor(mins / 60)}h ${pad(mins % 60)}m`;
-}
-
 export function toDateKey(d: Date) {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 }
 
-/** ~90 days of submitted daily work reports ending today. */
+/** ~90 days of daily EOD report submissions ending today. */
 export function generateWorklogs(today: Date): WorklogEntry[] {
   const rows: WorklogEntry[] = [];
   for (let d = 0; d < 90; d++) {
@@ -79,7 +95,6 @@ export function generateWorklogs(today: Date): WorklogEntry[] {
       const seed = d * 37 + p * 11;
       const r1 = rand(seed);
       const r2 = rand(seed + 1);
-      const r3 = rand(seed + 2);
       const id = `${toDateKey(day)}-wl-${p}`;
 
       if (r1 > 0.92) {
@@ -88,39 +103,25 @@ export function generateWorklogs(today: Date): WorklogEntry[] {
           date: toDateKey(day),
           employee,
           department,
-          summary: "No report submitted.",
-          tasks: [],
-          totalMinutes: 0,
+          report: "No EOD report submitted.",
           submittedAt: null,
-          status: "Missing",
+          status: "Not Submitted",
         });
         return;
       }
 
-      const bank = taskBank[department] ?? ["General agency work"];
-      const count = 2 + Math.round(r2 * 2);
-      const tasks: WorklogTask[] = Array.from({ length: count }, (_, i) => {
-        const rr = rand(seed + 10 + i);
-        return {
-          title: bank[(i + Math.round(r3 * 2)) % bank.length]!,
-          project: projects[Math.round(rr * (projects.length - 1))]!,
-          minutes: 45 + Math.round(rr * 150),
-        };
-      });
-      const totalMinutes = tasks.reduce((s, t) => s + t.minutes, 0);
-      const submitMin = 17 * 60 + Math.round(r3 * 260); // 17:00 – 21:20
-      const late = submitMin > 19 * 60;
+      const bank = reportBank[department] ?? ["General agency work completed today."];
+      const report = bank[Math.round(r2 * (bank.length - 1))]!;
+      const submitMin = 17 * 60 + Math.round(r2 * 260); // 17:00 – 21:20
 
       rows.push({
         id,
         date: toDateKey(day),
         employee,
         department,
-        summary: `${tasks.length} tasks across ${new Set(tasks.map((t) => t.project)).size} project(s). ${tasks[0]!.title} was the main focus.`,
-        tasks,
-        totalMinutes,
+        report,
         submittedAt: `${pad(Math.floor(submitMin / 60))}:${pad(submitMin % 60)}`,
-        status: late ? "Late" : r2 > 0.45 ? "Approved" : "Submitted",
+        status: "Submitted",
       });
     });
   }
