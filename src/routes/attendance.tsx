@@ -323,9 +323,9 @@ function Page() {
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             {[
               ["Days present", String(detailTotals.days)],
-              ["Worked", formatDuration(detailTotals.worked)],
-              ["Idle", formatDuration(detailTotals.idle)],
-              ["Break", formatDuration(detailTotals.breaks)],
+              ["Total Work Time", formatDuration(detailTotals.worked)],
+              ["Total Idle Time", formatDuration(detailTotals.idle)],
+              ["Total Break Time", formatDuration(detailTotals.breaks)],
             ].map(([label, value]) => (
               <div key={label} className="rounded-lg border border-border bg-secondary/40 p-3">
                 <p className="text-xs text-muted-foreground">{label}</p>
@@ -338,13 +338,21 @@ function Page() {
             <table className="w-full text-sm">
               <thead className="sticky top-0 bg-secondary/70 text-xs uppercase tracking-wide text-muted-foreground">
                 <tr>
-                  {["Date", "Clock In", "Break Start", "Break End", "Clock Out", "Worked", "Idle", "Status"].map(
-                    (h) => (
-                      <th key={h} className="px-3 py-2 text-left font-medium">
-                        {h}
-                      </th>
-                    ),
-                  )}
+                  {[
+                    "Date",
+                    "Clock In",
+                    "Break Start",
+                    "Break End",
+                    "Clock Out",
+                    "Break",
+                    "Worked",
+                    "Idle",
+                    "Status",
+                  ].map((h) => (
+                    <th key={h} className="px-3 py-2 text-left font-medium">
+                      {h}
+                    </th>
+                  ))}
                 </tr>
               </thead>
               <tbody>
@@ -355,6 +363,7 @@ function Page() {
                     <td className="px-3 py-2">{r.breakStart ?? "—"}</td>
                     <td className="px-3 py-2">{r.breakEnd ?? "—"}</td>
                     <td className="px-3 py-2">{r.clockOut ?? "—"}</td>
+                    <td className="px-3 py-2">{r.breakMinutes ? formatDuration(r.breakMinutes) : "—"}</td>
                     <td className="px-3 py-2 font-medium">{formatDuration(r.workedMinutes)}</td>
                     <td
                       className={cn(
@@ -371,12 +380,27 @@ function Page() {
                 ))}
                 {detailRows.length === 0 && (
                   <tr>
-                    <td colSpan={8} className="px-3 py-8 text-center text-muted-foreground">
+                    <td colSpan={9} className="px-3 py-8 text-center text-muted-foreground">
                       No logs in this range.
                     </td>
                   </tr>
                 )}
               </tbody>
+              {detailRows.length > 0 && (
+                <tfoot className="sticky bottom-0 bg-secondary/90 text-xs font-semibold uppercase tracking-wide text-foreground">
+                  <tr className="border-t border-border">
+                    <td className="px-3 py-2.5" colSpan={5}>
+                      Total
+                    </td>
+                    <td className="px-3 py-2.5">{formatDuration(detailTotals.breaks)}</td>
+                    <td className="px-3 py-2.5">{formatDuration(detailTotals.worked)}</td>
+                    <td className="px-3 py-2.5 text-muted-foreground">
+                      {formatDuration(detailTotals.idle)}
+                    </td>
+                    <td className="px-3 py-2.5" />
+                  </tr>
+                </tfoot>
+              )}
             </table>
           </div>
         </DialogContent>
