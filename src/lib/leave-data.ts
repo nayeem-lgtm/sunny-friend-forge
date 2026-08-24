@@ -1,6 +1,6 @@
 import { employees } from "@/lib/employee-data";
 
-export type LeaveType = "PTO" | "Sick" | "Casual" | "Unpaid" | "Maternity";
+export type LeaveType = "PTO" | "Unpaid";
 export type LeaveStatus = "Pending" | "Approved" | "Rejected" | "Cancelled";
 
 export type LeaveFeedback = {
@@ -27,15 +27,12 @@ export type LeaveRequest = {
   feedback: LeaveFeedback[];
 };
 
-export const leaveTypes: LeaveType[] = ["PTO", "Sick", "Casual", "Unpaid", "Maternity"];
+export const leaveTypes: LeaveType[] = ["PTO", "Unpaid"];
 export const leaveStatuses: LeaveStatus[] = ["Pending", "Approved", "Rejected", "Cancelled"];
 
 export const leaveTypeTone: Record<LeaveType, string> = {
-  PTO: "bg-primary/15 text-primary border-primary/25",
-  Sick: "bg-info/15 text-info border-info/25",
-  Casual: "bg-accent/15 text-accent border-accent/25",
+  PTO: "bg-primary/15 text-primary border-primary/30",
   Unpaid: "bg-muted text-muted-foreground border-border",
-  Maternity: "bg-warning/15 text-warning border-warning/25",
 };
 
 /** annual entitlement per employee */
@@ -82,7 +79,7 @@ export function generateLeaveRequests(today: Date): LeaveRequest[] {
     const status: LeaveStatus =
       start > today ? (r3 > 0.45 ? "Pending" : "Approved") : r3 > 0.9 ? "Rejected" : r3 < 0.06 ? "Cancelled" : "Approved";
 
-    const type = leaveTypes[Math.floor(r2 * leaveTypes.length) % leaveTypes.length]!;
+    const type: LeaveType = r2 > 0.28 ? "PTO" : "Unpaid";
 
     rows.push({
       id: `lv-${++n}`,
