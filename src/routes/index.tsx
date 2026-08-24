@@ -1010,3 +1010,12 @@ function ChartTip({
     </div>
   );
 }
+
+function SnapStat({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-lg border border-border bg-secondary/40 p-3">
+      <p className="text-[11px] text-muted-foreground">{label}</p>
+      <p className="mt-0.5 text-lg font-semibold tracking-tight">{value}</p>
+    </div>
+  );
+}
