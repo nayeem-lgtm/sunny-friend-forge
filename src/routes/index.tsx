@@ -3,13 +3,12 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   AlarmClock,
   ArrowUpRight,
-  CalendarClock,
   CheckCircle2,
   ClipboardList,
   Clock3,
   Coffee,
   Megaphone,
-  PalmtreeIcon,
+  Plane,
   Sparkles,
   TrendingUp,
   UserPlus,
@@ -240,7 +239,7 @@ function Dashboard() {
               }
             />
             <HeroCard
-              icon={PalmtreeIcon}
+              icon={Plane}
               label="On leave today"
               value={data.onLeaveToday.length}
               caption={`${data.pendingLeave.length} requests waiting approval`}
@@ -772,5 +771,3 @@ function ChartTip({
     </div>
   );
 }
-
-export { CalendarClock };
