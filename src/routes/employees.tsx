@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Mail, Plus, Send } from "lucide-react";
+import { Mail, Plus, Send, UserCheck, UserPlus, Users } from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 
@@ -186,10 +186,10 @@ function Page() {
       />
 
       <div className="mb-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <StatCard title="Total Employees" value={String(stats.total)} />
-        <StatCard title="Active" value={String(stats.active)} />
-        <StatCard title="In Onboarding" value={String(stats.onboarding)} />
-        <StatCard title="Pending Invites" value={String(stats.pending)} />
+        <StatCard icon={Users} label="Total Employees" value={stats.total} />
+        <StatCard icon={UserCheck} label="Active" value={stats.active} />
+        <StatCard icon={UserPlus} label="In Onboarding" value={stats.onboarding} />
+        <StatCard icon={Mail} label="Pending Invites" value={stats.pending} />
       </div>
 
       <Tabs defaultValue="directory">

@@ -114,7 +114,7 @@ export function EmployeeForm({ employee }: { employee?: Employee }) {
       <TabsContent value="professional" className="mt-6 space-y-5">
         <div className="grid gap-5 md:grid-cols-2">
           <Field label="Department" required>
-            <Select defaultValue={employee?.department}>
+            <Select defaultValue={employee?.department ?? ""}>
               <SelectTrigger>
                 <SelectValue placeholder="Select department" />
               </SelectTrigger>
@@ -128,7 +128,7 @@ export function EmployeeForm({ employee }: { employee?: Employee }) {
             </Select>
           </Field>
           <Field label="Designation" required>
-            <Select defaultValue={employee?.designation}>
+            <Select defaultValue={employee?.designation ?? ""}>
               <SelectTrigger>
                 <SelectValue placeholder="Select designation" />
               </SelectTrigger>
@@ -249,7 +249,7 @@ export function EmployeeForm({ employee }: { employee?: Employee }) {
 
       <TabsContent value="schedule" className="mt-6 space-y-5">
         <Field label="Assigned Schedule">
-          <Select defaultValue={employee?.schedule ?? schedules[0]}>
+          <Select defaultValue={employee?.schedule ?? schedules[0]!}>
             <SelectTrigger>
               <SelectValue placeholder="Select schedule" />
             </SelectTrigger>
