@@ -42,7 +42,40 @@ export const announcements: Announcement[] = [
     category: "Event",
     daysAgo: 5,
   },
+  {
+    id: "an-5",
+    title: "New attendance grace window",
+    body: "A 10 minute grace period now applies to the general shift. Anything beyond that will be marked late automatically.",
+    author: "HR Admin",
+    category: "Policy",
+    daysAgo: 6,
+  },
+  {
+    id: "an-6",
+    title: "QA Department onboards two new engineers",
+    body: "Please welcome our new QA teammates joining this sprint. Buddy assignments have been shared over email.",
+    author: "People Ops",
+    category: "Company",
+    daysAgo: 8,
+  },
+  {
+    id: "an-7",
+    title: "Monthly performance bonus released",
+    body: "August performance bonuses have been processed and will reflect in your account within two working days.",
+    author: "Accounts Team",
+    category: "Recognition",
+    daysAgo: 9,
+  },
+  {
+    id: "an-8",
+    title: "Team iftar & game night",
+    body: "Join us on the rooftop this Friday at 7:00 PM for dinner, board games and the quarterly awards.",
+    author: "Admin Desk",
+    category: "Event",
+    daysAgo: 11,
+  },
 ];
+
 
 export const announcementTone: Record<Announcement["category"], string> = {
   Company: "bg-primary/15 text-primary border-primary/30",
