@@ -74,6 +74,10 @@ function Page() {
   const [today, setToday] = useState<Date | null>(null);
   const [preset, setPreset] = useState<RangePreset>("today");
   const [custom, setCustom] = useState<DateRange | undefined>();
+  const [employee, setEmployee] = useState<string>("all");
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const [detail, setDetail] = useState<string | null>(null);
+
 
   useEffect(() => {
     const d = new Date();
