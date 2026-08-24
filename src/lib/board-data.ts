@@ -167,12 +167,13 @@ export const groupColors = [
 ];
 
 export const workspaces: Workspace[] = [
-  { id: "ws-bd", name: "Executive Management", icon: "◆", description: "Company-wide initiatives" },
-  { id: "ws-qa", name: "Marketing", icon: "◈", description: "Campaigns and brand" },
-  { id: "ws-mediaadmin", name: "Media Buying", icon: "◉", description: "Paid acquisition" },
-  { id: "ws-aff", name: "Affiliate Management", icon: "◎", description: "Partners and publishers" },
-  { id: "ws-it", name: "Development", icon: "◇", description: "Product and engineering" },
-  { id: "ws-admin", name: "Operations", icon: "○", description: "Internal operations" },
+  { id: "ws-admin", name: "Admin Department", icon: "◆", description: "Company administration" },
+  { id: "ws-mediaadmin", name: "Media by Admin Department", icon: "◈", description: "Media managed by admin" },
+  { id: "ws-it", name: "IT Department", icon: "◇", description: "Product and engineering" },
+  { id: "ws-aff", name: "Affiliate Department", icon: "◎", description: "Partners and publishers" },
+  { id: "ws-bd", name: "Business Development Department", icon: "◉", description: "Growth and partnerships" },
+  { id: "ws-qa", name: "QA Department", icon: "◍", description: "Quality assurance" },
+  { id: "ws-acct", name: "Accounting Department", icon: "○", description: "Finance and accounting" },
 ];
 
 export const seedFolders: Folder[] = [
