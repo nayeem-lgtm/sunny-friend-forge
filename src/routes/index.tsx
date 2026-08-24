@@ -120,7 +120,7 @@ function Dashboard() {
     const submitted = wlToday.filter((w) => w.status === "Submitted");
     const deptSubmission = Object.entries(
       wlToday.reduce<Record<string, { total: number; done: number }>>((acc, w) => {
-        const short = w.department.replace(" Department", "");
+        const short = w.department.replace(" Department", "").replace("Business Development", "Biz Dev");
         acc[short] = acc[short] ?? { total: 0, done: 0 };
         acc[short].total += 1;
         if (w.status === "Submitted") acc[short].done += 1;
@@ -129,9 +129,10 @@ function Dashboard() {
     ).map(([dept, v]) => ({ dept, rate: Math.round((v.done / v.total) * 100) }));
 
     const items = boards.flatMap((b) => b.groups.flatMap((g) => g.items));
-    const doneItems = items.filter((i) => i.status.toLowerCase() === "done");
-    const stuckItems = items.filter((i) => i.status.toLowerCase() === "stuck");
-    const overdue = items.filter((i) => i.dueDate && i.dueDate < key && i.status.toLowerCase() !== "done");
+    const isDone = (s: string) => ["done", "completed"].includes(s.toLowerCase());
+    const doneItems = items.filter((i) => isDone(i.status));
+    const stuckItems = items.filter((i) => ["stuck", "blocked"].includes(i.status.toLowerCase()));
+    const overdue = items.filter((i) => i.dueDate && i.dueDate < key && !isDone(i.status));
     const statusSplit = Object.entries(
       items.reduce<Record<string, number>>((acc, i) => {
         acc[i.status] = (acc[i.status] ?? 0) + 1;
@@ -305,12 +306,24 @@ function Dashboard() {
                       axisLine={false}
                     />
                     <YAxis
+                      yAxisId="rate"
+                      domain={[0, 100]}
                       tick={{ fontSize: 11, fill: "var(--muted-foreground)" }}
                       tickLine={false}
                       axisLine={false}
                     />
+                    <YAxis
+                      yAxisId="hours"
+                      orientation="right"
+                      domain={[0, 12]}
+                      tick={{ fontSize: 11, fill: "var(--muted-foreground)" }}
+                      tickLine={false}
+                      axisLine={false}
+                      width={28}
+                    />
                     <Tooltip content={<ChartTip suffixes={{ rate: "%", work: "h", idle: "h" }} />} />
                     <Area
+                      yAxisId="rate"
                       type="monotone"
                       dataKey="rate"
                       name="Attendance"
@@ -319,6 +332,7 @@ function Dashboard() {
                       fill="url(#gRate)"
                     />
                     <Area
+                      yAxisId="hours"
                       type="monotone"
                       dataKey="work"
                       name="Avg work"
