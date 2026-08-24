@@ -236,6 +236,8 @@ export function createSeedBoards(): Board[] {
       folderId: "fd-q1",
       workspaceId: "ws-dev",
       favorite: true,
+      statusLabels: defaultStatusLabels.map((l) => ({ ...l })),
+      priorityLabels: defaultPriorityLabels.map((l) => ({ ...l })),
       groups: [
         {
           id: "gr-progress",
@@ -344,6 +346,8 @@ export function createSeedBoards(): Board[] {
       folderId: null,
       workspaceId: "ws-aff",
       favorite: false,
+      statusLabels: defaultStatusLabels.map((l) => ({ ...l })),
+      priorityLabels: defaultPriorityLabels.map((l) => ({ ...l })),
       groups: [
         {
           id: "gr-aff-week",
@@ -401,6 +405,8 @@ export function createSeedBoards(): Board[] {
       folderId: "fd-camp",
       workspaceId: "ws-mkt",
       favorite: false,
+      statusLabels: defaultStatusLabels.map((l) => ({ ...l })),
+      priorityLabels: defaultPriorityLabels.map((l) => ({ ...l })),
       groups: [
         {
           id: "gr-mkt-p1",
@@ -444,17 +450,11 @@ export function initials(name: string) {
     .toUpperCase();
 }
 
-export function itemProgress(item: Item) {
+export function itemProgress(item: Item, statusLabels: Label[] = defaultStatusLabels) {
+  const done = statusLabels[statusLabels.length - 1]?.name ?? "Completed";
   if (item.subitems.length > 0) {
-    const done = item.subitems.filter((s) => s.status === "Completed").length;
-    return Math.round((done / item.subitems.length) * 100);
+    const complete = item.subitems.filter((s) => s.status === done).length;
+    return Math.round((complete / item.subitems.length) * 100);
   }
-  const map: Record<ItemStatus, number> = {
-    "Not Started": 0,
-    Working: 40,
-    "In Review": 75,
-    Blocked: 25,
-    Completed: 100,
-  };
-  return map[item.status];
+  return statusLabels.find((l) => l.name === item.status)?.progress ?? 0;
 }
