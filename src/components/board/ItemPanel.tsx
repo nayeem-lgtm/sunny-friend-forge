@@ -1,19 +1,14 @@
-import { useRef, useState } from "react";
-import { AtSign, FileText, Paperclip, Send, ThumbsUp, X } from "lucide-react";
+import { useState } from "react";
+import { FileText, ThumbsUp, X } from "lucide-react";
 
 import { PeopleCell, PriorityCell, StatusCell } from "@/components/board/cells";
+import { RichComposer } from "@/components/board/RichComposer";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Textarea } from "@/components/ui/textarea";
-import type { Group, Item, ItemUpdate, Label, UpdateFile } from "@/lib/board-data";
+import type { Group, Item, ItemUpdate, Label } from "@/lib/board-data";
 import { boardPeople, initials, itemProgress } from "@/lib/board-data";
 import { cn } from "@/lib/utils";
 
@@ -50,35 +45,11 @@ export function ItemPanel({
   onPatch: (patch: Partial<Item>, activity?: { action: string; from?: string; to?: string }) => void;
   onClose: () => void;
 }) {
-  const [draft, setDraft] = useState("");
-  const [mentions, setMentions] = useState<string[]>([]);
-  const [files, setFiles] = useState<UpdateFile[]>([]);
   const [replyTo, setReplyTo] = useState<string | null>(null);
-  const [replyText, setReplyText] = useState("");
-  const fileRef = useRef<HTMLInputElement>(null);
-  const people = boardPeople();
 
   if (!item || !group) return null;
 
   const allFiles = item.updates.flatMap((u) => u.files.map((f) => ({ ...f, from: u.author })));
-
-  const post = () => {
-    if (!draft.trim() && files.length === 0) return;
-    const update: ItemUpdate = {
-      id: `up-${Math.random().toString(36).slice(2, 9)}`,
-      author: CURRENT_USER,
-      text: draft.trim(),
-      mentions,
-      files,
-      likes: 0,
-      createdAt: now(),
-      replies: [],
-    };
-    onPatch({ updates: [update, ...item.updates] }, { action: "posted an update" });
-    setDraft("");
-    setMentions([]);
-    setFiles([]);
-  };
 
   const patchUpdate = (id: string, p: Partial<ItemUpdate>) =>
     onPatch({ updates: item.updates.map((u) => (u.id === id ? { ...u, ...p } : u)) });
@@ -155,96 +126,22 @@ export function ItemPanel({
           </TabsList>
 
           <TabsContent value="updates" className="space-y-4 pt-4">
-            <div className="rounded-lg border border-border p-2">
-              <Textarea
-                value={draft}
-                onChange={(e) => setDraft(e.target.value)}
-                placeholder="Write an update and mention others with @"
-                rows={3}
-                className="border-none shadow-none focus-visible:ring-0"
-              />
-              {files.length > 0 ? (
-                <div className="flex flex-wrap gap-1.5 px-2 pb-2">
-                  {files.map((f) => (
-                    <span
-                      key={f.id}
-                      className="flex items-center gap-1 rounded border border-border px-2 py-0.5 text-[11px]"
-                    >
-                      <FileText className="h-3 w-3" />
-                      {f.name}
-                      <button
-                        type="button"
-                        aria-label="Remove file"
-                        onClick={() => setFiles((p) => p.filter((x) => x.id !== f.id))}
-                      >
-                        <X className="h-3 w-3" />
-                      </button>
-                    </span>
-                  ))}
-                </div>
-              ) : null}
-              <div className="flex items-center gap-1 border-t border-border px-1 pt-2">
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button variant="ghost" size="sm" className="h-8 px-2" title="Mention">
-                      <AtSign className="h-4 w-4" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="max-h-64 w-60 overflow-y-auto p-1" align="start">
-                    {people.map((p) => {
-                      const name = `${p.firstName} ${p.lastName}`;
-                      return (
-                        <button
-                          key={p.id}
-                          type="button"
-                          onClick={() => {
-                            setDraft((d) => `${d}${d && !d.endsWith(" ") ? " " : ""}@${name} `);
-                            setMentions((m) => (m.includes(p.id) ? m : [...m, p.id]));
-                          }}
-                          className="flex w-full items-center gap-2 rounded px-2 py-1.5 text-left text-sm hover:bg-muted"
-                        >
-                          <Avatar className="h-6 w-6">
-                            <AvatarFallback className="bg-primary/15 text-[10px] text-primary">
-                              {initials(name)}
-                            </AvatarFallback>
-                          </Avatar>
-                          {name}
-                        </button>
-                      );
-                    })}
-                  </PopoverContent>
-                </Popover>
-
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-8 px-2"
-                  title="Attach files"
-                  onClick={() => fileRef.current?.click()}
-                >
-                  <Paperclip className="h-4 w-4" />
-                </Button>
-                <input
-                  ref={fileRef}
-                  type="file"
-                  multiple
-                  hidden
-                  onChange={(e) => {
-                    const list = Array.from(e.target.files ?? []).map((f) => ({
-                      id: `fl-${Math.random().toString(36).slice(2, 9)}`,
-                      name: f.name,
-                      size: f.size,
-                      type: f.type,
-                    }));
-                    setFiles((p) => [...p, ...list]);
-                    e.target.value = "";
-                  }}
-                />
-                <Button size="sm" className="ml-auto h-8" onClick={post}>
-                  <Send className="mr-1 h-3.5 w-3.5" /> Update
-                </Button>
-              </div>
-            </div>
+            <RichComposer
+              placeholder="Write an update and mention others with @"
+              onPost={({ html, mentions, files }) => {
+                const update: ItemUpdate = {
+                  id: `up-${Math.random().toString(36).slice(2, 9)}`,
+                  author: CURRENT_USER,
+                  text: html,
+                  mentions,
+                  files,
+                  likes: 0,
+                  createdAt: now(),
+                  replies: [],
+                };
+                onPatch({ updates: [update, ...item.updates] }, { action: "posted an update" });
+              }}
+            />
 
             {item.updates.map((u) => (
               <div key={u.id} className="rounded-lg border border-border">
@@ -265,17 +162,10 @@ export function ItemPanel({
                     <X className="h-3.5 w-3.5" />
                   </button>
                 </div>
-                <p className="whitespace-pre-wrap px-3 py-2 text-sm">
-                  {u.text.split(/(@[\w]+\s?[\w]*)/g).map((chunk, i) =>
-                    chunk.startsWith("@") ? (
-                      <span key={i} className="font-medium text-primary">
-                        {chunk}
-                      </span>
-                    ) : (
-                      <span key={i}>{chunk}</span>
-                    ),
-                  )}
-                </p>
+                <div
+                  className="px-3 py-2 text-sm [&_a]:text-primary [&_a]:underline [&_ol]:list-decimal [&_ol]:pl-5 [&_ul]:list-disc [&_ul]:pl-5"
+                  dangerouslySetInnerHTML={{ __html: u.text }}
+                />
                 {u.files.length > 0 ? (
                   <div className="flex flex-wrap gap-1.5 px-3 pb-2">
                     {u.files.map((f) => (
@@ -308,39 +198,29 @@ export function ItemPanel({
                   <div key={r.id} className="border-t border-border px-3 py-2 pl-8 text-sm">
                     <span className="font-medium">{r.author}</span>{" "}
                     <span className="text-xs text-muted-foreground">{fmt(r.createdAt)}</span>
-                    <p>{r.text}</p>
+                    <div dangerouslySetInnerHTML={{ __html: r.text }} />
                   </div>
                 ))}
                 {replyTo === u.id ? (
-                  <div className="flex items-center gap-2 border-t border-border p-2">
-                    <Input
-                      value={replyText}
-                      onChange={(e) => setReplyText(e.target.value)}
+                  <div className="border-t border-border p-2">
+                    <RichComposer
+                      compact
                       placeholder="Write a reply and mention others with @"
-                      className="h-8"
-                    />
-                    <Button
-                      size="sm"
-                      className="h-8"
-                      onClick={() => {
-                        if (!replyText.trim()) return;
+                      onPost={({ html }) => {
                         patchUpdate(u.id, {
                           replies: [
                             ...u.replies,
                             {
                               id: `rp-${Math.random().toString(36).slice(2, 9)}`,
                               author: CURRENT_USER,
-                              text: replyText.trim(),
+                              text: html,
                               createdAt: now(),
                             },
                           ],
                         });
-                        setReplyText("");
                         setReplyTo(null);
                       }}
-                    >
-                      Reply
-                    </Button>
+                    />
                   </div>
                 ) : null}
               </div>

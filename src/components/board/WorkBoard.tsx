@@ -197,7 +197,7 @@ export function WorkBoard({
               >
                 <div className="pl-8">Task</div>
                 <div className="text-center">Chat</div>
-                <div className="text-center">Owner</div>
+                <div className="text-center">Assignee</div>
                 <div className="text-center">Status</div>
                 <div className="text-center">Priority</div>
                 <div className="text-center">Start</div>
