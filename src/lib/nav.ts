@@ -1,6 +1,5 @@
 import {
   LayoutDashboard,
-  Building2,
   Clock,
   CalendarCheck,
   Wallet,
