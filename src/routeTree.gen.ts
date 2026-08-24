@@ -10,33 +10,232 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AnnouncementsRouteImport } from './routes/announcements'
+import { Route as AttendanceRouteImport } from './routes/attendance'
+import { Route as DepartmentsRouteImport } from './routes/departments'
+import { Route as DesignationsRouteImport } from './routes/designations'
+import { Route as EmployeesRouteImport } from './routes/employees'
+import { Route as HolidaysRouteImport } from './routes/holidays'
+import { Route as KpiReportsRouteImport } from './routes/kpi-reports'
+import { Route as LeaveRouteImport } from './routes/leave'
+import { Route as MeetingsRouteImport } from './routes/meetings'
+import { Route as MonitoringRouteImport } from './routes/monitoring'
+import { Route as PayrollRouteImport } from './routes/payroll'
+import { Route as PermissionsRouteImport } from './routes/permissions'
+import { Route as ProjectsRouteImport } from './routes/projects'
+import { Route as SchedulesRouteImport } from './routes/schedules'
+import { Route as WorklogsRouteImport } from './routes/worklogs'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AnnouncementsRoute = AnnouncementsRouteImport.update({
+  id: '/announcements',
+  path: '/announcements',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AttendanceRoute = AttendanceRouteImport.update({
+  id: '/attendance',
+  path: '/attendance',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DepartmentsRoute = DepartmentsRouteImport.update({
+  id: '/departments',
+  path: '/departments',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DesignationsRoute = DesignationsRouteImport.update({
+  id: '/designations',
+  path: '/designations',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EmployeesRoute = EmployeesRouteImport.update({
+  id: '/employees',
+  path: '/employees',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HolidaysRoute = HolidaysRouteImport.update({
+  id: '/holidays',
+  path: '/holidays',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const KpiReportsRoute = KpiReportsRouteImport.update({
+  id: '/kpi-reports',
+  path: '/kpi-reports',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LeaveRoute = LeaveRouteImport.update({
+  id: '/leave',
+  path: '/leave',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MeetingsRoute = MeetingsRouteImport.update({
+  id: '/meetings',
+  path: '/meetings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MonitoringRoute = MonitoringRouteImport.update({
+  id: '/monitoring',
+  path: '/monitoring',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PayrollRoute = PayrollRouteImport.update({
+  id: '/payroll',
+  path: '/payroll',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PermissionsRoute = PermissionsRouteImport.update({
+  id: '/permissions',
+  path: '/permissions',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProjectsRoute = ProjectsRouteImport.update({
+  id: '/projects',
+  path: '/projects',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SchedulesRoute = SchedulesRouteImport.update({
+  id: '/schedules',
+  path: '/schedules',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WorklogsRoute = WorklogsRouteImport.update({
+  id: '/worklogs',
+  path: '/worklogs',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/announcements': typeof AnnouncementsRoute
+  '/attendance': typeof AttendanceRoute
+  '/departments': typeof DepartmentsRoute
+  '/designations': typeof DesignationsRoute
+  '/employees': typeof EmployeesRoute
+  '/holidays': typeof HolidaysRoute
+  '/kpi-reports': typeof KpiReportsRoute
+  '/leave': typeof LeaveRoute
+  '/meetings': typeof MeetingsRoute
+  '/monitoring': typeof MonitoringRoute
+  '/payroll': typeof PayrollRoute
+  '/permissions': typeof PermissionsRoute
+  '/projects': typeof ProjectsRoute
+  '/schedules': typeof SchedulesRoute
+  '/worklogs': typeof WorklogsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/announcements': typeof AnnouncementsRoute
+  '/attendance': typeof AttendanceRoute
+  '/departments': typeof DepartmentsRoute
+  '/designations': typeof DesignationsRoute
+  '/employees': typeof EmployeesRoute
+  '/holidays': typeof HolidaysRoute
+  '/kpi-reports': typeof KpiReportsRoute
+  '/leave': typeof LeaveRoute
+  '/meetings': typeof MeetingsRoute
+  '/monitoring': typeof MonitoringRoute
+  '/payroll': typeof PayrollRoute
+  '/permissions': typeof PermissionsRoute
+  '/projects': typeof ProjectsRoute
+  '/schedules': typeof SchedulesRoute
+  '/worklogs': typeof WorklogsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/announcements': typeof AnnouncementsRoute
+  '/attendance': typeof AttendanceRoute
+  '/departments': typeof DepartmentsRoute
+  '/designations': typeof DesignationsRoute
+  '/employees': typeof EmployeesRoute
+  '/holidays': typeof HolidaysRoute
+  '/kpi-reports': typeof KpiReportsRoute
+  '/leave': typeof LeaveRoute
+  '/meetings': typeof MeetingsRoute
+  '/monitoring': typeof MonitoringRoute
+  '/payroll': typeof PayrollRoute
+  '/permissions': typeof PermissionsRoute
+  '/projects': typeof ProjectsRoute
+  '/schedules': typeof SchedulesRoute
+  '/worklogs': typeof WorklogsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/announcements'
+    | '/attendance'
+    | '/departments'
+    | '/designations'
+    | '/employees'
+    | '/holidays'
+    | '/kpi-reports'
+    | '/leave'
+    | '/meetings'
+    | '/monitoring'
+    | '/payroll'
+    | '/permissions'
+    | '/projects'
+    | '/schedules'
+    | '/worklogs'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/announcements'
+    | '/attendance'
+    | '/departments'
+    | '/designations'
+    | '/employees'
+    | '/holidays'
+    | '/kpi-reports'
+    | '/leave'
+    | '/meetings'
+    | '/monitoring'
+    | '/payroll'
+    | '/permissions'
+    | '/projects'
+    | '/schedules'
+    | '/worklogs'
+  id:
+    | '__root__'
+    | '/'
+    | '/announcements'
+    | '/attendance'
+    | '/departments'
+    | '/designations'
+    | '/employees'
+    | '/holidays'
+    | '/kpi-reports'
+    | '/leave'
+    | '/meetings'
+    | '/monitoring'
+    | '/payroll'
+    | '/permissions'
+    | '/projects'
+    | '/schedules'
+    | '/worklogs'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AnnouncementsRoute: typeof AnnouncementsRoute
+  AttendanceRoute: typeof AttendanceRoute
+  DepartmentsRoute: typeof DepartmentsRoute
+  DesignationsRoute: typeof DesignationsRoute
+  EmployeesRoute: typeof EmployeesRoute
+  HolidaysRoute: typeof HolidaysRoute
+  KpiReportsRoute: typeof KpiReportsRoute
+  LeaveRoute: typeof LeaveRoute
+  MeetingsRoute: typeof MeetingsRoute
+  MonitoringRoute: typeof MonitoringRoute
+  PayrollRoute: typeof PayrollRoute
+  PermissionsRoute: typeof PermissionsRoute
+  ProjectsRoute: typeof ProjectsRoute
+  SchedulesRoute: typeof SchedulesRoute
+  WorklogsRoute: typeof WorklogsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +247,131 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/announcements': {
+      id: '/announcements'
+      path: '/announcements'
+      fullPath: '/announcements'
+      preLoaderRoute: typeof AnnouncementsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/attendance': {
+      id: '/attendance'
+      path: '/attendance'
+      fullPath: '/attendance'
+      preLoaderRoute: typeof AttendanceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/departments': {
+      id: '/departments'
+      path: '/departments'
+      fullPath: '/departments'
+      preLoaderRoute: typeof DepartmentsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/designations': {
+      id: '/designations'
+      path: '/designations'
+      fullPath: '/designations'
+      preLoaderRoute: typeof DesignationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/employees': {
+      id: '/employees'
+      path: '/employees'
+      fullPath: '/employees'
+      preLoaderRoute: typeof EmployeesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/holidays': {
+      id: '/holidays'
+      path: '/holidays'
+      fullPath: '/holidays'
+      preLoaderRoute: typeof HolidaysRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/kpi-reports': {
+      id: '/kpi-reports'
+      path: '/kpi-reports'
+      fullPath: '/kpi-reports'
+      preLoaderRoute: typeof KpiReportsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/leave': {
+      id: '/leave'
+      path: '/leave'
+      fullPath: '/leave'
+      preLoaderRoute: typeof LeaveRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/meetings': {
+      id: '/meetings'
+      path: '/meetings'
+      fullPath: '/meetings'
+      preLoaderRoute: typeof MeetingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/monitoring': {
+      id: '/monitoring'
+      path: '/monitoring'
+      fullPath: '/monitoring'
+      preLoaderRoute: typeof MonitoringRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/payroll': {
+      id: '/payroll'
+      path: '/payroll'
+      fullPath: '/payroll'
+      preLoaderRoute: typeof PayrollRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/permissions': {
+      id: '/permissions'
+      path: '/permissions'
+      fullPath: '/permissions'
+      preLoaderRoute: typeof PermissionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/projects': {
+      id: '/projects'
+      path: '/projects'
+      fullPath: '/projects'
+      preLoaderRoute: typeof ProjectsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/schedules': {
+      id: '/schedules'
+      path: '/schedules'
+      fullPath: '/schedules'
+      preLoaderRoute: typeof SchedulesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/worklogs': {
+      id: '/worklogs'
+      path: '/worklogs'
+      fullPath: '/worklogs'
+      preLoaderRoute: typeof WorklogsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AnnouncementsRoute: AnnouncementsRoute,
+  AttendanceRoute: AttendanceRoute,
+  DepartmentsRoute: DepartmentsRoute,
+  DesignationsRoute: DesignationsRoute,
+  EmployeesRoute: EmployeesRoute,
+  HolidaysRoute: HolidaysRoute,
+  KpiReportsRoute: KpiReportsRoute,
+  LeaveRoute: LeaveRoute,
+  MeetingsRoute: MeetingsRoute,
+  MonitoringRoute: MonitoringRoute,
+  PayrollRoute: PayrollRoute,
+  PermissionsRoute: PermissionsRoute,
+  ProjectsRoute: ProjectsRoute,
+  SchedulesRoute: SchedulesRoute,
+  WorklogsRoute: WorklogsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
