@@ -1,3 +1,5 @@
+import { employees } from "@/lib/employee-data";
+
 export type WorklogStatus = "Submitted" | "Not Submitted";
 
 export type WorklogEntry = {

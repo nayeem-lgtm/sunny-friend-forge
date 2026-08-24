@@ -1,3 +1,5 @@
+import { employees } from "@/lib/employee-data";
+
 export type AttendanceRecord = {
   id: string;
   date: string; // yyyy-MM-dd
