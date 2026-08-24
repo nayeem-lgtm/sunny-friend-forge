@@ -122,6 +122,12 @@ export type Group = {
   items: Item[];
 };
 
+export type BoardColumn = {
+  id: string;
+  label: string;
+  type: "text" | "number" | "date" | "checkbox";
+};
+
 export type Board = {
   id: string;
   name: string;
@@ -133,6 +139,7 @@ export type Board = {
   favorite: boolean;
   statusLabels: Label[];
   priorityLabels: Label[];
+  columns?: BoardColumn[];
   groups: Group[];
 };
 
