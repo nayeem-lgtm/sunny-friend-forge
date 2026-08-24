@@ -132,10 +132,41 @@ function Page() {
     { key: "status", header: "Status", cell: (r) => <StatusPill status={r.status} /> },
   ];
 
-  const departments = useMemo(
-    () => Array.from(new Set(all.map((r) => r.department))).sort(),
+  const employees = useMemo(
+    () => Array.from(new Set(all.map((r) => r.employee))).sort(),
     [all],
   );
+
+  const visibleRows = useMemo(
+    () => (employee === "all" ? rows : rows.filter((r) => r.employee === employee)),
+    [rows, employee],
+  );
+
+  const detailRows = useMemo(
+    () =>
+      detail
+        ? all
+            .filter((r) => r.employee === detail)
+            .filter((r) => {
+              if (!range) return false;
+              const from = toDateKey(range.from);
+              const to = toDateKey(range.to);
+              return r.date >= from && r.date <= to;
+            })
+            .sort((a, b) => b.date.localeCompare(a.date))
+        : [],
+    [all, detail, range],
+  );
+
+  const detailTotals = useMemo(() => {
+    const present = detailRows.filter((r) => r.status !== "Absent");
+    return {
+      worked: present.reduce((s, r) => s + r.workedMinutes, 0),
+      idle: present.reduce((s, r) => s + r.idleMinutes, 0),
+      breaks: present.reduce((s, r) => s + r.breakMinutes, 0),
+      days: present.length,
+    };
+  }, [detailRows]);
 
   return (
     <AppShell>
@@ -178,6 +209,46 @@ function Page() {
           </Popover>
         )}
 
+        <Popover open={pickerOpen} onOpenChange={setPickerOpen}>
+          <PopoverTrigger asChild>
+            <Button size="sm" variant="outline" className="gap-2">
+              <UserSearch className="size-4" />
+              {employee === "all" ? "All employees" : employee}
+              <ChevronsUpDown className="size-3.5 opacity-60" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-64 p-0" align="start">
+            <Command>
+              <CommandInput placeholder="Search employee..." />
+              <CommandList>
+                <CommandEmpty>No employee found.</CommandEmpty>
+                <CommandGroup>
+                  <CommandItem
+                    onSelect={() => {
+                      setEmployee("all");
+                      setPickerOpen(false);
+                    }}
+                  >
+                    All employees
+                  </CommandItem>
+                  {employees.map((e) => (
+                    <CommandItem
+                      key={e}
+                      value={e}
+                      onSelect={() => {
+                        setEmployee(e);
+                        setPickerOpen(false);
+                      }}
+                    >
+                      {e}
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+              </CommandList>
+            </Command>
+          </PopoverContent>
+        </Popover>
+
         {range && (
           <span className="ml-auto text-sm text-muted-foreground">
             {fmt(range.from)} — {fmt(range.to)}
@@ -198,10 +269,10 @@ function Page() {
         </div>
       ) : (
         <DataTable
-          data={rows}
+          data={visibleRows}
           columns={columns}
+          onRowClick={(r) => setDetail(r.employee)}
           filters={[
-            { key: "department", label: "Departments", options: departments },
             { key: "status", label: "Status", options: ["Present", "Late", "On Break", "Absent"] },
           ]}
           emptyMessage={
@@ -211,6 +282,78 @@ function Page() {
           }
         />
       )}
+
+      <Dialog open={!!detail} onOpenChange={(o) => !o && setDetail(null)}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle>{detail}</DialogTitle>
+            <DialogDescription>
+              {detailRows[0]?.department} · {range ? `${fmt(range.from)} — ${fmt(range.to)}` : ""}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            {[
+              ["Days present", String(detailTotals.days)],
+              ["Worked", formatDuration(detailTotals.worked)],
+              ["Idle", formatDuration(detailTotals.idle)],
+              ["Break", formatDuration(detailTotals.breaks)],
+            ].map(([label, value]) => (
+              <div key={label} className="rounded-lg border border-border bg-secondary/40 p-3">
+                <p className="text-xs text-muted-foreground">{label}</p>
+                <p className="mt-1 text-lg font-semibold">{value}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="scrollbar-slim max-h-[50vh] overflow-auto rounded-lg border border-border">
+            <table className="w-full text-sm">
+              <thead className="sticky top-0 bg-secondary/70 text-xs uppercase tracking-wide text-muted-foreground">
+                <tr>
+                  {["Date", "Clock In", "Break Start", "Break End", "Clock Out", "Worked", "Idle", "Status"].map(
+                    (h) => (
+                      <th key={h} className="px-3 py-2 text-left font-medium">
+                        {h}
+                      </th>
+                    ),
+                  )}
+                </tr>
+              </thead>
+              <tbody>
+                {detailRows.map((r) => (
+                  <tr key={r.id} className="border-t border-border/60">
+                    <td className="px-3 py-2">{r.date}</td>
+                    <td className="px-3 py-2">{r.clockIn ?? "—"}</td>
+                    <td className="px-3 py-2">{r.breakStart ?? "—"}</td>
+                    <td className="px-3 py-2">{r.breakEnd ?? "—"}</td>
+                    <td className="px-3 py-2">{r.clockOut ?? "—"}</td>
+                    <td className="px-3 py-2 font-medium">{formatDuration(r.workedMinutes)}</td>
+                    <td
+                      className={cn(
+                        "px-3 py-2",
+                        r.idleMinutes > 45 ? "text-warning" : "text-muted-foreground",
+                      )}
+                    >
+                      {formatDuration(r.idleMinutes)}
+                    </td>
+                    <td className="px-3 py-2">
+                      <StatusPill status={r.status} />
+                    </td>
+                  </tr>
+                ))}
+                {detailRows.length === 0 && (
+                  <tr>
+                    <td colSpan={8} className="px-3 py-8 text-center text-muted-foreground">
+                      No logs in this range.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </DialogContent>
+      </Dialog>
     </AppShell>
   );
+
 }
