@@ -109,6 +109,16 @@ function Page() {
     return { pending: pending.length, onLeave: onLeave.length, upcoming: upcoming.length, approvedDays };
   }, [rows, todayKey, year]);
 
+  const employeeOptions = useMemo(
+    () => Array.from(new Set(rows.map((r) => r.employee))).sort((a, b) => a.localeCompare(b)),
+    [rows],
+  );
+
+  const outToday = useMemo(
+    () => rows.filter((r) => r.status === "Approved" && r.from <= todayKey && r.to >= todayKey),
+    [rows, todayKey],
+  );
+
   const active = rows.find((r) => r.id === openId) ?? null;
 
   const decide = (id: string, status: "Approved" | "Rejected") => {
@@ -197,6 +207,49 @@ function Page() {
         <StatCard icon={CalendarDays} label={`Days taken in ${year}`} value={stats.approvedDays} caption="Across all employees" />
       </div>
 
+      <div className="mt-6 overflow-hidden rounded-2xl border border-border bg-linear-to-r from-primary/12 via-card to-card p-5">
+        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4 sm:flex sm:justify-between">
+          <div className="min-w-0">
+            <p className="text-sm font-semibold text-foreground">Who is out today</p>
+            <p className="truncate text-xs text-muted-foreground">
+              {outToday.length ? `${outToday.length} teammate(s) on approved leave` : "Everyone is in today"}
+            </p>
+          </div>
+          <div className="flex shrink-0 -space-x-2">
+            {outToday.slice(0, 6).map((r) => (
+              <span
+                key={r.id}
+                title={`${r.employee} · ${r.type}`}
+                className="flex size-9 items-center justify-center rounded-full border-2 border-card bg-primary/20 text-xs font-semibold text-primary"
+              >
+                {initials(r.employee)}
+              </span>
+            ))}
+            {outToday.length > 6 && (
+              <span className="flex size-9 items-center justify-center rounded-full border-2 border-card bg-secondary text-xs font-semibold text-muted-foreground">
+                +{outToday.length - 6}
+              </span>
+            )}
+          </div>
+        </div>
+        {outToday.length > 0 && (
+          <ul className="mt-4 flex flex-wrap gap-2">
+            {outToday.map((r) => (
+              <li key={`c-${r.id}`}>
+                <button
+                  type="button"
+                  onClick={() => { setOpenId(r.id); setComment(""); }}
+                  className="flex items-center gap-2 rounded-full border border-border bg-card/80 px-3 py-1.5 text-xs text-foreground transition-colors hover:border-primary/40 hover:bg-primary/10"
+                >
+                  {r.employee}
+                  <TypePill type={r.type} />
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
       <div className="mt-6">
         <DataTable
           data={rows}
@@ -209,6 +262,7 @@ function Page() {
             { key: "type", label: "Leave Type", options: leaveTypes },
             { key: "status", label: "Status", options: leaveStatuses },
             { key: "department", label: "Department", options: [...departments] },
+            { key: "employee", label: "Employee", options: employeeOptions },
           ]}
           filterAccessor={(row, key) => String(row[key as keyof LeaveRequest] ?? "")}
           emptyMessage="No leave requests for this filter."
