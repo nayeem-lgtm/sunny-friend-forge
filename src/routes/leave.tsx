@@ -199,7 +199,7 @@ function Page() {
 
       <div className="mt-6">
         <DataTable
-          data={rows as unknown as Record<string, unknown>[] as LeaveRequest[]}
+          data={rows}
           columns={columns}
           onRowClick={(r) => {
             setOpenId(r.id);
@@ -210,13 +210,13 @@ function Page() {
             { key: "status", label: "Status", options: leaveStatuses },
             { key: "department", label: "Department", options: [...departments] },
           ]}
-          filterAccessor={(row, key) => String((row as unknown as Record<string, unknown>)[key] ?? "")}
+          filterAccessor={(row, key) => String(row[key as keyof LeaveRequest] ?? "")}
           emptyMessage="No leave requests for this filter."
         />
       </div>
 
       <Dialog open={!!active} onOpenChange={(o) => !o && setOpenId(null)}>
-        <DialogContent className="max-w-3xl">
+        <DialogContent className="max-h-[90vh] max-w-3xl overflow-y-auto">
           {active && (
             <>
               <DialogHeader>
