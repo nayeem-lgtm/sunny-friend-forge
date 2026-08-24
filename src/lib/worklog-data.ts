@@ -10,18 +10,10 @@ export type WorklogEntry = {
   status: WorklogStatus;
 };
 
-const people: [string, string][] = [
-  ["Arlene Lane", "Business Development Department"],
-  ["Devon Reed", "IT Department"],
-  ["Marvin Hall", "Affiliate Department"],
-  ["Kristin Ward", "QA Department"],
-  ["Cody Fisher", "IT Department"],
-  ["Jenny Wilson", "Business Development Department"],
-  ["Guy Hawkins", "Affiliate Department"],
-  ["Esther Howard", "QA Department"],
-  ["Ralph Edwards", "IT Department"],
-  ["Courtney Henry", "Accounting Department"],
-];
+const people: [string, string][] = employees
+  .filter((e) => e.status !== "Inactive")
+  .map((e) => [`${e.firstName} ${e.lastName}`, e.department]);
+
 
 const reportBank: Record<string, string[]> = {
   "IT Department": [
