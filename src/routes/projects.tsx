@@ -150,12 +150,66 @@ function Page() {
               variant="outline"
               size="icon"
               className="h-9 w-9 shrink-0"
+              title="Rename department"
+              onClick={() => {
+                setRenameValue(depts.find((d) => d.id === workspaceId)?.name ?? "");
+                setRenaming((p) => !p);
+              }}
+            >
+              <Pencil className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-9 w-9 shrink-0 text-destructive"
+              title="Delete department"
+              disabled={depts.length <= 1}
+              onClick={() => {
+                const rest = depts.filter((d) => d.id !== workspaceId);
+                if (!rest.length) return;
+                setDepts(rest);
+                setBoards((prev) => prev.filter((b) => b.workspaceId !== workspaceId));
+                setFolders((prev) => prev.filter((f) => f.workspaceId !== workspaceId));
+                const next = rest[0]!.id;
+                setWorkspaceId(next);
+                const first = boards.find((b) => b.workspaceId === next);
+                if (first) setActiveBoardId(first.id);
+              }}
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-9 w-9 shrink-0"
               title="Add department"
               onClick={() => setAddingDept((p) => !p)}
             >
               <Plus className="h-4 w-4" />
             </Button>
           </div>
+
+          {renaming ? (
+            <Input
+              autoFocus
+              value={renameValue}
+              placeholder="Department name"
+              onChange={(e) => setRenameValue(e.target.value)}
+              onBlur={() => setRenaming(false)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  const name = renameValue.trim();
+                  if (name)
+                    setDepts((p) =>
+                      p.map((d) => (d.id === workspaceId ? { ...d, name } : d)),
+                    );
+                  setRenaming(false);
+                }
+                if (e.key === "Escape") setRenaming(false);
+              }}
+              className="h-9"
+            />
+          ) : null}
 
           {addingDept ? (
             <div className="flex items-center gap-1.5">
