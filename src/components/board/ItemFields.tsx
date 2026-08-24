@@ -190,7 +190,7 @@ export function CustomFieldControl({
             className="min-h-0 text-xs"
           />
         ) : field.type === "dropdown" ? (
-          <Select value={field.value || undefined} onValueChange={onChange}>
+          <Select {...(field.value ? { value: field.value } : {})} onValueChange={onChange}>
             <SelectTrigger className="h-8 text-xs">
               <SelectValue placeholder="Select" />
             </SelectTrigger>
