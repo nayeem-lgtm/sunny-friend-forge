@@ -8,16 +8,18 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { boardPeople, initials, itemStatuses, priorities, priorityColor, statusColor } from "@/lib/board-data";
-import type { ItemStatus, Priority } from "@/lib/board-data";
+import { boardPeople, initials, labelColor } from "@/lib/board-data";
+import type { Label } from "@/lib/board-data";
 import { cn } from "@/lib/utils";
 
 export function StatusCell({
   value,
+  labels,
   onChange,
 }: {
-  value: ItemStatus;
-  onChange: (v: ItemStatus) => void;
+  value: string;
+  labels: Label[];
+  onChange: (v: string) => void;
 }) {
   return (
     <Popover>
@@ -26,21 +28,21 @@ export function StatusCell({
           type="button"
           className={cn(
             "h-8 w-full text-xs font-medium transition-opacity hover:opacity-90",
-            statusColor[value],
+            labelColor(labels, value),
           )}
         >
           {value}
         </button>
       </PopoverTrigger>
-      <PopoverContent className="w-44 p-1" align="start">
-        {itemStatuses.map((s) => (
+      <PopoverContent className="w-48 p-1" align="start">
+        {labels.map((s) => (
           <button
-            key={s}
+            key={s.id}
             type="button"
-            onClick={() => onChange(s)}
-            className={cn("mb-1 block h-8 w-full rounded text-xs font-medium", statusColor[s])}
+            onClick={() => onChange(s.name)}
+            className={cn("mb-1 block h-8 w-full rounded text-xs font-medium", s.color)}
           >
-            {s}
+            {s.name}
           </button>
         ))}
       </PopoverContent>
@@ -50,10 +52,12 @@ export function StatusCell({
 
 export function PriorityCell({
   value,
+  labels,
   onChange,
 }: {
-  value: Priority;
-  onChange: (v: Priority) => void;
+  value: string;
+  labels: Label[];
+  onChange: (v: string) => void;
 }) {
   return (
     <Popover>
@@ -61,26 +65,23 @@ export function PriorityCell({
         <button
           type="button"
           className={cn(
-            "mx-auto flex h-6 items-center gap-1 rounded-full border px-2.5 text-xs font-medium",
-            priorityColor[value],
+            "mx-auto flex h-6 items-center gap-1 rounded-full px-2.5 text-xs font-medium",
+            labelColor(labels, value),
           )}
         >
           {value}
-          <ChevronDown className="h-3 w-3 opacity-60" />
+          <ChevronDown className="h-3 w-3 opacity-70" />
         </button>
       </PopoverTrigger>
-      <PopoverContent className="w-36 p-1" align="start">
-        {priorities.map((p) => (
+      <PopoverContent className="w-40 p-1" align="start">
+        {labels.map((p) => (
           <button
-            key={p}
+            key={p.id}
             type="button"
-            onClick={() => onChange(p)}
-            className={cn(
-              "mb-1 block w-full rounded-full border px-2.5 py-1 text-xs font-medium",
-              priorityColor[p],
-            )}
+            onClick={() => onChange(p.name)}
+            className={cn("mb-1 block w-full rounded-full px-2.5 py-1 text-xs font-medium", p.color)}
           >
-            {p}
+            {p.name}
           </button>
         ))}
       </PopoverContent>
