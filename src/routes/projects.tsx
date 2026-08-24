@@ -48,7 +48,10 @@ export const Route = createFileRoute("/projects")({
 function Page() {
   const [boards, setBoards] = useState<Board[]>(() => createSeedBoards());
   const [folders, setFolders] = useState<FolderType[]>(() => seedFolders);
-  const [workspaceId, setWorkspaceId] = useState(workspaces[4]!.id);
+  const [depts, setDepts] = useState(() => workspaces);
+  const [workspaceId, setWorkspaceId] = useState("ws-it");
+  const [addingDept, setAddingDept] = useState(false);
+  const [newDept, setNewDept] = useState("");
   const [activeBoardId, setActiveBoardId] = useState("bd-roadmap");
   const [openFolders, setOpenFolders] = useState<Record<string, boolean>>({ "fd-q1": true });
   const [query, setQuery] = useState("");
@@ -123,25 +126,75 @@ function Page() {
 
       <div className="flex flex-col gap-4 lg:flex-row">
         <aside className="w-full shrink-0 space-y-3 rounded-xl border border-border bg-card p-3 lg:w-64">
-          <Select
-            value={workspaceId}
-            onValueChange={(v) => {
-              setWorkspaceId(v);
-              const first = boards.find((b) => b.workspaceId === v);
-              if (first) setActiveBoardId(first.id);
-            }}
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {workspaces.map((w) => (
-                <SelectItem key={w.id} value={w.id}>
-                  {w.icon} {w.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <div className="flex items-center gap-1.5">
+            <Select
+              value={workspaceId}
+              onValueChange={(v) => {
+                setWorkspaceId(v);
+                const first = boards.find((b) => b.workspaceId === v);
+                if (first) setActiveBoardId(first.id);
+              }}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {depts.map((w) => (
+                  <SelectItem key={w.id} value={w.id}>
+                    {w.icon} {w.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-9 w-9 shrink-0"
+              title="Add department"
+              onClick={() => setAddingDept((p) => !p)}
+            >
+              <Plus className="h-4 w-4" />
+            </Button>
+          </div>
+
+          {addingDept ? (
+            <div className="flex items-center gap-1.5">
+              <Input
+                autoFocus
+                value={newDept}
+                placeholder="Department name"
+                onChange={(e) => setNewDept(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    const name = newDept.trim();
+                    if (!name) return;
+                    const id = `ws-${Math.random().toString(36).slice(2, 8)}`;
+                    setDepts((p) => [...p, { id, name, icon: "◇", description: "" }]);
+                    setWorkspaceId(id);
+                    setNewDept("");
+                    setAddingDept(false);
+                  }
+                  if (e.key === "Escape") setAddingDept(false);
+                }}
+                className="h-9"
+              />
+              <Button
+                size="sm"
+                className="h-9"
+                onClick={() => {
+                  const name = newDept.trim();
+                  if (!name) return;
+                  const id = `ws-${Math.random().toString(36).slice(2, 8)}`;
+                  setDepts((p) => [...p, { id, name, icon: "◇", description: "" }]);
+                  setWorkspaceId(id);
+                  setNewDept("");
+                  setAddingDept(false);
+                }}
+              >
+                Add
+              </Button>
+            </div>
+          ) : null}
 
           <div className="space-y-1">
             {wsFolders.map((f) => {

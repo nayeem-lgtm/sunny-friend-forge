@@ -167,19 +167,20 @@ export const groupColors = [
 ];
 
 export const workspaces: Workspace[] = [
-  { id: "ws-exec", name: "Executive Management", icon: "◆", description: "Company-wide initiatives" },
-  { id: "ws-mkt", name: "Marketing", icon: "◈", description: "Campaigns and brand" },
-  { id: "ws-media", name: "Media Buying", icon: "◉", description: "Paid acquisition" },
-  { id: "ws-aff", name: "Affiliate Management", icon: "◎", description: "Partners and publishers" },
-  { id: "ws-dev", name: "Development", icon: "◇", description: "Product and engineering" },
-  { id: "ws-ops", name: "Operations", icon: "○", description: "Internal operations" },
+  { id: "ws-admin", name: "Admin Department", icon: "◆", description: "Company administration" },
+  { id: "ws-mediaadmin", name: "Media by Admin Department", icon: "◈", description: "Media managed by admin" },
+  { id: "ws-it", name: "IT Department", icon: "◇", description: "Product and engineering" },
+  { id: "ws-aff", name: "Affiliate Department", icon: "◎", description: "Partners and publishers" },
+  { id: "ws-bd", name: "Business Development Department", icon: "◉", description: "Growth and partnerships" },
+  { id: "ws-qa", name: "QA Department", icon: "◍", description: "Quality assurance" },
+  { id: "ws-acct", name: "Accounting Department", icon: "○", description: "Finance and accounting" },
 ];
 
 export const seedFolders: Folder[] = [
-  { id: "fd-q1", name: "Q1 Projects", workspaceId: "ws-dev" },
-  { id: "fd-q2", name: "Q2 Projects", workspaceId: "ws-dev" },
-  { id: "fd-camp", name: "2026 Campaigns", workspaceId: "ws-mkt" },
-  { id: "fd-internal", name: "Internal Projects", workspaceId: "ws-ops" },
+  { id: "fd-q1", name: "Q1 Projects", workspaceId: "ws-it" },
+  { id: "fd-q2", name: "Q2 Projects", workspaceId: "ws-it" },
+  { id: "fd-camp", name: "2026 Campaigns", workspaceId: "ws-qa" },
+  { id: "fd-internal", name: "Internal Projects", workspaceId: "ws-admin" },
 ];
 
 const people = employees.slice(0, 14);
@@ -252,7 +253,7 @@ export function createSeedBoards(): Board[] {
       icon: "◇",
       privacy: "Main",
       folderId: "fd-q1",
-      workspaceId: "ws-dev",
+      workspaceId: "ws-it",
       favorite: true,
       statusLabels: defaultStatusLabels.map((l) => ({ ...l })),
       priorityLabels: defaultPriorityLabels.map((l) => ({ ...l })),
@@ -421,7 +422,7 @@ export function createSeedBoards(): Board[] {
       icon: "◈",
       privacy: "Private",
       folderId: "fd-camp",
-      workspaceId: "ws-mkt",
+      workspaceId: "ws-qa",
       favorite: false,
       statusLabels: defaultStatusLabels.map((l) => ({ ...l })),
       priorityLabels: defaultPriorityLabels.map((l) => ({ ...l })),
