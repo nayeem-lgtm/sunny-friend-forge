@@ -155,9 +155,10 @@ function Dashboard() {
       attendance
         .filter((r) => days.includes(r.date))
         .reduce<Record<string, { mins: number; dept: string; days: number }>>((acc, r) => {
-          acc[r.employee] = acc[r.employee] ?? { mins: 0, dept: r.department, days: 0 };
-          acc[r.employee].mins += r.workedMinutes;
-          if (r.status !== "Absent") acc[r.employee].days += 1;
+          const cur = acc[r.employee] ?? { mins: 0, dept: r.department, days: 0 };
+          cur.mins += r.workedMinutes;
+          if (r.status !== "Absent") cur.days += 1;
+          acc[r.employee] = cur;
           return acc;
         }, {}),
     )
