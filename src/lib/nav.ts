@@ -28,10 +28,7 @@ export const navItems: NavItem[] = [
   {
     title: "Organizations",
     icon: Building2,
-    children: [
-      { title: "Designations", url: "/designations" },
-      { title: "Employee Directory", url: "/employees" },
-    ],
+    children: [{ title: "Designations", url: "/designations" }],
   },
   {
     title: "Attendance",
@@ -51,6 +48,7 @@ export const navItems: NavItem[] = [
     title: "Settings",
     icon: Settings,
     children: [
+      { title: "Employee Directory", url: "/employees" },
       { title: "Schedules", url: "/schedules" },
       { title: "Permissions", url: "/permissions" },
     ],
