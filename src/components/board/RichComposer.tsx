@@ -45,7 +45,7 @@ export function RichComposer({
   placeholder?: string;
   compact?: boolean;
 }) {
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(true);
   const [empty, setEmpty] = useState(true);
   const [mentions, setMentions] = useState<string[]>([]);
   const [files, setFiles] = useState<UpdateFile[]>([]);
@@ -53,7 +53,12 @@ export function RichComposer({
   const fileRef = useRef<HTMLInputElement>(null);
   const people = boardPeople();
 
+  const didMount = useRef(false);
   useEffect(() => {
+    if (!didMount.current) {
+      didMount.current = true;
+      return;
+    }
     if (expanded) editorRef.current?.focus();
   }, [expanded]);
 
@@ -139,6 +144,18 @@ export function RichComposer({
           contentEditable={expanded}
           suppressContentEditableWarning
           onInput={() => setEmpty(!editorRef.current?.textContent?.trim())}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
+              e.preventDefault();
+              post();
+            }
+          }}
+          onPaste={(e) => {
+            e.preventDefault();
+            const text = e.clipboardData.getData("text/plain");
+            exec("insertText", text);
+            setEmpty(!editorRef.current?.textContent?.trim());
+          }}
           data-placeholder={placeholder}
           className={cn(
             "prose-sm max-w-none text-sm outline-none [&_a]:text-primary [&_a]:underline [&_ol]:list-decimal [&_ol]:pl-5 [&_ul]:list-disc [&_ul]:pl-5",
