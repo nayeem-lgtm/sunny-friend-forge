@@ -55,10 +55,12 @@ export function StatusCell({
   value,
   labels,
   onChange,
+  onAddLabel,
 }: {
   value: string;
   labels: Label[];
   onChange: (v: string) => void;
+  onAddLabel?: (l: Label) => void;
 }) {
   return (
     <Popover>
@@ -84,6 +86,19 @@ export function StatusCell({
             {s.name}
           </button>
         ))}
+        {onAddLabel ? (
+          <AddLabelInline
+            onAdd={(name) => {
+              const label: Label = {
+                id: `st-${Math.random().toString(36).slice(2, 8)}`,
+                name,
+                color: labelPalette[labels.length % labelPalette.length]!,
+              };
+              onAddLabel(label);
+              onChange(name);
+            }}
+          />
+        ) : null}
       </PopoverContent>
     </Popover>
   );
@@ -93,10 +108,12 @@ export function PriorityCell({
   value,
   labels,
   onChange,
+  onAddLabel,
 }: {
   value: string;
   labels: Label[];
   onChange: (v: string) => void;
+  onAddLabel?: (l: Label) => void;
 }) {
   return (
     <Popover>
@@ -123,10 +140,24 @@ export function PriorityCell({
             {p.name}
           </button>
         ))}
+        {onAddLabel ? (
+          <AddLabelInline
+            onAdd={(name) => {
+              const label: Label = {
+                id: `pr-${Math.random().toString(36).slice(2, 8)}`,
+                name,
+                color: labelPalette[labels.length % labelPalette.length]!,
+              };
+              onAddLabel(label);
+              onChange(name);
+            }}
+          />
+        ) : null}
       </PopoverContent>
     </Popover>
   );
 }
+
 
 export function PeopleCell({
   value,
