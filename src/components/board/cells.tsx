@@ -92,7 +92,7 @@ export function StatusCell({
               const label: Label = {
                 id: `st-${Math.random().toString(36).slice(2, 8)}`,
                 name,
-                color: labelPalette[labels.length % labelPalette.length]!,
+                color: labelPalette[labels.length % labelPalette.length]!.color,
               };
               onAddLabel(label);
               onChange(name);
@@ -146,7 +146,7 @@ export function PriorityCell({
               const label: Label = {
                 id: `pr-${Math.random().toString(36).slice(2, 8)}`,
                 name,
-                color: labelPalette[labels.length % labelPalette.length]!,
+                color: labelPalette[labels.length % labelPalette.length]!.color,
               };
               onAddLabel(label);
               onChange(name);
@@ -255,7 +255,7 @@ export function DateCell({
         <Calendar
           mode="single"
           selected={selected}
-          defaultMonth={selected}
+          {...(selected ? { defaultMonth: selected } : {})}
           onSelect={(d) => {
             if (d) {
               const iso = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
