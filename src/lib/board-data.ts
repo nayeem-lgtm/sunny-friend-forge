@@ -120,8 +120,11 @@ export type Board = {
   folderId: string | null;
   workspaceId: string;
   favorite: boolean;
+  statusLabels: Label[];
+  priorityLabels: Label[];
   groups: Group[];
 };
+
 
 export type Folder = {
   id: string;
