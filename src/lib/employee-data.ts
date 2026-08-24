@@ -96,7 +96,32 @@ const names: [string, string][] = [
   ["Rifat", "Kabir"],
   ["Sabbir", "Alam"],
   ["Tasnim", "Nahar"],
+  ["Arif", "Hossain"],
+  ["Maliha", "Sultana"],
+  ["Zubair", "Rahim"],
+  ["Nafisa", "Anjum"],
+  ["Rakib", "Hasan"],
+  ["Sanjida", "Haque"],
+  ["Fahim", "Reza"],
+  ["Tanjila", "Ferdous"],
+  ["Ashiq", "Mahmud"],
+  ["Rumana", "Parvin"],
+  ["Jubayer", "Alam"],
+  ["Sharmin", "Aktar"],
+  ["Nayeem", "Sarker"],
+  ["Ishrat", "Binte"],
+  ["Tawhid", "Bhuiyan"],
+  ["Lamia", "Chowdhury"],
+  ["Sourav", "Das"],
+  ["Mim", "Tabassum"],
+  ["Redwan", "Karim"],
+  ["Anika", "Rahman"],
+  ["Shafayet", "Ullah"],
+  ["Priya", "Barua"],
+  ["Mahin", "Talukder"],
+  ["Nabila", "Yasmin"],
 ];
+
 
 export const employees: Employee[] = names.map(([firstName, lastName], i) => {
   const status: EmployeeStatus = i % 7 === 3 ? "Onboarding" : i % 9 === 8 ? "Inactive" : "Active";

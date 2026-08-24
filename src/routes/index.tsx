@@ -167,8 +167,55 @@ function Dashboard() {
       .sort((a, b) => b.mins - a.mins)
       .slice(0, 5);
 
+    const monthPrefix = key.slice(0, 7);
+    const leaveByDept = Object.entries(
+      leave
+        .filter((l) => l.status === "Approved" && l.from.startsWith(key.slice(0, 4)))
+        .reduce<Record<string, number>>((acc, l) => {
+          const short = l.department.replace(" Department", "");
+          acc[short] = (acc[short] ?? 0) + l.days;
+          return acc;
+        }, {}),
+    )
+      .map(([name, value]) => ({ name, value }))
+      .sort((a, b) => b.value - a.value);
+
+    const payrollTotal = employees
+      .filter((e) => e.status !== "Inactive")
+      .reduce((s, e) => s + e.monthlySalary, 0);
+    const onProbation = employees.filter((e) => e.onProbation && e.status === "Active").length;
+
+    const lateList = todayRows.filter((r) => r.status === "Late").slice(0, 6);
+
+    const missingEod = wlToday.filter((w) => w.status !== "Submitted").slice(0, 6);
+
+    const upcomingDue = items
+      .filter((i) => i.dueDate && i.dueDate >= key && !isDone(i.status))
+      .sort((a, b) => (a.dueDate ?? "").localeCompare(b.dueDate ?? ""))
+      .slice(0, 6);
+
+    const empName = (id: string) => {
+      const e = employees.find((x) => x.id === id);
+      return e ? `${e.firstName} ${e.lastName}` : "Unassigned";
+    };
+    const workloadByAssignee = Object.entries(
+      items.reduce<Record<string, { open: number; done: number }>>((acc, i) => {
+        const names = i.ownerIds.length ? i.ownerIds.map(empName) : ["Unassigned"];
+        names.forEach((a) => {
+          acc[a] = acc[a] ?? { open: 0, done: 0 };
+          if (isDone(i.status)) acc[a].done += 1;
+          else acc[a].open += 1;
+        });
+        return acc;
+      }, {}),
+    )
+      .map(([name, v]) => ({ name, ...v }))
+      .sort((a, b) => b.open + b.done - (a.open + a.done))
+      .slice(0, 6);
+
     return {
       key,
+      monthPrefix,
       todayRows,
       present,
       late,
@@ -190,7 +237,15 @@ function Dashboard() {
       headcount,
       newHires,
       topPerformers,
+      leaveByDept,
+      payrollTotal,
+      onProbation,
+      lateList,
+      missingEod,
+      upcomingDue,
+      workloadByAssignee,
     };
+
   }, [today]);
 
   const activeCount = employees.filter((e) => e.status === "Active").length;
@@ -642,6 +697,175 @@ function Dashboard() {
               </Panel>
             </div>
           </div>
+
+          {/* Operational detail row */}
+          <div className="grid gap-4 xl:grid-cols-3">
+            <Panel
+              title="Late arrivals today"
+              subtitle={`${data.late.length} teammates clocked in after shift start`}
+              action={
+                <Link to="/attendance" className="text-xs text-primary hover:underline">
+                  Attendance
+                </Link>
+              }
+            >
+              {data.lateList.length === 0 ? (
+                <Empty text="Everyone was on time today" />
+              ) : (
+                <ul className="space-y-2.5">
+                  {data.lateList.map((r) => (
+                    <li key={r.id ?? r.employee} className="flex items-center gap-3">
+                      <Avatar className="size-8">
+                        <AvatarFallback className="bg-secondary text-[11px]">
+                          {initials(r.employee)}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-medium">{r.employee}</p>
+                        <p className="truncate text-xs text-muted-foreground">
+                          {r.department.replace(" Department", "")}
+                        </p>
+                      </div>
+                      <Badge variant="outline" className="ml-auto border-warning/30 bg-warning/15 text-warning">
+                        {r.clockIn ?? "—"}
+                      </Badge>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </Panel>
+
+            <Panel
+              title="Missing EOD reports"
+              subtitle="Not submitted yet for today"
+              action={
+                <Link to="/worklogs" className="text-xs text-primary hover:underline">
+                  Work logs
+                </Link>
+              }
+            >
+              {data.missingEod.length === 0 ? (
+                <Empty text="All EOD reports are in" />
+              ) : (
+                <ul className="space-y-2.5">
+                  {data.missingEod.map((w) => (
+                    <li key={w.id} className="flex items-center gap-3">
+                      <span className="flex size-8 items-center justify-center rounded-lg bg-warning/15 text-warning">
+                        <ClipboardList className="size-4" />
+                      </span>
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-medium">{w.employee}</p>
+                        <p className="truncate text-xs text-muted-foreground">
+                          {w.department.replace(" Department", "")}
+                        </p>
+                      </div>
+                      <span className="ml-auto text-xs text-muted-foreground">Pending</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </Panel>
+
+            <Panel
+              title="Upcoming deadlines"
+              subtitle="Tasks due next across every board"
+              action={
+                <Link to="/projects" className="text-xs text-primary hover:underline">
+                  Boards
+                </Link>
+              }
+            >
+              {data.upcomingDue.length === 0 ? (
+                <Empty text="No upcoming deadlines" />
+              ) : (
+                <ul className="space-y-2.5">
+                  {data.upcomingDue.map((i) => (
+                    <li key={i.id} className="flex items-center gap-3">
+                      <span className="flex size-8 items-center justify-center rounded-lg bg-secondary text-[10px] font-semibold text-muted-foreground">
+                        {i.code.split("-")[1]}
+                      </span>
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-medium">{i.name}</p>
+                        <p className="truncate text-xs text-muted-foreground">
+                          {i.department.replace(" Department", "")} · {i.status}
+                        </p>
+                      </div>
+                      <span className="ml-auto shrink-0 text-xs text-primary">
+                        {shortDate(i.dueDate)}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </Panel>
+          </div>
+
+          {/* Workload, leave usage, payroll */}
+          <div className="grid gap-4 xl:grid-cols-3">
+            <Panel title="Workload by assignee" subtitle="Open vs completed tasks">
+              <ul className="space-y-3">
+                {data.workloadByAssignee.map((w) => {
+                  const total = w.open + w.done;
+                  return (
+                    <li key={w.name} className="space-y-1">
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="truncate font-medium">{w.name}</span>
+                        <span className="text-muted-foreground">
+                          {w.done}/{total} done
+                        </span>
+                      </div>
+                      <Progress value={total ? (w.done / total) * 100 : 0} className="h-1.5" />
+                    </li>
+                  );
+                })}
+              </ul>
+            </Panel>
+
+            <Panel title="Leave days used" subtitle="Approved days this year by department">
+              <ul className="space-y-2.5">
+                {data.leaveByDept.map((d, i) => {
+                  const max = Math.max(...data.leaveByDept.map((x) => x.value), 1);
+                  return (
+                    <li key={d.name} className="space-y-1">
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="text-muted-foreground">{d.name}</span>
+                        <span className="font-medium">{d.value} days</span>
+                      </div>
+                      <div className="h-1.5 overflow-hidden rounded-full bg-secondary">
+                        <div
+                          className="h-full rounded-full"
+                          style={{
+                            width: `${(d.value / max) * 100}%`,
+                            background: CHART[i % CHART.length],
+                          }}
+                        />
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+            </Panel>
+
+            <Panel
+              title="Payroll & people snapshot"
+              subtitle="Current month estimate"
+              action={
+                <Link to="/payroll" className="text-xs text-primary hover:underline">
+                  Payroll
+                </Link>
+              }
+            >
+              <div className="grid grid-cols-2 gap-3">
+                <SnapStat label="Monthly payroll" value={`৳${(data.payrollTotal / 1000).toFixed(0)}k`} />
+                <SnapStat label="Active teammates" value={String(activeCount)} />
+                <SnapStat label="On probation" value={String(data.onProbation)} />
+                <SnapStat label="Departments" value={String(data.headcount.length)} />
+                <SnapStat label="Open tasks" value={String(data.items.length - data.doneItems.length)} />
+                <SnapStat label="Blocked" value={String(data.stuckItems.length)} />
+              </div>
+            </Panel>
+          </div>
+
         </div>
       )}
     </AppShell>
@@ -783,6 +1007,15 @@ function ChartTip({
           </span>
         </p>
       ))}
+    </div>
+  );
+}
+
+function SnapStat({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-lg border border-border bg-secondary/40 p-3">
+      <p className="text-[11px] text-muted-foreground">{label}</p>
+      <p className="mt-0.5 text-lg font-semibold tracking-tight">{value}</p>
     </div>
   );
 }

@@ -1,3 +1,5 @@
+import { employees } from "@/lib/employee-data";
+
 export type AttendanceRecord = {
   id: string;
   date: string; // yyyy-MM-dd
@@ -13,18 +15,10 @@ export type AttendanceRecord = {
   status: "Present" | "Late" | "On Break" | "Absent";
 };
 
-const people: [string, string][] = [
-  ["Arlene Lane", "Business Development Department"],
-  ["Devon Reed", "IT Department"],
-  ["Marvin Hall", "Affiliate Department"],
-  ["Kristin Ward", "QA Department"],
-  ["Cody Fisher", "IT Department"],
-  ["Jenny Wilson", "Business Development Department"],
-  ["Guy Hawkins", "Affiliate Department"],
-  ["Esther Howard", "QA Department"],
-  ["Ralph Edwards", "IT Department"],
-  ["Courtney Henry", "Accounting Department"],
-];
+const people: [string, string][] = employees
+  .filter((e) => e.status !== "Inactive")
+  .map((e) => [`${e.firstName} ${e.lastName}`, e.department]);
+
 
 /** deterministic pseudo-random so SSR and client agree */
 function rand(seed: number) {
