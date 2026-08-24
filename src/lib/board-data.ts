@@ -83,6 +83,16 @@ export type Subitem = {
   actualHours: number;
 };
 
+export type CustomFieldType = "text" | "longtext" | "number" | "date" | "dropdown" | "people" | "checkbox" | "link";
+
+export type CustomField = {
+  id: string;
+  label: string;
+  type: CustomFieldType;
+  value: string;
+  options?: string[];
+};
+
 export type Item = {
   id: string;
   code: string;
@@ -100,6 +110,7 @@ export type Item = {
   subitems: Subitem[];
   updates: ItemUpdate[];
   activity: ActivityEntry[];
+  custom?: CustomField[];
 };
 
 

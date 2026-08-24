@@ -2,14 +2,14 @@ import { useState } from "react";
 import { FileText, ThumbsUp, X } from "lucide-react";
 
 import { PeopleCell, PriorityCell, StatusCell } from "@/components/board/cells";
+import { AddFieldButton, CustomFieldControl, DateField } from "@/components/board/ItemFields";
 import { RichComposer } from "@/components/board/RichComposer";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { Group, Item, ItemUpdate, Label } from "@/lib/board-data";
-import { initials, itemProgress } from "@/lib/board-data";
+import { initials } from "@/lib/board-data";
 import { cn } from "@/lib/utils";
 
 const CURRENT_USER = "Arlene Lane";
@@ -94,28 +94,54 @@ export function ItemPanel({
               </span>
             </div>
           </Field>
-          <Field label="Timeline">
-            <div className="flex items-center gap-1">
-              <Input
-                type="date"
-                value={item.startDate}
-                onChange={(e) =>
-                  onPatch({ startDate: e.target.value }, { action: "changed start date" })
-                }
-                className="h-8 text-xs"
-              />
-              <Input
-                type="date"
-                value={item.dueDate}
-                onChange={(e) => onPatch({ dueDate: e.target.value }, { action: "changed due date" })}
-                className="h-8 text-xs"
-              />
-            </div>
+          <Field label="Start date">
+            <DateField
+              value={item.startDate}
+              onChange={(v) => onPatch({ startDate: v }, { action: "changed start date" })}
+              placeholder="Start date"
+            />
           </Field>
-          <Field label="Progress">{itemProgress(item, statusLabels)}%</Field>
-          <Field label="Hours">
-            {item.actualHours}h actual / {item.estimatedHours}h estimated
+          <Field label="Due date">
+            <DateField
+              value={item.dueDate}
+              onChange={(v) => onPatch({ dueDate: v }, { action: "changed due date" })}
+              placeholder="Due date"
+            />
           </Field>
+          {(item.custom ?? []).map((f) => (
+            <CustomFieldControl
+              key={f.id}
+              field={f}
+              onChange={(value) =>
+                onPatch(
+                  {
+                    custom: (item.custom ?? []).map((x) =>
+                      x.id === f.id ? { ...x, value } : x,
+                    ),
+                  },
+                  { action: `updated ${f.label}` },
+                )
+              }
+              onRename={(label) =>
+                onPatch({
+                  custom: (item.custom ?? []).map((x) => (x.id === f.id ? { ...x, label } : x)),
+                })
+              }
+              onRemove={() =>
+                onPatch(
+                  { custom: (item.custom ?? []).filter((x) => x.id !== f.id) },
+                  { action: `removed field ${f.label}` },
+                )
+              }
+            />
+          ))}
+          <AddFieldButton
+            onAdd={(field) =>
+              onPatch({ custom: [...(item.custom ?? []), field] }, {
+                action: `added field ${field.label}`,
+              })
+            }
+          />
         </div>
 
         <Tabs defaultValue="updates" className="flex-1 px-5 py-4">
