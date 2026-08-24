@@ -203,8 +203,13 @@ function makeItem(
     tags: opts.tags ?? [],
     notes: opts.notes ?? "",
     subitems: opts.subitems ?? [],
+    updates: opts.updates ?? [],
+    activity: opts.activity ?? [
+      { id: `ac-${Math.random().toString(36).slice(2, 8)}`, actor: "System", action: "created this item", at: iso(offset) },
+    ],
   };
 }
+
 
 function makeSub(name: string, o: Partial<Subitem> & { owner?: number } = {}): Subitem {
   return {
