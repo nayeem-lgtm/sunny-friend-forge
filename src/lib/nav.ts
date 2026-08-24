@@ -44,7 +44,6 @@ export const navItems: NavItem[] = [
     children: [
       { title: "Employee Directory", url: "/employees" },
       { title: "Departments", url: "/departments" },
-      { title: "Designations", url: "/designations" },
       { title: "Schedules", url: "/schedules" },
       { title: "Permissions", url: "/permissions" },
     ],
@@ -55,7 +54,6 @@ export const navItems: NavItem[] = [
 export const pageTitles: Record<string, string> = {
   "/": "Dashboard",
   "/departments": "Departments",
-  "/designations": "Designations",
   "/employees": "Employee Directory",
   "/schedules": "Schedules",
   "/attendance": "Attendance Logs",
