@@ -28,10 +28,7 @@ export const navItems: NavItem[] = [
   {
     title: "Organizations",
     icon: Building2,
-    children: [
-      { title: "Designations", url: "/designations" },
-      { title: "Employee Directory", url: "/employees" },
-    ],
+    children: [{ title: "Designations", url: "/designations" }],
   },
   {
     title: "Attendance",
