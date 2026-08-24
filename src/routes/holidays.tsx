@@ -6,9 +6,9 @@ import { PageHeader } from "@/components/shared/PageHeader";
 export const Route = createFileRoute("/holidays")({
   head: () => ({
     meta: [
-      { title: "Holidays — Ray ERP" },
+      { title: "Holidays — WorkBoard" },
       { name: "description", content: "View and organize company holidays." },
-      { property: "og:title", content: "Holidays — Ray ERP" },
+      { property: "og:title", content: "Holidays — WorkBoard" },
       { property: "og:description", content: "View and organize company holidays." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

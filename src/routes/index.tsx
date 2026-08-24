@@ -46,13 +46,13 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Command Center — OmniWork Operations Dashboard" },
+      { title: "Command Center — WorkBoard Operations Dashboard" },
       {
         name: "description",
         content:
           "Live agency pulse: attendance, who is on leave, pending approvals, project delivery, EOD reports, announcements and new hires.",
       },
-      { property: "og:title", content: "Command Center — OmniWork Operations Dashboard" },
+      { property: "og:title", content: "Command Center — WorkBoard Operations Dashboard" },
       {
         property: "og:description",
         content: "Attendance, leave, projects, EOD reports and announcements in one live view.",

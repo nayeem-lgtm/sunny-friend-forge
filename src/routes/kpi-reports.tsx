@@ -6,9 +6,9 @@ import { PageHeader } from "@/components/shared/PageHeader";
 export const Route = createFileRoute("/kpi-reports")({
   head: () => ({
     meta: [
-      { title: "KPI Reports — Ray ERP" },
+      { title: "KPI Reports — WorkBoard" },
       { name: "description", content: "Daily KPI scores, goals, and AI insights per employee." },
-      { property: "og:title", content: "KPI Reports — Ray ERP" },
+      { property: "og:title", content: "KPI Reports — WorkBoard" },
       { property: "og:description", content: "Daily KPI scores, goals, and AI insights per employee." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

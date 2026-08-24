@@ -50,13 +50,13 @@ import {
 export const Route = createFileRoute("/attendance")({
   head: () => ({
     meta: [
-      { title: "Attendance Logs — Ray ERP" },
+      { title: "Attendance Logs — WorkBoard" },
       {
         name: "description",
         content:
           "See clock-in, break and clock-out times per employee with worked and idle hours for any date range.",
       },
-      { property: "og:title", content: "Attendance Logs — Ray ERP" },
+      { property: "og:title", content: "Attendance Logs — WorkBoard" },
       {
         property: "og:description",
         content: "Clock-in, break, clock-out, worked and idle time for every employee.",

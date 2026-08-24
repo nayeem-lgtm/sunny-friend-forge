@@ -6,9 +6,9 @@ import { PageHeader } from "@/components/shared/PageHeader";
 export const Route = createFileRoute("/monitoring")({
   head: () => ({
     meta: [
-      { title: "Monitoring — Ray ERP" },
+      { title: "Monitoring — WorkBoard" },
       { name: "description", content: "Monitor your managed employees in real-time." },
-      { property: "og:title", content: "Monitoring — Ray ERP" },
+      { property: "og:title", content: "Monitoring — WorkBoard" },
       { property: "og:description", content: "Monitor your managed employees in real-time." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

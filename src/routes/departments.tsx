@@ -24,9 +24,9 @@ import { departments as seedDepartments, employees } from "@/lib/employee-data";
 export const Route = createFileRoute("/departments")({
   head: () => ({
     meta: [
-      { title: "Departments — Ray ERP" },
+      { title: "Departments — WorkBoard" },
       { name: "description", content: "Create and oversee Ray's departments and their team sizes." },
-      { property: "og:title", content: "Departments — Ray ERP" },
+      { property: "og:title", content: "Departments — WorkBoard" },
       {
         property: "og:description",
         content: "Create and oversee Ray's departments and their team sizes.",

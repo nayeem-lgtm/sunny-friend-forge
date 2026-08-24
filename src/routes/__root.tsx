@@ -79,10 +79,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Ray ERP — Agency Operations Platform" },
+      { title: "WorkBoard — Agency Operations Platform" },
       { name: "description", content: "Internal HR and operations platform for a digital advertising agency." },
       { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Ray ERP — Agency Operations Platform" },
+      { property: "og:title", content: "WorkBoard — Agency Operations Platform" },
       { property: "og:description", content: "Internal HR and operations platform for a digital advertising agency." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
