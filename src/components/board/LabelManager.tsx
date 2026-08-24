@@ -93,7 +93,7 @@ export function LabelManager({
                 id: `lb-${Math.random().toString(36).slice(2, 8)}`,
                 name: "New label",
                 color: labelPalette[labels.length % labelPalette.length]!.color,
-                progress: showProgress ? 50 : undefined,
+                ...(showProgress ? { progress: 50 } : {}),
               },
             ])
           }
