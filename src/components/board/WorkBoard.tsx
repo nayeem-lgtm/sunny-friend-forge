@@ -9,17 +9,16 @@ import {
 } from "lucide-react";
 
 import { DateCell, NumberCell, PeopleCell, PriorityCell, ProgressBar, StatusCell, TextCell } from "@/components/board/cells";
+import { ItemPanel } from "@/components/board/ItemPanel";
+import { MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { Textarea } from "@/components/ui/textarea";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import type { Board, Group, Item, Subitem } from "@/lib/board-data";
-import { boardPeople, initials, itemProgress, statusColor } from "@/lib/board-data";
+import { itemProgress } from "@/lib/board-data";
 import { cn } from "@/lib/utils";
 
 const COLS =
-  "grid grid-cols-[minmax(260px,1fr)_120px_140px_130px_120px_120px_72px_72px_140px_40px] items-center";
+  "grid grid-cols-[minmax(240px,1fr)_56px_120px_140px_130px_120px_120px_72px_72px_140px_40px] items-center";
 
 type Drag = { groupId: string; itemId: string } | null;
 
@@ -41,6 +40,15 @@ function newItem(): Item {
     tags: [],
     notes: "",
     subitems: [],
+    updates: [],
+    activity: [
+      {
+        id: `ac-${id}`,
+        actor: "Arlene Lane",
+        action: "created this item",
+        at: new Date().toISOString(),
+      },
+    ],
   };
 }
 
@@ -73,10 +81,33 @@ export function WorkBoard({
   const patchGroup = (groupId: string, fn: (g: Group) => Group) =>
     onChange((b) => ({ ...b, groups: b.groups.map((g) => (g.id === groupId ? fn(g) : g)) }));
 
-  const patchItem = (groupId: string, itemId: string, patch: Partial<Item>) =>
+  const patchItem = (
+    groupId: string,
+    itemId: string,
+    patch: Partial<Item>,
+    activity?: { action: string; from?: string; to?: string },
+  ) =>
     patchGroup(groupId, (g) => ({
       ...g,
-      items: g.items.map((i) => (i.id === itemId ? { ...i, ...patch } : i)),
+      items: g.items.map((i) =>
+        i.id === itemId
+          ? {
+              ...i,
+              ...patch,
+              activity: activity
+                ? [
+                    ...i.activity,
+                    {
+                      id: `ac-${Math.random().toString(36).slice(2, 9)}`,
+                      actor: "Arlene Lane",
+                      at: new Date().toISOString(),
+                      ...activity,
+                    },
+                  ]
+                : i.activity,
+            }
+          : i,
+      ),
     }));
 
   const patchSub = (groupId: string, itemId: string, subId: string, patch: Partial<Subitem>) =>
@@ -143,7 +174,7 @@ export function WorkBoard({
               ·{" "}
               {group.items.length
                 ? Math.round(
-                    group.items.reduce((a, i) => a + itemProgress(i), 0) / group.items.length,
+                    group.items.reduce((a, i) => a + itemProgress(i, board.statusLabels), 0) / group.items.length,
                   )
                 : 0}
               % done
@@ -165,6 +196,7 @@ export function WorkBoard({
               <div className={cn(COLS, "border-b border-border bg-muted/40 px-2 py-2 text-[11px] font-medium uppercase tracking-wide text-muted-foreground")}
               >
                 <div className="pl-8">Task</div>
+                <div className="text-center">Chat</div>
                 <div className="text-center">Owner</div>
                 <div className="text-center">Status</div>
                 <div className="text-center">Priority</div>
@@ -217,6 +249,19 @@ export function WorkBoard({
                           Open
                         </button>
                       </div>
+                      <button
+                        type="button"
+                        onClick={() => setOpenItem({ groupId: group.id, itemId: item.id })}
+                        title="Open updates"
+                        className="relative mx-auto flex h-7 w-7 items-center justify-center rounded-full text-muted-foreground hover:bg-muted hover:text-primary"
+                      >
+                        <MessageSquare className="h-4 w-4" />
+                        {item.updates.length > 0 ? (
+                          <span className="absolute -bottom-0.5 -right-0.5 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-primary text-[9px] font-semibold text-primary-foreground">
+                            {item.updates.length}
+                          </span>
+                        ) : null}
+                      </button>
                       <div>
                         <PeopleCell
                           value={item.ownerIds}
@@ -225,11 +270,25 @@ export function WorkBoard({
                       </div>
                       <StatusCell
                         value={item.status}
-                        onChange={(v) => patchItem(group.id, item.id, { status: v })}
+                        labels={board.statusLabels}
+                        onChange={(v) =>
+                          patchItem(group.id, item.id, { status: v }, {
+                            action: "changed status",
+                            from: item.status,
+                            to: v,
+                          })
+                        }
                       />
                       <PriorityCell
                         value={item.priority}
-                        onChange={(v) => patchItem(group.id, item.id, { priority: v })}
+                        labels={board.priorityLabels}
+                        onChange={(v) =>
+                          patchItem(group.id, item.id, { priority: v }, {
+                            action: "changed priority",
+                            from: item.priority,
+                            to: v,
+                          })
+                        }
                       />
                       <DateCell
                         value={item.startDate}
@@ -248,7 +307,7 @@ export function WorkBoard({
                         value={item.actualHours}
                         onChange={(v) => patchItem(group.id, item.id, { actualHours: v })}
                       />
-                      <ProgressBar value={itemProgress(item)} />
+                      <ProgressBar value={itemProgress(item, board.statusLabels)} />
                       <button
                         type="button"
                         aria-label="Delete task"
@@ -275,16 +334,19 @@ export function WorkBoard({
                                 className="text-xs"
                               />
                             </div>
+                            <div />
                             <PeopleCell
                               value={sub.ownerIds}
                               onChange={(v) => patchSub(group.id, item.id, sub.id, { ownerIds: v })}
                             />
                             <StatusCell
                               value={sub.status}
+                              labels={board.statusLabels}
                               onChange={(v) => patchSub(group.id, item.id, sub.id, { status: v })}
                             />
                             <PriorityCell
                               value={sub.priority}
+                              labels={board.priorityLabels}
                               onChange={(v) => patchSub(group.id, item.id, sub.id, { priority: v })}
                             />
                             <DateCell
@@ -376,97 +438,18 @@ export function WorkBoard({
         <Plus className="mr-1 h-4 w-4" /> Add new group
       </Button>
 
-      <Sheet open={!!active} onOpenChange={(o) => !o && setOpenItem(null)}>
-        <SheetContent className="w-full overflow-y-auto sm:max-w-xl">
-          {active ? (
-            <>
-              <SheetHeader>
-                <SheetTitle className="pr-6 text-left">{active.item.name}</SheetTitle>
-                <p className="text-left text-xs text-muted-foreground">
-                  {active.item.code} · {active.group.name} · {active.item.department}
-                </p>
-              </SheetHeader>
-              <div className="space-y-5 px-4 pb-8">
-                <div className="grid grid-cols-2 gap-3 text-sm">
-                  <Field label="Status">
-                    <span className={cn("inline-flex rounded px-2 py-1 text-xs", statusColor[active.item.status])}>
-                      {active.item.status}
-                    </span>
-                  </Field>
-                  <Field label="Priority">{active.item.priority}</Field>
-                  <Field label="Timeline">
-                    {active.item.startDate} → {active.item.dueDate}
-                  </Field>
-                  <Field label="Progress">{itemProgress(active.item)}%</Field>
-                  <Field label="Estimated">{active.item.estimatedHours}h</Field>
-                  <Field label="Actual">{active.item.actualHours}h</Field>
-                </div>
-
-                <div>
-                  <p className="mb-2 text-xs font-medium uppercase text-muted-foreground">Owners</p>
-                  <div className="flex flex-wrap gap-2">
-                    {boardPeople()
-                      .filter((p) => active.item.ownerIds.includes(p.id))
-                      .map((p) => (
-                        <span key={p.id} className="flex items-center gap-2 rounded-full border border-border px-2 py-1 text-xs">
-                          <Avatar className="h-5 w-5">
-                            <AvatarFallback className="bg-primary/15 text-[9px] text-primary">
-                              {initials(`${p.firstName} ${p.lastName}`)}
-                            </AvatarFallback>
-                          </Avatar>
-                          {p.firstName} {p.lastName}
-                        </span>
-                      ))}
-                    {active.item.ownerIds.length === 0 ? (
-                      <span className="text-xs text-muted-foreground">Unassigned</span>
-                    ) : null}
-                  </div>
-                </div>
-
-                <div>
-                  <p className="mb-2 text-xs font-medium uppercase text-muted-foreground">Description</p>
-                  <Textarea
-                    value={active.item.notes}
-                    placeholder="Add a description…"
-                    onChange={(e) =>
-                      patchItem(active.group.id, active.item.id, { notes: e.target.value })
-                    }
-                    rows={4}
-                  />
-                </div>
-
-                <div>
-                  <p className="mb-2 text-xs font-medium uppercase text-muted-foreground">
-                    Subitems ({active.item.subitems.length})
-                  </p>
-                  <div className="space-y-1">
-                    {active.item.subitems.map((s) => (
-                      <div key={s.id} className="flex items-center justify-between rounded border border-border px-2 py-1.5 text-sm">
-                        <span className="truncate">{s.name}</span>
-                        <span className={cn("rounded px-2 py-0.5 text-[10px]", statusColor[s.status])}>
-                          {s.status}
-                        </span>
-                      </div>
-                    ))}
-                    {active.item.subitems.length === 0 ? (
-                      <p className="text-xs text-muted-foreground">No subitems yet.</p>
-                    ) : null}
-                  </div>
-                </div>
-              </div>
-            </>
-          ) : null}
-        </SheetContent>
-      </Sheet>
+      <ItemPanel
+        open={!!active}
+        item={active?.item ?? null}
+        group={active?.group ?? null}
+        statusLabels={board.statusLabels}
+        priorityLabels={board.priorityLabels}
+        onPatch={(patch, activity) =>
+          active ? patchItem(active.group.id, active.item.id, patch, activity) : undefined
+        }
+        onClose={() => setOpenItem(null)}
+      />
     </div>
   );
 }
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <div className="rounded-lg border border-border p-2">
-      <p className="text-[10px] uppercase tracking-wide text-muted-foreground">{label}</p>
-      <div className="mt-1 text-sm">{children}</div>
-    </div>
-  );
-}
