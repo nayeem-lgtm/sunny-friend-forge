@@ -167,8 +167,53 @@ function Dashboard() {
       .sort((a, b) => b.mins - a.mins)
       .slice(0, 5);
 
+    const monthPrefix = key.slice(0, 7);
+    const leaveByDept = Object.entries(
+      leave
+        .filter((l) => l.status === "Approved" && l.from.startsWith(key.slice(0, 4)))
+        .reduce<Record<string, number>>((acc, l) => {
+          const short = l.department.replace(" Department", "");
+          acc[short] = (acc[short] ?? 0) + l.days;
+          return acc;
+        }, {}),
+    )
+      .map(([name, value]) => ({ name, value }))
+      .sort((a, b) => b.value - a.value);
+
+    const payrollTotal = employees
+      .filter((e) => e.status !== "Inactive")
+      .reduce((s, e) => s + e.monthlySalary, 0);
+    const onProbation = employees.filter((e) => e.onProbation && e.status === "Active").length;
+
+    const lateList = data0(todayRows.filter((r) => r.status === "Late"));
+    function data0<T>(v: T) {
+      return v;
+    }
+
+    const missingEod = wlToday.filter((w) => w.status !== "Submitted").slice(0, 6);
+
+    const upcomingDue = items
+      .filter((i) => i.dueDate && i.dueDate >= key && !isDone(i.status))
+      .sort((a, b) => (a.dueDate ?? "").localeCompare(b.dueDate ?? ""))
+      .slice(0, 6);
+
+    const workloadByAssignee = Object.entries(
+      items.reduce<Record<string, { open: number; done: number }>>((acc, i) => {
+        (i.assignees?.length ? i.assignees : ["Unassigned"]).forEach((a: string) => {
+          acc[a] = acc[a] ?? { open: 0, done: 0 };
+          if (isDone(i.status)) acc[a].done += 1;
+          else acc[a].open += 1;
+        });
+        return acc;
+      }, {}),
+    )
+      .map(([name, v]) => ({ name, ...v }))
+      .sort((a, b) => b.open + b.done - (a.open + a.done))
+      .slice(0, 6);
+
     return {
       key,
+      monthPrefix,
       todayRows,
       present,
       late,
@@ -190,7 +235,15 @@ function Dashboard() {
       headcount,
       newHires,
       topPerformers,
+      leaveByDept,
+      payrollTotal,
+      onProbation,
+      lateList,
+      missingEod,
+      upcomingDue,
+      workloadByAssignee,
     };
+
   }, [today]);
 
   const activeCount = employees.filter((e) => e.status === "Active").length;
