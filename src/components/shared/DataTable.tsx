@@ -48,6 +48,7 @@ export function DataTable<T extends Record<string, unknown>>({
   actions,
   emptyMessage = "No records found.",
   toolbar,
+  onRowClick,
 }: {
   data: T[];
   columns: Column<T>[];
@@ -56,6 +57,8 @@ export function DataTable<T extends Record<string, unknown>>({
   actions?: RowAction<T>[];
   emptyMessage?: string;
   toolbar?: ReactNode;
+  onRowClick?: (row: T) => void;
+
 }) {
   const [search, setSearch] = useState("");
   const [colSearch, setColSearch] = useState<Record<string, string>>({});
@@ -231,8 +234,13 @@ export function DataTable<T extends Record<string, unknown>>({
             {paged.map((row, i) => (
               <tr
                 key={i}
-                className="border-b border-border/60 transition-colors last:border-0 hover:bg-secondary/40"
+                onClick={onRowClick ? () => onRowClick(row) : undefined}
+                className={cn(
+                  "border-b border-border/60 transition-colors last:border-0 hover:bg-secondary/40",
+                  onRowClick && "cursor-pointer",
+                )}
               >
+
                 {columns.map((col) => (
                   <td key={col.key} className={cn("px-4 py-3", col.className)}>
                     {col.cell ? col.cell(row) : value(row, col)}
