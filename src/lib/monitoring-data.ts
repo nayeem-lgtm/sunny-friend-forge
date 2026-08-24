@@ -118,3 +118,58 @@ export function generateShotsForRange(from: Date, to: Date): Shot[] {
   }
   return out.sort((a, b) => b.at - a.at);
 }
+
+export type LiveStatus = {
+  name: string;
+  department: string;
+  designation: string;
+  live: boolean;
+  activity: number;
+  activeMinutes: number;
+  idleMinutes: number;
+  shots: number;
+  lastSeen: number | null;
+};
+
+export function formatDuration(min: number) {
+  if (!min) return "—";
+  const h = Math.floor(min / 60);
+  const m = min % 60;
+  return h ? `${h}h ${m}m` : `${m}m`;
+}
+
+/** Per-employee live status derived from today's captures. */
+export function getLiveStatuses(now: Date): LiveStatus[] {
+  const shots = generateShots(now);
+  const byPerson = new Map<string, Shot[]>();
+  shots.forEach((s) => {
+    const arr = byPerson.get(s.employee) ?? [];
+    arr.push(s);
+    byPerson.set(s.employee, arr);
+  });
+
+  return employees
+    .filter((e) => e.status === "Active")
+    .map((e) => {
+      const name = `${e.firstName} ${e.lastName}`;
+      const list = (byPerson.get(name) ?? []).slice().sort((a, b) => b.at - a.at);
+      const last = list[0]?.at ?? null;
+      const live = !!last && now.getTime() - last <= 15 * 60 * 1000;
+      const activity = list.length
+        ? Math.round(list.reduce((a, s) => a + s.activity, 0) / list.length)
+        : 0;
+      const activeShots = list.filter((s) => s.activity >= 40).length;
+      return {
+        name,
+        department: e.department,
+        designation: e.designation,
+        live,
+        activity: live ? activity : 0,
+        activeMinutes: activeShots * 5,
+        idleMinutes: (list.length - activeShots) * 5,
+        shots: list.length,
+        lastSeen: last,
+      };
+    })
+    .sort((a, b) => Number(b.live) - Number(a.live) || a.name.localeCompare(b.name));
+}
