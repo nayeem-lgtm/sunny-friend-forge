@@ -1,25 +1,66 @@
-import { Check, ChevronDown } from "lucide-react";
+import { useState } from "react";
+import { Check, ChevronDown, Plus } from "lucide-react";
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import { Input } from "@/components/ui/input";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { boardPeople, initials, labelColor } from "@/lib/board-data";
+import { boardPeople, initials, labelColor, labelPalette } from "@/lib/board-data";
 import type { Label } from "@/lib/board-data";
 import { cn } from "@/lib/utils";
+
+function AddLabelInline({ onAdd }: { onAdd: (name: string) => void }) {
+  const [adding, setAdding] = useState(false);
+  const [name, setName] = useState("");
+  const commit = () => {
+    const v = name.trim();
+    if (v) onAdd(v);
+    setName("");
+    setAdding(false);
+  };
+  if (!adding) {
+    return (
+      <button
+        type="button"
+        onClick={() => setAdding(true)}
+        className="mt-1 flex w-full items-center gap-1 rounded px-2 py-1.5 text-xs text-muted-foreground hover:bg-muted"
+      >
+        <Plus className="h-3.5 w-3.5" /> Add option
+      </button>
+    );
+  }
+  return (
+    <Input
+      autoFocus
+      value={name}
+      placeholder="Option name"
+      onChange={(e) => setName(e.target.value)}
+      onBlur={commit}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") commit();
+        if (e.key === "Escape") setAdding(false);
+      }}
+      className="mt-1 h-8 text-xs"
+    />
+  );
+}
+
 
 export function StatusCell({
   value,
   labels,
   onChange,
+  onAddLabel,
 }: {
   value: string;
   labels: Label[];
   onChange: (v: string) => void;
+  onAddLabel?: (l: Label) => void;
 }) {
   return (
     <Popover>
@@ -45,6 +86,19 @@ export function StatusCell({
             {s.name}
           </button>
         ))}
+        {onAddLabel ? (
+          <AddLabelInline
+            onAdd={(name) => {
+              const label: Label = {
+                id: `st-${Math.random().toString(36).slice(2, 8)}`,
+                name,
+                color: labelPalette[labels.length % labelPalette.length]!.color,
+              };
+              onAddLabel(label);
+              onChange(name);
+            }}
+          />
+        ) : null}
       </PopoverContent>
     </Popover>
   );
@@ -54,10 +108,12 @@ export function PriorityCell({
   value,
   labels,
   onChange,
+  onAddLabel,
 }: {
   value: string;
   labels: Label[];
   onChange: (v: string) => void;
+  onAddLabel?: (l: Label) => void;
 }) {
   return (
     <Popover>
@@ -84,10 +140,24 @@ export function PriorityCell({
             {p.name}
           </button>
         ))}
+        {onAddLabel ? (
+          <AddLabelInline
+            onAdd={(name) => {
+              const label: Label = {
+                id: `pr-${Math.random().toString(36).slice(2, 8)}`,
+                name,
+                color: labelPalette[labels.length % labelPalette.length]!.color,
+              };
+              onAddLabel(label);
+              onChange(name);
+            }}
+          />
+        ) : null}
       </PopoverContent>
     </Popover>
   );
 }
+
 
 export function PeopleCell({
   value,
@@ -159,18 +229,48 @@ export function DateCell({
   onChange: (v: string) => void;
   overdue?: boolean;
 }) {
+  const [open, setOpen] = useState(false);
+  const selected = value ? new Date(`${value}T00:00:00`) : undefined;
   return (
-    <Input
-      type="date"
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      className={cn(
-        "h-7 border-none bg-transparent px-1 text-center text-xs shadow-none focus-visible:ring-1",
-        overdue && "text-destructive",
-      )}
-    />
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <button
+          type="button"
+          className={cn(
+            "h-7 w-full rounded px-1 text-center text-xs hover:bg-muted",
+            overdue ? "text-destructive" : "text-foreground",
+            !value && "text-muted-foreground",
+          )}
+        >
+          {value
+            ? selected!.toLocaleDateString(undefined, {
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+              })
+            : "Set date"}
+        </button>
+      </PopoverTrigger>
+      <PopoverContent className="w-auto p-0" align="start">
+        <Calendar
+          mode="single"
+          selected={selected}
+          {...(selected ? { defaultMonth: selected } : {})}
+          onSelect={(d) => {
+            if (d) {
+              const iso = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+              onChange(iso);
+            }
+            setOpen(false);
+          }}
+          initialFocus
+          className={cn("p-3 pointer-events-auto")}
+        />
+      </PopoverContent>
+    </Popover>
   );
 }
+
 
 export function NumberCell({
   value,

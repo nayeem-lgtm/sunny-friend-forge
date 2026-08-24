@@ -34,6 +34,8 @@ export function ItemPanel({
   group,
   statusLabels,
   priorityLabels,
+  onAddStatusLabel,
+  onAddPriorityLabel,
   onPatch,
   onClose,
 }: {
@@ -42,6 +44,8 @@ export function ItemPanel({
   group: Group | null;
   statusLabels: Label[];
   priorityLabels: Label[];
+  onAddStatusLabel?: (l: Label) => void;
+  onAddPriorityLabel?: (l: Label) => void;
   onPatch: (patch: Partial<Item>, activity?: { action: string; from?: string; to?: string }) => void;
   onClose: () => void;
 }) {
@@ -69,6 +73,7 @@ export function ItemPanel({
             <StatusCell
               value={item.status}
               labels={statusLabels}
+              {...(onAddStatusLabel ? { onAddLabel: onAddStatusLabel } : {})}
               onChange={(v) =>
                 onPatch({ status: v }, { action: "changed status", from: item.status, to: v })
               }
@@ -78,6 +83,7 @@ export function ItemPanel({
             <PriorityCell
               value={item.priority}
               labels={priorityLabels}
+              {...(onAddPriorityLabel ? { onAddLabel: onAddPriorityLabel } : {})}
               onChange={(v) =>
                 onPatch({ priority: v }, { action: "changed priority", from: item.priority, to: v })
               }

@@ -188,6 +188,11 @@ export function WorkBoard({
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
   const columns = board.columns ?? [];
 
+  const addStatusLabel = (l: { id: string; name: string; color: string }) =>
+    onChange((b) => ({ ...b, statusLabels: [...b.statusLabels, l] }));
+  const addPriorityLabel = (l: { id: string; name: string; color: string }) =>
+    onChange((b) => ({ ...b, priorityLabels: [...b.priorityLabels, l] }));
+
   const addColumn = (label: string, type: BoardColumn["type"]) =>
     onChange((b) => ({
       ...b,
@@ -377,13 +382,6 @@ export function WorkBoard({
                           value={item.name}
                           onChange={(v) => patchItem(group.id, item.id, { name: v })}
                         />
-                        <button
-                          type="button"
-                          onClick={() => setOpenItem({ groupId: group.id, itemId: item.id })}
-                          className="shrink-0 rounded px-1.5 py-0.5 text-[10px] text-muted-foreground opacity-0 transition-opacity hover:bg-muted group-hover:opacity-100"
-                        >
-                          Open
-                        </button>
                       </div>
                       <button
                         type="button"
@@ -407,6 +405,7 @@ export function WorkBoard({
                       <StatusCell
                         value={item.status}
                         labels={board.statusLabels}
+                        onAddLabel={addStatusLabel}
                         onChange={(v) =>
                           patchItem(group.id, item.id, { status: v }, {
                             action: "changed status",
@@ -418,6 +417,7 @@ export function WorkBoard({
                       <PriorityCell
                         value={item.priority}
                         labels={board.priorityLabels}
+                        onAddLabel={addPriorityLabel}
                         onChange={(v) =>
                           patchItem(group.id, item.id, { priority: v }, {
                             action: "changed priority",
@@ -479,11 +479,13 @@ export function WorkBoard({
                             <StatusCell
                               value={sub.status}
                               labels={board.statusLabels}
+                              onAddLabel={addStatusLabel}
                               onChange={(v) => patchSub(group.id, item.id, sub.id, { status: v })}
                             />
                             <PriorityCell
                               value={sub.priority}
                               labels={board.priorityLabels}
+                              onAddLabel={addPriorityLabel}
                               onChange={(v) => patchSub(group.id, item.id, sub.id, { priority: v })}
                             />
                             <DateCell
@@ -573,6 +575,8 @@ export function WorkBoard({
         group={active?.group ?? null}
         statusLabels={board.statusLabels}
         priorityLabels={board.priorityLabels}
+        onAddStatusLabel={addStatusLabel}
+        onAddPriorityLabel={addPriorityLabel}
         onPatch={(patch, activity) =>
           active ? patchItem(active.group.id, active.item.id, patch, activity) : undefined
         }
