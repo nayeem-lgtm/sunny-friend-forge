@@ -48,6 +48,7 @@ export const navItems: NavItem[] = [
     title: "Settings",
     icon: Settings,
     children: [
+      { title: "Employee Directory", url: "/employees" },
       { title: "Schedules", url: "/schedules" },
       { title: "Permissions", url: "/permissions" },
     ],
