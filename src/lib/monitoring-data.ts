@@ -66,13 +66,24 @@ export function generateShots(day: Date): Shot[] {
   const daySeed = Math.round(base.getTime() / 86400000);
   const now = Date.now();
 
+  const isToday = toDateKey(new Date(now)) === key;
+  const nowMin = isToday
+    ? Math.floor((now - base.getTime()) / 60000)
+    : 24 * 60;
+
   const shots: Shot[] = [];
   people.forEach((p, pi) => {
     const s0 = rand(daySeed * 13 + pi * 7);
     if (s0 > 0.82) return; // not working / offline that day
-    const start = 9 * 60 + Math.round(rand(daySeed + pi) * 60);
-    const end = 18 * 60 + Math.round(rand(daySeed + pi * 3) * 60);
+    let start = 9 * 60 + Math.round(rand(daySeed + pi) * 60);
+    let end = 18 * 60 + Math.round(rand(daySeed + pi * 3) * 60);
+    // Early in the day (or overnight shifts): show the most recent hours instead of nothing.
+    if (nowMin < start + 60) {
+      end = Math.max(nowMin, 60);
+      start = Math.max(0, end - (7 * 60 + Math.round(rand(daySeed + pi) * 120)));
+    }
     for (let m = start; m <= end; m += 5) {
+
       const seed = daySeed * 101 + pi * 37 + m;
       const r = rand(seed);
       if (r > 0.93) continue; // capture gap
