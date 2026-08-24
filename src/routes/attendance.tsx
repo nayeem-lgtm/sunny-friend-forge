@@ -323,9 +323,9 @@ function Page() {
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             {[
               ["Days present", String(detailTotals.days)],
-              ["Worked", formatDuration(detailTotals.worked)],
-              ["Idle", formatDuration(detailTotals.idle)],
-              ["Break", formatDuration(detailTotals.breaks)],
+              ["Total Work Time", formatDuration(detailTotals.worked)],
+              ["Total Idle Time", formatDuration(detailTotals.idle)],
+              ["Total Break Time", formatDuration(detailTotals.breaks)],
             ].map(([label, value]) => (
               <div key={label} className="rounded-lg border border-border bg-secondary/40 p-3">
                 <p className="text-xs text-muted-foreground">{label}</p>
