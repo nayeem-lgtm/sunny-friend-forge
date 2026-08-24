@@ -15,7 +15,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import type { Board, Folder as FolderType } from "@/lib/board-data";
-import { createSeedBoards, seedFolders, workspaces } from "@/lib/board-data";
+import { LabelManager } from "@/components/board/LabelManager";
+import {
+  createSeedBoards,
+  defaultPriorityLabels,
+  defaultStatusLabels,
+  seedFolders,
+  workspaces,
+} from "@/lib/board-data";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/projects")({
@@ -84,6 +91,8 @@ function Page() {
         folderId,
         workspaceId,
         favorite: false,
+        statusLabels: defaultStatusLabels.map((l) => ({ ...l })),
+        priorityLabels: defaultPriorityLabels.map((l) => ({ ...l })),
         groups: [
           { id: `gr-${id}-1`, name: "To-Do", color: "bg-primary", collapsed: false, items: [] },
           { id: `gr-${id}-2`, name: "Completed", color: "bg-success", collapsed: false, items: [] },
@@ -226,6 +235,17 @@ function Page() {
                   className="pl-8"
                 />
               </div>
+              <LabelManager
+                title="Statuses"
+                labels={activeBoard.statusLabels}
+                showProgress
+                onChange={(labels) => updateBoard((b) => ({ ...b, statusLabels: labels }))}
+              />
+              <LabelManager
+                title="Priorities"
+                labels={activeBoard.priorityLabels}
+                onChange={(labels) => updateBoard((b) => ({ ...b, priorityLabels: labels }))}
+              />
               <Button
                 variant="ghost"
                 size="sm"
