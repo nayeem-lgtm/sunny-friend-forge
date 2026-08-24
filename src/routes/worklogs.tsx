@@ -138,7 +138,10 @@ function Page() {
       searchable: true,
       accessor: (r) => r.report,
       cell: (r) => (
-        <span className="line-clamp-2 max-w-lg text-muted-foreground">
+        <span
+          className="line-clamp-1 max-w-[16rem] text-muted-foreground"
+          title={r.status === "Submitted" ? r.report : undefined}
+        >
           {r.status === "Submitted" ? r.report : "—"}
         </span>
       ),
