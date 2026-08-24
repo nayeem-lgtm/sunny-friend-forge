@@ -1,5 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { CalendarIcon, Clock, Coffee, MoonStar, Timer } from "lucide-react";
+import {
+  CalendarIcon,
+  ChevronsUpDown,
+  Clock,
+  Coffee,
+  MoonStar,
+  Timer,
+  UserSearch,
+} from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import type { DateRange } from "react-day-picker";
 
@@ -10,8 +18,24 @@ import { StatusPill } from "@/components/shared/StatusPill";
 import { DataTable, type Column } from "@/components/shared/DataTable";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+
 import {
   formatDuration,
   generateAttendance,
