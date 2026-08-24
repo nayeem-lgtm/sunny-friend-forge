@@ -229,18 +229,48 @@ export function DateCell({
   onChange: (v: string) => void;
   overdue?: boolean;
 }) {
+  const [open, setOpen] = useState(false);
+  const selected = value ? new Date(`${value}T00:00:00`) : undefined;
   return (
-    <Input
-      type="date"
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      className={cn(
-        "h-7 border-none bg-transparent px-1 text-center text-xs shadow-none focus-visible:ring-1",
-        overdue && "text-destructive",
-      )}
-    />
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <button
+          type="button"
+          className={cn(
+            "h-7 w-full rounded px-1 text-center text-xs hover:bg-muted",
+            overdue ? "text-destructive" : "text-foreground",
+            !value && "text-muted-foreground",
+          )}
+        >
+          {value
+            ? selected!.toLocaleDateString(undefined, {
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+              })
+            : "Set date"}
+        </button>
+      </PopoverTrigger>
+      <PopoverContent className="w-auto p-0" align="start">
+        <Calendar
+          mode="single"
+          selected={selected}
+          defaultMonth={selected}
+          onSelect={(d) => {
+            if (d) {
+              const iso = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+              onChange(iso);
+            }
+            setOpen(false);
+          }}
+          initialFocus
+          className={cn("p-3 pointer-events-auto")}
+        />
+      </PopoverContent>
+    </Popover>
   );
 }
+
 
 export function NumberCell({
   value,
