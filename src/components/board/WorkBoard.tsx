@@ -575,6 +575,8 @@ export function WorkBoard({
         group={active?.group ?? null}
         statusLabels={board.statusLabels}
         priorityLabels={board.priorityLabels}
+        onAddStatusLabel={addStatusLabel}
+        onAddPriorityLabel={addPriorityLabel}
         onPatch={(patch, activity) =>
           active ? patchItem(active.group.id, active.item.id, patch, activity) : undefined
         }
