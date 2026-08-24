@@ -194,9 +194,14 @@ function Dashboard() {
       .sort((a, b) => (a.dueDate ?? "").localeCompare(b.dueDate ?? ""))
       .slice(0, 6);
 
+    const empName = (id: string) => {
+      const e = employees.find((x) => x.id === id);
+      return e ? `${e.firstName} ${e.lastName}` : "Unassigned";
+    };
     const workloadByAssignee = Object.entries(
       items.reduce<Record<string, { open: number; done: number }>>((acc, i) => {
-        (i.assignees?.length ? i.assignees : ["Unassigned"]).forEach((a: string) => {
+        const names = i.ownerIds.length ? i.ownerIds.map(empName) : ["Unassigned"];
+        names.forEach((a) => {
           acc[a] = acc[a] ?? { open: 0, done: 0 };
           if (isDone(i.status)) acc[a].done += 1;
           else acc[a].open += 1;
