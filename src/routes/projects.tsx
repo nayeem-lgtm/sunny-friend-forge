@@ -355,6 +355,15 @@ function Page() {
                 labels={activeBoard.priorityLabels}
                 onChange={(labels) => updateBoard((b) => ({ ...b, priorityLabels: labels }))}
               />
+              <AutomationPanel
+                statusOptions={activeBoard.statusLabels.map((l) => l.name)}
+                priorityOptions={activeBoard.priorityLabels.map((l) => l.name)}
+                groupOptions={activeBoard.groups.map((g) => g.name)}
+                rules={automations[activeBoard.id] ?? []}
+                onChange={(rules) =>
+                  setAutomations((prev) => ({ ...prev, [activeBoard.id]: rules }))
+                }
+              />
               <Button
                 variant="ghost"
                 size="sm"
