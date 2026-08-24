@@ -49,13 +49,13 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/monitoring")({
   head: () => ({
     meta: [
-      { title: "Screen Monitoring — WorkBoard" },
+      { title: "Screen Monitoring — OmniWork" },
       {
         name: "description",
         content:
           "Live employee activity status and desktop screenshots captured every 5 minutes.",
       },
-      { property: "og:title", content: "Screen Monitoring — WorkBoard" },
+      { property: "og:title", content: "Screen Monitoring — OmniWork" },
       {
         property: "og:description",
         content: "Live teammate status cards with click-through screenshot history.",

@@ -6,9 +6,9 @@ import { PageHeader } from "@/components/shared/PageHeader";
 export const Route = createFileRoute("/kpi-reports")({
   head: () => ({
     meta: [
-      { title: "KPI Reports — WorkBoard" },
+      { title: "KPI Reports — OmniWork" },
       { name: "description", content: "Daily KPI scores, goals, and AI insights per employee." },
-      { property: "og:title", content: "KPI Reports — WorkBoard" },
+      { property: "og:title", content: "KPI Reports — OmniWork" },
       { property: "og:description", content: "Daily KPI scores, goals, and AI insights per employee." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

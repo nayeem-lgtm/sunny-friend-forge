@@ -41,12 +41,12 @@ import {
 export const Route = createFileRoute("/employees")({
   head: () => ({
     meta: [
-      { title: "Employee Directory — WorkBoard" },
+      { title: "Employee Directory — OmniWork" },
       {
         name: "description",
         content: "Invite employees, run onboarding, and manage full employee records.",
       },
-      { property: "og:title", content: "Employee Directory — WorkBoard" },
+      { property: "og:title", content: "Employee Directory — OmniWork" },
       {
         property: "og:description",
         content: "Invite employees, run onboarding, and manage full employee records.",

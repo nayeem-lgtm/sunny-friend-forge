@@ -28,12 +28,12 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/projects")({
   head: () => ({
     meta: [
-      { title: "Work Board — WorkBoard" },
+      { title: "Workboard — OmniWork" },
       {
         name: "description",
         content: "Workspaces, folders, boards, groups, tasks and subitems in one work board.",
       },
-      { property: "og:title", content: "Work Board — WorkBoard" },
+      { property: "og:title", content: "Workboard — OmniWork" },
       {
         property: "og:description",
         content: "Plan and track every project across Ray's departments.",
@@ -122,7 +122,7 @@ function Page() {
   return (
     <AppShell>
       <PageHeader
-        title="Work Board"
+        title="Workboard"
         description="Workspaces, folders, boards, groups, tasks and subitems."
       />
 

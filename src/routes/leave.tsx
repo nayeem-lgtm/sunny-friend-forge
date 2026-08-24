@@ -45,12 +45,12 @@ import {
 export const Route = createFileRoute("/leave")({
   head: () => ({
     meta: [
-      { title: "Leave — WorkBoard" },
+      { title: "Leave — OmniWork" },
       {
         name: "description",
         content: "Review, approve and track employee leave requests, balances and upcoming time off.",
       },
-      { property: "og:title", content: "Leave — WorkBoard" },
+      { property: "og:title", content: "Leave — OmniWork" },
       {
         property: "og:description",
         content: "Review, approve and track employee leave requests, balances and upcoming time off.",
