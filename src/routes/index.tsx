@@ -185,10 +185,7 @@ function Dashboard() {
       .reduce((s, e) => s + e.monthlySalary, 0);
     const onProbation = employees.filter((e) => e.onProbation && e.status === "Active").length;
 
-    const lateList = data0(todayRows.filter((r) => r.status === "Late"));
-    function data0<T>(v: T) {
-      return v;
-    }
+    const lateList = todayRows.filter((r) => r.status === "Late").slice(0, 6);
 
     const missingEod = wlToday.filter((w) => w.status !== "Submitted").slice(0, 6);
 
