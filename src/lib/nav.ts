@@ -26,11 +26,6 @@ export type NavItem = {
 export const navItems: NavItem[] = [
   { title: "Dashboard", icon: LayoutDashboard, url: "/" },
   {
-    title: "Organizations",
-    icon: Building2,
-    children: [{ title: "Designations", url: "/designations" }],
-  },
-  {
     title: "Attendance",
     icon: Clock,
     children: [
@@ -49,6 +44,8 @@ export const navItems: NavItem[] = [
     icon: Settings,
     children: [
       { title: "Employee Directory", url: "/employees" },
+      { title: "Departments", url: "/departments" },
+      { title: "Designations", url: "/designations" },
       { title: "Schedules", url: "/schedules" },
       { title: "Permissions", url: "/permissions" },
     ],
@@ -58,6 +55,7 @@ export const navItems: NavItem[] = [
 
 export const pageTitles: Record<string, string> = {
   "/": "Dashboard",
+  "/departments": "Departments",
   "/designations": "Designations",
   "/employees": "Employee Directory",
   "/schedules": "Schedules",
