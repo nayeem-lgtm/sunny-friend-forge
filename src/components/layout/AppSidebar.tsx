@@ -1,7 +1,8 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { ChevronDown, ExternalLink, PanelLeftClose, PanelLeftOpen, Aperture, MoreHorizontal } from "lucide-react";
+import { ChevronDown, ExternalLink, PanelLeftClose, PanelLeftOpen, MoreHorizontal } from "lucide-react";
 import { useState } from "react";
 
+import logoAsset from "@/assets/omniwork-mark.png.asset.json";
 import { navItems } from "@/lib/nav";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -33,11 +34,11 @@ export function AppSidebar({
       )}
     >
       <div className="flex h-16 items-center gap-2 px-4">
-        <div className="flex size-9 items-center justify-center rounded-lg bg-sidebar-primary/15 text-sidebar-primary">
-          <Aperture className="size-5" />
+        <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-sidebar-primary/15">
+          <img src={logoAsset.url} alt="OmniWork logo" className="size-6 object-contain" />
         </div>
         {!collapsed && (
-          <span className="truncate text-[15px] font-semibold tracking-tight">RAY ERP</span>
+          <span className="truncate text-[15px] font-semibold tracking-tight">OmniWork</span>
         )}
         <button
           onClick={onToggle}
