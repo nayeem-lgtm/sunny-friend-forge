@@ -14,16 +14,16 @@ export type AttendanceRecord = {
 };
 
 const people: [string, string][] = [
-  ["Arlene Lane", "Management"],
-  ["Devon Reed", "Creative"],
-  ["Marvin Hall", "Media Buying"],
-  ["Kristin Ward", "Content"],
-  ["Cody Fisher", "Development"],
-  ["Jenny Wilson", "Client Services"],
-  ["Guy Hawkins", "SEO"],
-  ["Esther Howard", "Design"],
-  ["Ralph Edwards", "Development"],
-  ["Courtney Henry", "Finance"],
+  ["Arlene Lane", "Business Development Department"],
+  ["Devon Reed", "IT Department"],
+  ["Marvin Hall", "Affiliate Department"],
+  ["Kristin Ward", "QA Department"],
+  ["Cody Fisher", "IT Department"],
+  ["Jenny Wilson", "Business Development Department"],
+  ["Guy Hawkins", "Affiliate Department"],
+  ["Esther Howard", "QA Department"],
+  ["Ralph Edwards", "IT Department"],
+  ["Courtney Henry", "Accounting Department"],
 ];
 
 /** deterministic pseudo-random so SSR and client agree */

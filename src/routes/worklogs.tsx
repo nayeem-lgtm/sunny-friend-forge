@@ -12,6 +12,7 @@ import { useEffect, useMemo, useState } from "react";
 import type { DateRange } from "react-day-picker";
 
 import { AppShell } from "@/components/layout/AppShell";
+import { departments } from "@/lib/employee-data";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { StatCard } from "@/components/shared/StatCard";
 import { StatusPill } from "@/components/shared/StatusPill";
@@ -285,7 +286,10 @@ function Page() {
           data={rows}
           columns={columns}
           onRowClick={(r) => setDetail(r)}
-          filters={[{ key: "status", label: "Status", options: ["Submitted", "Not Submitted"] }]}
+          filters={[
+            { key: "department", label: "Departments", options: departments },
+            { key: "status", label: "Status", options: ["Submitted", "Not Submitted"] },
+          ]}
           emptyMessage={
             preset === "custom" && !custom?.from
               ? "Pick a custom date range to see work reports."

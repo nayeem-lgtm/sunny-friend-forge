@@ -11,60 +11,40 @@ export type WorklogEntry = {
 };
 
 const people: [string, string][] = [
-  ["Arlene Lane", "Management"],
-  ["Devon Reed", "Creative"],
-  ["Marvin Hall", "Media Buying"],
-  ["Kristin Ward", "Content"],
-  ["Cody Fisher", "Development"],
-  ["Jenny Wilson", "Client Services"],
-  ["Guy Hawkins", "SEO"],
-  ["Esther Howard", "Design"],
-  ["Ralph Edwards", "Development"],
-  ["Courtney Henry", "Finance"],
+  ["Arlene Lane", "Business Development Department"],
+  ["Devon Reed", "IT Department"],
+  ["Marvin Hall", "Affiliate Department"],
+  ["Kristin Ward", "QA Department"],
+  ["Cody Fisher", "IT Department"],
+  ["Jenny Wilson", "Business Development Department"],
+  ["Guy Hawkins", "Affiliate Department"],
+  ["Esther Howard", "QA Department"],
+  ["Ralph Edwards", "IT Department"],
+  ["Courtney Henry", "Accounting Department"],
 ];
 
 const reportBank: Record<string, string[]> = {
-  Management: [
-    "Spent the day aligning Q3 priorities with department heads and clearing blockers for the upcoming campaign sprints.",
-    "Reviewed resource allocation, approved two new project kick-offs, and updated leadership on financial forecasts.",
-    "Facilitated cross-functional syncs and drafted the monthly operations review for the executive team.",
+  "IT Department": [
+    "Shipped the internal dashboard update, resolved frontend bugs, and reviewed peer pull requests.",
+    "Built API integrations for the reporting module and wrote supporting documentation.",
+    "Debugged production issues and deployed a hotfix for the analytics service.",
   ],
-  Creative: [
-    "Finalized three ad concepts for the retail client and supported the social team with fresh visual directions.",
-    "Worked on storyboard revisions and presented two campaign directions for internal feedback.",
-    "Polished the brand refresh deck and collaborated with copy on headline options.",
+  "Affiliate Department": [
+    "Onboarded three new affiliate partners and reviewed commission payouts for the week.",
+    "Optimised top-performing offers and paused links with poor conversion rates.",
+    "Ran partner performance reports and followed up with inactive affiliates.",
   ],
-  "Media Buying": [
-    "Optimized audience targeting for the travel account and reallocated budget toward top-performing placements.",
-    "Paced weekly spend across four active campaigns and flagged any underperforming ad sets.",
-    "Ran performance reports and adjusted bids to stay within CPA targets.",
+  "Business Development Department": [
+    "Led discovery calls with two prospects and prepared proposals for the retail vertical.",
+    "Updated the pipeline, followed up on pending contracts and scheduled next-week demos.",
+    "Researched new outbound segments and drafted the outreach sequence for approval.",
   ],
-  Content: [
-    "Drafted two long-form blog posts, scheduled social captions for the week, and updated the editorial calendar.",
-    "Researched SEO briefs and produced a batch of product descriptions for the e-commerce launch.",
-    "Edited partner submissions and prepared newsletter copy for final review.",
+  "QA Department": [
+    "Executed regression suites on the latest release and logged four defects for the dev team.",
+    "Wrote test cases for the new onboarding flow and verified previously reported fixes.",
+    "Performed cross-browser testing and updated the QA checklist documentation.",
   ],
-  Development: [
-    "Shipped the landing page builder update, resolved frontend bugs, and reviewed peer pull requests.",
-    "Built API integrations for the new reporting dashboard and wrote supporting documentation.",
-    "Debugged production issues and deployed a hotfix for the analytics module.",
-  ],
-  "Client Services": [
-    "Led status calls with two key accounts, gathered feedback, and circulated meeting notes to stakeholders.",
-    "Prepared monthly performance decks and coordinated timelines with the project management team.",
-    "Responded to client requests, updated scopes, and set expectations for deliverables next week.",
-  ],
-  SEO: [
-    "Completed a keyword gap analysis, implemented on-page fixes, and tracked ranking movements.",
-    "Audited site health issues and prioritized technical recommendations for the dev queue.",
-    "Reached out to publishers for backlink opportunities and updated the link-building tracker.",
-  ],
-  Design: [
-    "Explored new visual directions for the skincare rebrand and delivered social template kits.",
-    "Polished UI screens for the internal dashboard and prepared assets for handoff.",
-    "Created presentation layouts and refined iconography across two active projects.",
-  ],
-  Finance: [
+  "Accounting Department": [
     "Reconciled vendor invoices, processed payroll inputs, and updated cash-flow projections.",
     "Reviewed expense reports and followed up on outstanding client payments.",
     "Prepared monthly financial summaries and supported audit documentation requests.",

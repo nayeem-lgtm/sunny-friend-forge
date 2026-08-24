@@ -49,24 +49,35 @@ export type Invite = {
 };
 
 export const departments = [
-  "Media Buying",
-  "Creative",
-  "Client Services",
-  "Technology",
-  "People Ops",
-  "Finance",
+  "IT Department",
+  "Affiliate Department",
+  "Business Development Department",
+  "QA Department",
+  "Accounting Department",
 ];
 
 export const designations = [
-  "Media Buyer",
-  "Senior Media Buyer",
-  "Art Director",
-  "Copywriter",
-  "Account Manager",
-  "Frontend Engineer",
-  "HR Executive",
+  "Software Engineer",
+  "Senior Software Engineer",
+  "Affiliate Manager",
+  "Affiliate Executive",
+  "Business Development Executive",
+  "Business Development Manager",
+  "QA Engineer",
   "Accountant",
 ];
+
+/** Designations that belong to each department. */
+export const departmentDesignations: Record<string, string[]> = {
+  "IT Department": ["Software Engineer", "Senior Software Engineer"],
+  "Affiliate Department": ["Affiliate Manager", "Affiliate Executive"],
+  "Business Development Department": [
+    "Business Development Executive",
+    "Business Development Manager",
+  ],
+  "QA Department": ["QA Engineer"],
+  "Accounting Department": ["Accountant"],
+};
 
 export const roleTypes: RoleType[] = ["Employee", "Manager", "Admin", "Intern"];
 
@@ -99,7 +110,11 @@ export const employees: Employee[] = names.map(([firstName, lastName], i) => {
     dateOfBirth: `199${i % 10}-0${(i % 9) + 1}-1${i % 9}`,
     joiningDate: `202${(i % 5) + 1}-0${(i % 9) + 1}-0${(i % 8) + 1}`,
     department: departments[i % departments.length]!,
-    designation: designations[i % designations.length]!,
+    designation: (() => {
+      const dept = departments[i % departments.length]!;
+      const list = departmentDesignations[dept] ?? designations;
+      return list[i % list.length]!;
+    })(),
     monthlySalary: 45000 + (i % 6) * 10000,
     hireDate: `202${(i % 5) + 1}-0${(i % 9) + 1}-0${(i % 8) + 1}`,
     roleType: roleTypes[i % roleTypes.length]!,
@@ -129,8 +144,8 @@ export const initialInvites: Invite[] = [
     email: "arif.hossain@rayagency.com",
     firstName: "Arif",
     lastName: "Hossain",
-    department: "Media Buying",
-    designation: "Media Buyer",
+    department: "Affiliate Department",
+    designation: "Affiliate Executive",
     roleType: "Employee",
     sentAt: "2026-08-18",
     status: "Pending",
@@ -140,8 +155,8 @@ export const initialInvites: Invite[] = [
     email: "mim.chowdhury@rayagency.com",
     firstName: "Mim",
     lastName: "Chowdhury",
-    department: "Creative",
-    designation: "Copywriter",
+    department: "QA Department",
+    designation: "QA Engineer",
     roleType: "Employee",
     sentAt: "2026-08-12",
     status: "Accepted",
@@ -151,8 +166,8 @@ export const initialInvites: Invite[] = [
     email: "zahid.karim@rayagency.com",
     firstName: "Zahid",
     lastName: "Karim",
-    department: "Technology",
-    designation: "Frontend Engineer",
+    department: "IT Department",
+    designation: "Senior Software Engineer",
     roleType: "Manager",
     sentAt: "2026-07-29",
     status: "Expired",

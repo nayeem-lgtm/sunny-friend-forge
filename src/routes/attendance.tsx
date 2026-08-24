@@ -12,6 +12,7 @@ import { useEffect, useMemo, useState } from "react";
 import type { DateRange } from "react-day-picker";
 
 import { AppShell } from "@/components/layout/AppShell";
+import { departments } from "@/lib/employee-data";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { StatCard } from "@/components/shared/StatCard";
 import { StatusPill } from "@/components/shared/StatusPill";
@@ -301,6 +302,7 @@ function Page() {
           columns={columns}
           onRowClick={(r) => setDetail(r.employee)}
           filters={[
+            { key: "department", label: "Departments", options: departments },
             { key: "status", label: "Status", options: ["Present", "Late", "On Break", "Absent"] },
           ]}
           emptyMessage={
