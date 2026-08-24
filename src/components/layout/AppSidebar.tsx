@@ -35,10 +35,10 @@ export function AppSidebar({
     >
       <div className="flex h-16 items-center gap-2 px-4">
         <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-sidebar-primary/15">
-          <img src={logoAsset.url} alt="WorkBoard logo" className="size-6 object-contain" />
+          <img src={logoAsset.url} alt="OmniWork logo" className="size-6 object-contain" />
         </div>
         {!collapsed && (
-          <span className="truncate text-[15px] font-semibold tracking-tight">WorkBoard</span>
+          <span className="truncate text-[15px] font-semibold tracking-tight">OmniWork</span>
         )}
         <button
           onClick={onToggle}

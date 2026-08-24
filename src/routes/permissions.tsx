@@ -6,9 +6,9 @@ import { PageHeader } from "@/components/shared/PageHeader";
 export const Route = createFileRoute("/permissions")({
   head: () => ({
     meta: [
-      { title: "Permissions — WorkBoard" },
+      { title: "Permissions — OmniWork" },
       { name: "description", content: "Manage and view employee role permissions." },
-      { property: "og:title", content: "Permissions — WorkBoard" },
+      { property: "og:title", content: "Permissions — OmniWork" },
       { property: "og:description", content: "Manage and view employee role permissions." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
