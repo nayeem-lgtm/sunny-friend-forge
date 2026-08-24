@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/select";
 import type { Board, Folder as FolderType } from "@/lib/board-data";
 import { LabelManager } from "@/components/board/LabelManager";
+import { AutomationPanel, type AutomationRule } from "@/components/board/AutomationPanel";
 import {
   createSeedBoards,
   defaultPriorityLabels,
@@ -55,6 +56,7 @@ function Page() {
   const [renaming, setRenaming] = useState(false);
   const [renameValue, setRenameValue] = useState("");
   const [activeBoardId, setActiveBoardId] = useState("bd-roadmap");
+  const [automations, setAutomations] = useState<Record<string, AutomationRule[]>>({});
   const [openFolders, setOpenFolders] = useState<Record<string, boolean>>({ "fd-q1": true });
   const [query, setQuery] = useState("");
 
@@ -354,6 +356,15 @@ function Page() {
                 title="Priorities"
                 labels={activeBoard.priorityLabels}
                 onChange={(labels) => updateBoard((b) => ({ ...b, priorityLabels: labels }))}
+              />
+              <AutomationPanel
+                statusOptions={activeBoard.statusLabels.map((l) => l.name)}
+                priorityOptions={activeBoard.priorityLabels.map((l) => l.name)}
+                groupOptions={activeBoard.groups.map((g) => g.name)}
+                rules={automations[activeBoard.id] ?? []}
+                onChange={(rules) =>
+                  setAutomations((prev) => ({ ...prev, [activeBoard.id]: rules }))
+                }
               />
               <Button
                 variant="ghost"
