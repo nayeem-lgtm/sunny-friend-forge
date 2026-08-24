@@ -41,12 +41,12 @@ import {
 export const Route = createFileRoute("/employees")({
   head: () => ({
     meta: [
-      { title: "Employee Directory — Ray ERP" },
+      { title: "Employee Directory — WorkBoard" },
       {
         name: "description",
         content: "Invite employees, run onboarding, and manage full employee records.",
       },
-      { property: "og:title", content: "Employee Directory — Ray ERP" },
+      { property: "og:title", content: "Employee Directory — WorkBoard" },
       {
         property: "og:description",
         content: "Invite employees, run onboarding, and manage full employee records.",

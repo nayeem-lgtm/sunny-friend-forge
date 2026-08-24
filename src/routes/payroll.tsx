@@ -6,9 +6,9 @@ import { PageHeader } from "@/components/shared/PageHeader";
 export const Route = createFileRoute("/payroll")({
   head: () => ({
     meta: [
-      { title: "Payroll — Ray ERP" },
+      { title: "Payroll — WorkBoard" },
       { name: "description", content: "Process payroll and manage compensation." },
-      { property: "og:title", content: "Payroll — Ray ERP" },
+      { property: "og:title", content: "Payroll — WorkBoard" },
       { property: "og:description", content: "Process payroll and manage compensation." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

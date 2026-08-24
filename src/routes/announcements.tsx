@@ -6,9 +6,9 @@ import { PageHeader } from "@/components/shared/PageHeader";
 export const Route = createFileRoute("/announcements")({
   head: () => ({
     meta: [
-      { title: "Announcements — Ray ERP" },
+      { title: "Announcements — WorkBoard" },
       { name: "description", content: "Manage and create announcements." },
-      { property: "og:title", content: "Announcements — Ray ERP" },
+      { property: "og:title", content: "Announcements — WorkBoard" },
       { property: "og:description", content: "Manage and create announcements." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

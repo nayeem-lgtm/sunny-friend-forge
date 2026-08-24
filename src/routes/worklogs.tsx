@@ -48,13 +48,13 @@ import {
 export const Route = createFileRoute("/worklogs")({
   head: () => ({
     meta: [
-      { title: "Worklogs — Ray ERP" },
+      { title: "Worklogs — WorkBoard" },
       {
         name: "description",
         content:
           "Daily EOD reports submitted by employees, filterable by day, week, month or a custom range.",
       },
-      { property: "og:title", content: "Worklogs — Ray ERP" },
+      { property: "og:title", content: "Worklogs — WorkBoard" },
       {
         property: "og:description",
         content: "Employee end-of-day report submissions with submit time and status.",
