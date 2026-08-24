@@ -1,32 +1,74 @@
 import { departments, employees } from "@/lib/employee-data";
 
-export type ItemStatus = "Not Started" | "Working" | "In Review" | "Blocked" | "Completed";
-export type Priority = "Critical" | "High" | "Medium" | "Low";
+export type ItemStatus = string;
+export type Priority = string;
 export type BoardPrivacy = "Main" | "Private" | "Shareable";
 
-export const itemStatuses: ItemStatus[] = [
-  "Not Started",
-  "Working",
-  "In Review",
-  "Blocked",
-  "Completed",
-];
-
-export const priorities: Priority[] = ["Critical", "High", "Medium", "Low"];
-
-export const statusColor: Record<ItemStatus, string> = {
-  "Not Started": "bg-muted text-muted-foreground",
-  Working: "bg-warning text-warning-foreground",
-  "In Review": "bg-info text-info-foreground",
-  Blocked: "bg-destructive text-destructive-foreground",
-  Completed: "bg-success text-success-foreground",
+export type Label = {
+  id: string;
+  name: string;
+  /** tailwind classes for a solid pill */
+  color: string;
+  /** progress contribution 0-100, used when an item has no subitems */
+  progress?: number;
 };
 
-export const priorityColor: Record<Priority, string> = {
-  Critical: "bg-destructive/15 text-destructive border-destructive/30",
-  High: "bg-warning/15 text-warning border-warning/30",
-  Medium: "bg-info/15 text-info border-info/30",
-  Low: "bg-muted text-muted-foreground border-border",
+export const labelPalette: { name: string; color: string }[] = [
+  { name: "Green", color: "bg-success text-success-foreground" },
+  { name: "Orange", color: "bg-warning text-warning-foreground" },
+  { name: "Blue", color: "bg-info text-info-foreground" },
+  { name: "Red", color: "bg-destructive text-destructive-foreground" },
+  { name: "Mint", color: "bg-primary text-primary-foreground" },
+  { name: "Purple", color: "bg-accent text-accent-foreground" },
+  { name: "Grey", color: "bg-muted text-muted-foreground" },
+];
+
+export const defaultStatusLabels: Label[] = [
+  { id: "st-1", name: "Not Started", color: "bg-muted text-muted-foreground", progress: 0 },
+  { id: "st-2", name: "Working", color: "bg-warning text-warning-foreground", progress: 40 },
+  { id: "st-3", name: "In Review", color: "bg-info text-info-foreground", progress: 75 },
+  { id: "st-4", name: "Blocked", color: "bg-destructive text-destructive-foreground", progress: 25 },
+  { id: "st-5", name: "Completed", color: "bg-success text-success-foreground", progress: 100 },
+];
+
+export const defaultPriorityLabels: Label[] = [
+  { id: "pr-1", name: "Critical", color: "bg-destructive text-destructive-foreground" },
+  { id: "pr-2", name: "High", color: "bg-warning text-warning-foreground" },
+  { id: "pr-3", name: "Medium", color: "bg-info text-info-foreground" },
+  { id: "pr-4", name: "Low", color: "bg-muted text-muted-foreground" },
+];
+
+export function labelColor(labels: Label[], name: string) {
+  return labels.find((l) => l.name === name)?.color ?? "bg-muted text-muted-foreground";
+}
+
+export type UpdateFile = { id: string; name: string; size: number; type: string };
+
+export type UpdateReply = {
+  id: string;
+  author: string;
+  text: string;
+  createdAt: string;
+};
+
+export type ItemUpdate = {
+  id: string;
+  author: string;
+  text: string;
+  mentions: string[];
+  files: UpdateFile[];
+  likes: number;
+  createdAt: string;
+  replies: UpdateReply[];
+};
+
+export type ActivityEntry = {
+  id: string;
+  actor: string;
+  action: string;
+  from?: string;
+  to?: string;
+  at: string;
 };
 
 export type Subitem = {
@@ -56,7 +98,10 @@ export type Item = {
   tags: string[];
   notes: string;
   subitems: Subitem[];
+  updates: ItemUpdate[];
+  activity: ActivityEntry[];
 };
+
 
 export type Group = {
   id: string;
@@ -75,8 +120,11 @@ export type Board = {
   folderId: string | null;
   workspaceId: string;
   favorite: boolean;
+  statusLabels: Label[];
+  priorityLabels: Label[];
   groups: Group[];
 };
+
 
 export type Folder = {
   id: string;
@@ -155,8 +203,13 @@ function makeItem(
     tags: opts.tags ?? [],
     notes: opts.notes ?? "",
     subitems: opts.subitems ?? [],
+    updates: opts.updates ?? [],
+    activity: opts.activity ?? [
+      { id: `ac-${Math.random().toString(36).slice(2, 8)}`, actor: "System", action: "created this item", at: iso(offset) },
+    ],
   };
 }
+
 
 function makeSub(name: string, o: Partial<Subitem> & { owner?: number } = {}): Subitem {
   return {
@@ -183,6 +236,8 @@ export function createSeedBoards(): Board[] {
       folderId: "fd-q1",
       workspaceId: "ws-dev",
       favorite: true,
+      statusLabels: defaultStatusLabels.map((l) => ({ ...l })),
+      priorityLabels: defaultPriorityLabels.map((l) => ({ ...l })),
       groups: [
         {
           id: "gr-progress",
@@ -291,6 +346,8 @@ export function createSeedBoards(): Board[] {
       folderId: null,
       workspaceId: "ws-aff",
       favorite: false,
+      statusLabels: defaultStatusLabels.map((l) => ({ ...l })),
+      priorityLabels: defaultPriorityLabels.map((l) => ({ ...l })),
       groups: [
         {
           id: "gr-aff-week",
@@ -348,6 +405,8 @@ export function createSeedBoards(): Board[] {
       folderId: "fd-camp",
       workspaceId: "ws-mkt",
       favorite: false,
+      statusLabels: defaultStatusLabels.map((l) => ({ ...l })),
+      priorityLabels: defaultPriorityLabels.map((l) => ({ ...l })),
       groups: [
         {
           id: "gr-mkt-p1",
@@ -391,17 +450,11 @@ export function initials(name: string) {
     .toUpperCase();
 }
 
-export function itemProgress(item: Item) {
+export function itemProgress(item: Item, statusLabels: Label[] = defaultStatusLabels) {
+  const done = statusLabels[statusLabels.length - 1]?.name ?? "Completed";
   if (item.subitems.length > 0) {
-    const done = item.subitems.filter((s) => s.status === "Completed").length;
-    return Math.round((done / item.subitems.length) * 100);
+    const complete = item.subitems.filter((s) => s.status === done).length;
+    return Math.round((complete / item.subitems.length) * 100);
   }
-  const map: Record<ItemStatus, number> = {
-    "Not Started": 0,
-    Working: 40,
-    "In Review": 75,
-    Blocked: 25,
-    Completed: 100,
-  };
-  return map[item.status];
+  return statusLabels.find((l) => l.name === item.status)?.progress ?? 0;
 }
