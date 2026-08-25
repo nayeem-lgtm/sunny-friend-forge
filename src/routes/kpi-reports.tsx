@@ -39,6 +39,8 @@ import {
 
 import { AppShell } from "@/components/layout/AppShell";
 import { PageHeader } from "@/components/shared/PageHeader";
+import { EmployeeCombobox } from "@/components/shared/EmployeeCombobox";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
