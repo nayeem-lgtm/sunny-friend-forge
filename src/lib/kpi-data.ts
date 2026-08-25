@@ -304,10 +304,7 @@ export function generateTasks(today: Date): KpiTask[] {
         }
         if (completed && completed > today) completed = new Date(today);
 
-        const quality =
-          status === "Rejected"
-            ? 0
-            : [100, 95, 90, 80, 60][Math.floor(rand(s + 7) * 5)] ?? 90;
+        const quality = [100, 95, 90, 80, 60][Math.floor(rand(s + 7) * 5)] ?? 90;
 
         out.push({
           id: `${dateKey(day)}-tk-${p}-${k}`,
