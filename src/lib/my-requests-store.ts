@@ -8,7 +8,9 @@ export type MyWorklog = {
   employeeId: string;
   date: string; // yyyy-MM-dd
   report: string;
-  submittedAt: string; // ISO
+  submittedAt: string; // ISO — first submission
+  updatedAt?: string; // ISO — last edit
+  revisions?: { at: string; report: string }[]; // previous versions, oldest first
 };
 
 function read<T>(key: string): T[] {
