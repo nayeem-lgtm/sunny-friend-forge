@@ -195,7 +195,9 @@ function Page() {
   const decide = (status: "Approved" | "Rejected") => {
     if (!review) return;
     const next = submissions.map((s) =>
-      s.token === review.token ? { ...s, status, reviewNote: reviewNote.trim() } : s,
+      s.token === review.token
+        ? { ...s, status, reviewNote: reviewNote.trim(), reviewedDocuments: hrReviewed }
+        : s,
     );
     persistSubmissions(next);
     persistInvites(invites.map((i) => (i.token === review.token ? { ...i, status } : i)));
@@ -388,6 +390,7 @@ function Page() {
             onRowClick={(row) => {
               setReview(row);
               setReviewNote(row.reviewNote ?? "");
+              setHrReviewed(row.reviewedDocuments ?? []);
             }}
           />
         </TabsContent>
@@ -648,7 +651,10 @@ function Page() {
                   <Button variant="outline" onClick={() => decide("Rejected")}>
                     <XCircle className="size-4" /> Send back
                   </Button>
-                  <Button onClick={() => decide("Approved")}>
+                  <Button
+                    onClick={() => decide("Approved")}
+                    disabled={hrReviewed.length < formConfig.documents.length + 1}
+                  >
                     <CheckCircle2 className="size-4" /> Approve
                   </Button>
                 </div>
