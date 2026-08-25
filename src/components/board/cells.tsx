@@ -439,6 +439,10 @@ export function TimingBar({
           role="button"
           tabIndex={0}
           aria-label="Open timing schedule"
+          onClick={(event) => {
+            event.stopPropagation();
+            setOpen(true);
+          }}
           onKeyDown={(event) => {
             if (event.key === "Enter" || event.key === " ") {
               event.preventDefault();
