@@ -58,8 +58,8 @@ export const defaultKpiSettings: KpiSettings = {
     scheduleIn: "09:00",
     scheduleOut: "18:00",
     graceMinutes: 5,
-    allowedLate: 2,
-    allowedEarly: 2,
+    allowedLate: 3,
+    allowedEarly: 3,
   },
   workHours: {
     requiredHours: 8,
@@ -69,9 +69,9 @@ export const defaultKpiSettings: KpiSettings = {
   },
   breaks: {
     windowStart: "13:00",
-    windowEnd: "14:00",
-    allowedMinutes: 60,
-    allowedViolations: 2,
+    windowEnd: "15:00",
+    allowedMinutes: 75,
+    allowedViolations: 3,
   },
   workLogs: { deadline: "20:00", allowedMissing: 1, allowedLate: 2 },
   tiers: { exceptional: 95, good: 90, needsImprovement: 80 },
@@ -338,6 +338,11 @@ const toMin = (hhmm: string) => {
   return (h ?? 0) * 60 + (m ?? 0);
 };
 
+/** Violation allowances scale with the length of the reporting period (base = 20 working days). */
+function scaledAllowance(base: number, days: number) {
+  return Math.max(base, Math.round(base * (days / 20)));
+}
+
 function deduct(max: number, violations: number, allowed: number, unit: number) {
   const billable = Math.max(0, violations - allowed);
   return { score: Math.max(0, +(max - billable * unit).toFixed(2)), billable };
@@ -466,7 +471,12 @@ export function computeEmployeeKpi(
     }
   });
   const attViolations = lateDays + earlyOuts + absentDays;
-  const attCalc = deduct(s.weights.attendance, attViolations, s.attendance.allowedLate + s.attendance.allowedEarly, s.deductionUnit);
+  const attCalc = deduct(
+    s.weights.attendance,
+    attViolations,
+    scaledAllowance(s.attendance.allowedLate + s.attendance.allowedEarly, att.length),
+    s.deductionUnit,
+  );
 
   /* --- Work hours & idle --- */
   const requiredMin = s.workHours.requiredHours * 60;
@@ -484,7 +494,7 @@ export function computeEmployeeKpi(
   const whCalc = deduct(
     s.weights.workHours,
     whViolations,
-    s.workHours.allowedShortDays + s.workHours.allowedIdleDays,
+    scaledAllowance(s.workHours.allowedShortDays + s.workHours.allowedIdleDays, att.length),
     s.deductionUnit,
   );
 
@@ -510,7 +520,12 @@ export function computeEmployeeKpi(
     }
     if (violated) breakViolations++;
   });
-  const brCalc = deduct(s.weights.breaks, breakViolations, s.breaks.allowedViolations, s.deductionUnit);
+  const brCalc = deduct(
+    s.weights.breaks,
+    breakViolations,
+    scaledAllowance(s.breaks.allowedViolations, att.length),
+    s.deductionUnit,
+  );
 
   /* --- Work logs --- */
   const required = logs.length;
@@ -522,7 +537,7 @@ export function computeEmployeeKpi(
   const wlCalc = deduct(
     s.weights.workLogs,
     wlViolations,
-    s.workLogs.allowedMissing + s.workLogs.allowedLate,
+    scaledAllowance(s.workLogs.allowedMissing + s.workLogs.allowedLate, logs.length),
     s.deductionUnit,
   );
 
@@ -690,13 +705,14 @@ export function kpiTrend(
   data: KpiDataset,
   today: Date,
   s: KpiSettings,
-  months = 5,
+  months = 6,
 ): { month: string; score: number; tier: string }[] {
   const out: { month: string; score: number; tier: string }[] = [];
   for (let i = months - 1; i >= 0; i--) {
     const from = new Date(today.getFullYear(), today.getMonth() - i, 1);
     const to = i === 0 ? today : new Date(today.getFullYear(), today.getMonth() - i + 1, 0);
     const k = computeEmployeeKpi(employeeName, data, from, to, s);
+    if (!k.attendance.scheduledDays) continue;
     out.push({
       month: from.toLocaleDateString(undefined, { month: "short" }),
       score: k.total,
