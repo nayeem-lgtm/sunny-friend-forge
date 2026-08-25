@@ -71,7 +71,9 @@ export function generateAttendance(today: Date): AttendanceRecord[] {
         return;
       }
 
-      const inMin = 9 * 60 + Math.round(r1 * 55); // 09:00 - 09:55
+      // Most staff arrive on time; a minority drift past the grace period.
+      const inMin =
+        9 * 60 + (r1 > 0.78 ? 6 + Math.round(r1 * 26) : Math.round(r1 * 5));
       const breakStart = 13 * 60 + Math.round(r2 * 40);
       const breakLen = 30 + Math.round(r3 * 35);
       const breakEnd = breakStart + breakLen;
@@ -79,7 +81,7 @@ export function generateAttendance(today: Date): AttendanceRecord[] {
       const gross = outMin - inMin - breakLen;
       const idle = Math.round(r3 * 70);
       const worked = gross - idle;
-      const late = inMin > 9 * 60 + 15;
+      const late = inMin > 9 * 60 + 5;
       const onBreak = d === 0 && r2 > 0.75;
 
       rows.push({
