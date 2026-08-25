@@ -23,6 +23,7 @@ import { Route as PayrollRouteImport } from './routes/payroll'
 import { Route as PermissionsRouteImport } from './routes/permissions'
 import { Route as ProjectsRouteImport } from './routes/projects'
 import { Route as SchedulesRouteImport } from './routes/schedules'
+import { Route as UserAccessRouteImport } from './routes/user-access'
 import { Route as WorklogsRouteImport } from './routes/worklogs'
 
 const IndexRoute = IndexRouteImport.update({
@@ -95,6 +96,11 @@ const SchedulesRoute = SchedulesRouteImport.update({
   path: '/schedules',
   getParentRoute: () => rootRouteImport,
 } as any)
+const UserAccessRoute = UserAccessRouteImport.update({
+  id: '/user-access',
+  path: '/user-access',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const WorklogsRoute = WorklogsRouteImport.update({
   id: '/worklogs',
   path: '/worklogs',
@@ -116,6 +122,7 @@ export interface FileRoutesByFullPath {
   '/permissions': typeof PermissionsRoute
   '/projects': typeof ProjectsRoute
   '/schedules': typeof SchedulesRoute
+  '/user-access': typeof UserAccessRoute
   '/worklogs': typeof WorklogsRoute
 }
 export interface FileRoutesByTo {
@@ -133,6 +140,7 @@ export interface FileRoutesByTo {
   '/permissions': typeof PermissionsRoute
   '/projects': typeof ProjectsRoute
   '/schedules': typeof SchedulesRoute
+  '/user-access': typeof UserAccessRoute
   '/worklogs': typeof WorklogsRoute
 }
 export interface FileRoutesById {
@@ -151,6 +159,7 @@ export interface FileRoutesById {
   '/permissions': typeof PermissionsRoute
   '/projects': typeof ProjectsRoute
   '/schedules': typeof SchedulesRoute
+  '/user-access': typeof UserAccessRoute
   '/worklogs': typeof WorklogsRoute
 }
 export interface FileRouteTypes {
@@ -170,6 +179,7 @@ export interface FileRouteTypes {
     | '/permissions'
     | '/projects'
     | '/schedules'
+    | '/user-access'
     | '/worklogs'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -187,6 +197,7 @@ export interface FileRouteTypes {
     | '/permissions'
     | '/projects'
     | '/schedules'
+    | '/user-access'
     | '/worklogs'
   id:
     | '__root__'
@@ -204,6 +215,7 @@ export interface FileRouteTypes {
     | '/permissions'
     | '/projects'
     | '/schedules'
+    | '/user-access'
     | '/worklogs'
   fileRoutesById: FileRoutesById
 }
@@ -222,6 +234,7 @@ export interface RootRouteChildren {
   PermissionsRoute: typeof PermissionsRoute
   ProjectsRoute: typeof ProjectsRoute
   SchedulesRoute: typeof SchedulesRoute
+  UserAccessRoute: typeof UserAccessRoute
   WorklogsRoute: typeof WorklogsRoute
 }
 
@@ -325,6 +338,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SchedulesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/user-access': {
+      id: '/user-access'
+      path: '/user-access'
+      fullPath: '/user-access'
+      preLoaderRoute: typeof UserAccessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/worklogs': {
       id: '/worklogs'
       path: '/worklogs'
@@ -350,6 +370,7 @@ const rootRouteChildren: RootRouteChildren = {
   PermissionsRoute: PermissionsRoute,
   ProjectsRoute: ProjectsRoute,
   SchedulesRoute: SchedulesRoute,
+  UserAccessRoute: UserAccessRoute,
   WorklogsRoute: WorklogsRoute,
 }
 export const routeTree = rootRouteImport
