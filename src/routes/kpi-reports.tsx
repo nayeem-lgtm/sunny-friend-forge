@@ -834,11 +834,26 @@ function Page() {
           </div>
         </TabsContent>
 
+        {/* ---------------- Email reports ---------------- */}
+        <TabsContent value="email">
+          <EmailReportsPanel
+            kpis={filtered}
+            periodLabel={`${formatDate(range.from)} → ${formatDate(range.to)}`}
+            today={today}
+            previousScore={(name) => {
+              const t = kpiTrend(name, dataset, today, settings);
+              return t.length > 1 ? t[t.length - 2]!.score : null;
+            }}
+            onLog={(count) => logAudit(`Emailed KPI report to ${count} employee(s)`, "KPI reports")}
+          />
+        </TabsContent>
+
         {/* ---------------- Settings ---------------- */}
         <TabsContent value="settings">
           <KpiSettingsPanel settings={settings} onChange={updateSettings} />
         </TabsContent>
       </Tabs>
+
 
       {/* Employee detail */}
       <Dialog open={!!detail} onOpenChange={(o) => !o && setDetail(null)}>
