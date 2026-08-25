@@ -114,6 +114,10 @@ function Page() {
       return;
     }
     const days = daysBetween(from, to);
+    if (days > MONTHLY_CAP) {
+      toast.error(`You can request at most ${MONTHLY_CAP} days of leave per month.`);
+      return;
+    }
     const request: LeaveRequest = {
       id: `my-lv-${Date.now()}`,
       employeeId: employee.id,
@@ -127,7 +131,7 @@ function Page() {
       status: "Pending",
       appliedAt: new Date().toISOString(),
       reason: reason.trim(),
-      documents: [],
+      documents: docs,
       feedback: [],
     };
     const next = [request, ...loadMyLeave()];
@@ -135,6 +139,7 @@ function Page() {
     setLocal(next.filter((l) => l.employeeId === employee.id));
     setOpen(false);
     setReason("");
+    setDocs([]);
     toast.success("Leave request submitted — HR will review it shortly.");
   };
 
