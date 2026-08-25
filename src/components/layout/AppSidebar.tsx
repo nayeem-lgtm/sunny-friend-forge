@@ -145,6 +145,14 @@ export function AppSidebar({
       </nav>
 
       <div className="border-t border-sidebar-border p-3">
+        <Link
+          to="/me"
+          title="Employee portal"
+          className="mb-2 flex items-center gap-3 rounded-lg px-3 py-2 text-xs text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+        >
+          <UserRound className="size-[18px] shrink-0" />
+          {!collapsed && <span className="truncate">Employee portal</span>}
+        </Link>
         <div className="flex items-center gap-3 rounded-lg px-2 py-2 hover:bg-sidebar-accent">
           <Avatar className="size-9">
             <AvatarImage src="https://i.pravatar.cc/80?img=47" alt="Arlene Lane" />
