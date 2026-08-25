@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { ChevronLeft, ChevronRight, Download, Minus, Plus, Wallet } from "lucide-react";
+import { ChevronLeft, ChevronRight, Download, Eye, Minus, Plus, Wallet } from "lucide-react";
 
 import { EmployeeShell } from "@/components/layout/EmployeeShell";
 import { PageHeader } from "@/components/shared/PageHeader";
@@ -8,6 +8,7 @@ import { StatCard } from "@/components/shared/StatCard";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useEmployeeSession } from "@/lib/employee-session";
+import { downloadPayslipPdf, openPayslipPdf } from "@/lib/payslip-pdf";
 import {
   formatBDT,
   generatePayroll,
@@ -16,8 +17,9 @@ import {
   payrollStatusTone,
   periodLabel,
   sumAdjustments,
-  type PayrollRow,
+
 } from "@/lib/payroll-data";
+
 
 export const Route = createFileRoute("/me/payslips")({
   head: () => ({
@@ -71,31 +73,8 @@ function Line({
   );
 }
 
-function downloadPayslip(row: PayrollRow, month: Date) {
-  const lines = [
-    `OmniWork Payslip — ${periodText(month)}`,
-    "",
-    `Employee: ${row.employee} (${row.employeeCode})`,
-    `Designation: ${row.designation}`,
-    `Department: ${row.department}`,
-    "",
-    `Base salary: ${formatBDT(row.baseSalary)}`,
-    `Bonuses: ${formatBDT(sumAdjustments(row.bonuses))}`,
-    `Incentives: ${formatBDT(sumAdjustments(row.incentives))}`,
-    `Deductions: -${formatBDT(sumAdjustments(row.deductions))}`,
-    `Absence days (equivalent): ${row.absence.equivalentAbsentDays}`,
-    `Absence deduction: -${formatBDT(row.absence.equivalentAbsentDays * row.dailyRate)}`,
-    "",
-    `Net pay: ${formatBDT(netPay(row))}`,
-    `Status: ${row.status}`,
-  ].join("\n");
-  const url = URL.createObjectURL(new Blob([lines], { type: "text/plain" }));
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = `payslip-${row.employeeCode}-${monthLabel(month).replace(" ", "-")}.txt`;
-  a.click();
-  URL.revokeObjectURL(url);
-}
+
+
 
 function Page() {
   const { employee } = useEmployeeSession();
@@ -127,26 +106,35 @@ function Page() {
         title="My Payslips"
         description="Your monthly salary breakdown, including absence adjustments."
         actions={
-          <div className="flex items-center gap-1 rounded-lg border border-border p-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="flex items-center gap-1 rounded-lg border border-border p-1">
+              <Button
+                variant="ghost"
+                size="icon"
+                aria-label="Previous month"
+                onClick={() => setMonth(new Date(month.getFullYear(), month.getMonth() - 1, 1))}
+              >
+                <ChevronLeft className="size-4" />
+              </Button>
+              <span className="min-w-[130px] text-center text-sm font-medium">{monthLabel(month)}</span>
+              <Button
+                variant="ghost"
+                size="icon"
+                aria-label="Next month"
+                onClick={() => setMonth(new Date(month.getFullYear(), month.getMonth() + 1, 1))}
+              >
+                <ChevronRight className="size-4" />
+              </Button>
+            </div>
             <Button
-              variant="ghost"
-              size="icon"
-              aria-label="Previous month"
-              onClick={() => setMonth(new Date(month.getFullYear(), month.getMonth() - 1, 1))}
+              disabled={!row}
+              onClick={() => row && downloadPayslipPdf(row, month, { bankName: employee.bankName })}
             >
-              <ChevronLeft className="size-4" />
-            </Button>
-            <span className="min-w-[130px] text-center text-sm font-medium">{monthLabel(month)}</span>
-            <Button
-              variant="ghost"
-              size="icon"
-              aria-label="Next month"
-              onClick={() => setMonth(new Date(month.getFullYear(), month.getMonth() + 1, 1))}
-            >
-              <ChevronRight className="size-4" />
+              <Download className="mr-1.5 size-4" /> Download payslip PDF
             </Button>
           </div>
         }
+
       />
 
       {!row ? (
@@ -167,14 +155,22 @@ function Page() {
                 <Badge variant="outline" className={payrollStatusTone[row.status]}>
                   {row.status}
                 </Badge>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="ml-auto"
-                  onClick={() => downloadPayslip(row, month)}
-                >
-                  <Download className="mr-1.5 size-4" /> Download
-                </Button>
+                <div className="ml-auto flex items-center gap-2">
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => openPayslipPdf(row, month, { bankName: employee.bankName })}
+                  >
+                    <Eye className="mr-1.5 size-4" /> Preview PDF
+                  </Button>
+                  <Button
+                    size="sm"
+                    onClick={() => downloadPayslipPdf(row, month, { bankName: employee.bankName })}
+                  >
+                    <Download className="mr-1.5 size-4" /> Download PDF
+                  </Button>
+                </div>
+
               </div>
 
               <Line label="Base salary" value={formatBDT(row.baseSalary)} />
