@@ -115,7 +115,7 @@ function LoginPage() {
       {/* Left brand panel */}
       <div className="relative z-10 hidden w-1/2 flex-col justify-between p-10 lg:flex xl:p-16">
         <div className="flex items-center gap-3">
-          <img src={omniMark} alt="OmniWork mark" className="size-10 object-contain" />
+          <img src={omniMarkUrl.url} alt="OmniWork mark" className="size-10 object-contain" />
           <span className="text-2xl font-semibold tracking-tight text-foreground">OmniWork</span>
         </div>
 
