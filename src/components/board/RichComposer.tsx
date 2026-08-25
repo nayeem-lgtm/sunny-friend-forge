@@ -40,18 +40,30 @@ export function RichComposer({
   onPost,
   placeholder = "Write an update…",
   compact = false,
+  initialHtml,
+  submitLabel = "Update",
 }: {
   onPost: (payload: { html: string; mentions: string[]; files: UpdateFile[] }) => void;
   placeholder?: string;
   compact?: boolean;
+  initialHtml?: string;
+  submitLabel?: string;
 }) {
   const [expanded, setExpanded] = useState(true);
-  const [empty, setEmpty] = useState(true);
+  const [empty, setEmpty] = useState(!initialHtml);
   const [mentions, setMentions] = useState<string[]>([]);
   const [files, setFiles] = useState<UpdateFile[]>([]);
   const editorRef = useRef<HTMLDivElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const people = boardPeople();
+
+  useEffect(() => {
+    if (initialHtml && editorRef.current && !editorRef.current.innerHTML) {
+      editorRef.current.innerHTML = initialHtml;
+      setEmpty(!editorRef.current.textContent?.trim());
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const didMount = useRef(false);
   useEffect(() => {
@@ -274,7 +286,7 @@ export function RichComposer({
           </Popover>
 
           <Button size="sm" className="ml-auto h-8" onClick={post}>
-            <Send className="mr-1 h-3.5 w-3.5" /> Update
+            <Send className="mr-1 h-3.5 w-3.5" /> {submitLabel}
           </Button>
         </div>
       ) : null}
