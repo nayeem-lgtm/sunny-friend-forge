@@ -118,10 +118,52 @@ function Page() {
   const [amount, setAmount] = useState("");
   const [note, setNote] = useState("");
 
-  const shiftMonth = (delta: number) => {
-    const next = new Date(month.getFullYear(), month.getMonth() + delta, 1);
+  const setMonthTo = (m: number, y: number) => {
+    const next = new Date(y, m, 1);
     setMonth(next);
     setRows(generatePayroll(next));
+  };
+
+  const shiftMonth = (delta: number) =>
+    setMonthTo(month.getMonth() + delta, month.getFullYear());
+
+  const exportReport = async () => {
+    const XLSX = await import("xlsx");
+    const remark = `Salary ${monthLabel(month)}`;
+    const data = filtered.map((r) => ({
+      Reason: "Monthly Salary Pay",
+      "Sender Account No": "",
+      "Receiving Bank Routing No": r.routingNumber,
+      "Beneficiary Bank Account  No": r.accountNumber,
+      "Account Type": r.accountType,
+      Amount: Number(netPay(r).toFixed(2)),
+      "Receiver ID": r.employeeCode,
+      "Receiver Name": r.employee,
+      Remarks: remark,
+      "Receiver Mobile Number": r.phone,
+      "Receiver Email Address": r.email,
+    }));
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.json_to_sheet(data);
+    ws["!cols"] = [18, 18, 24, 26, 14, 12, 14, 24, 20, 22, 32].map((w) => ({ wch: w }));
+    XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+    const guide = XLSX.utils.aoa_to_sheet([
+      ["Data Field", "Data Type", "Description", "Is Mandatory"],
+      ["Reason", "String", "Type of payment. Example: Salary, Advance, Travel etc", "No"],
+      ["Sender Account No", "Number", "Transaction debit account number", "Yes"],
+      ["Receiving Bank Routing No", "Number", "Beneficiary bank routing number", "No"],
+      ["Beneficiary Bank Account  No", "Number", "Beneficiary bank account number", "No"],
+      ["Account Type", "String", "Beneficiary account type , Example : SB", "No"],
+      ["Amount", "Decimal", "Transaction amount", "Yes"],
+      ["Receiver ID", "Integer", "Set default value 0", "No"],
+      ["Receiver Name", "String", "Beneficiary bank account title", "Yes"],
+      ["Remarks", "String", "Transaction remarks (Maximum 100 letter input)", "Yes"],
+    ]);
+    guide["!cols"] = [28, 12, 60, 14].map((w) => ({ wch: w }));
+    XLSX.utils.book_append_sheet(wb, guide, "Sheet2");
+    const name = `payroll-${monthNames[month.getMonth()]!.toLowerCase()}-${month.getFullYear()}.xlsx`;
+    XLSX.writeFile(wb, name);
+    toast.success(`Bank transfer sheet exported (${data.length} payments)`);
   };
 
   const filtered = useMemo(
