@@ -108,6 +108,7 @@ function Page() {
 
 
   const [form, setForm] = useState({
+    employeeId: "",
     firstName: "",
     lastName: "",
     email: "",
@@ -169,6 +170,7 @@ function Page() {
     const invite: OnboardingInvite = {
       id: `inv-${Date.now()}`,
       token,
+      employeeId: form.employeeId.trim(),
       email: form.email.trim(),
       firstName: form.firstName.trim(),
       lastName: form.lastName.trim(),
@@ -183,6 +185,7 @@ function Page() {
     void navigator.clipboard?.writeText(onboardingLink(token));
     toast.success(`Onboarding link sent to ${invite.email} (copied to clipboard)`);
     setForm({
+      employeeId: "",
       firstName: "",
       lastName: "",
       email: "",
@@ -256,6 +259,12 @@ function Page() {
   ];
 
   const inviteColumns: Column<InviteRow>[] = [
+    {
+      key: "employeeId",
+      header: "Employee ID",
+      searchable: true,
+      cell: (r) => <span className="font-mono text-xs">{r.employeeId || "—"}</span>,
+    },
     {
       key: "name",
       header: "Invitee",
@@ -441,6 +450,15 @@ function Page() {
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 sm:grid-cols-2">
+            <div className="space-y-1.5 sm:col-span-2">
+              <Label className="text-xs text-muted-foreground">Employee ID</Label>
+              <Input
+                value={form.employeeId}
+                onChange={(e) => setForm((f) => ({ ...f, employeeId: e.target.value }))}
+                placeholder="e.g. RAY-0142"
+                maxLength={32}
+              />
+            </div>
             <div className="space-y-1.5">
               <Label className="text-xs text-muted-foreground">First Name *</Label>
               <Input
