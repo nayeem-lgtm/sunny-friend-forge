@@ -119,6 +119,76 @@ export function generateShotsForRange(from: Date, to: Date): Shot[] {
   return out.sort((a, b) => b.at - a.at);
 }
 
+const appDomains: Record<string, string[]> = {
+  Chrome: ["google.com", "youtube.com", "chatgpt.com", "sellercentral.amazon.com"],
+  Slack: ["app.slack.com"],
+  "Google Sheets": ["docs.google.com", "drive.google.com"],
+  "VS Code": ["github.com"],
+  Gmail: ["mail.google.com"],
+  Figma: ["figma.com"],
+  Zoom: ["zoom.us", "meet.google.com"],
+  Notion: ["notion.so"],
+  Excel: ["office.com"],
+};
+
+export type UsageEntry = { name: string; minutes: number };
+export type Session = {
+  id: string;
+  at: number;
+  endAt: number;
+  apps: UsageEntry[];
+  urls: UsageEntry[];
+};
+
+/** Group captures into sessions (gaps > 30 min start a new one) with app/URL usage. */
+export function buildSessions(shots: Shot[]): Session[] {
+  const asc = shots.slice().sort((a, b) => a.at - b.at);
+  const groups: Shot[][] = [];
+  asc.forEach((s) => {
+    const last = groups[groups.length - 1];
+    const prev = last?.[last.length - 1];
+    if (last && prev && s.at - prev.at <= 30 * 60000) last.push(s);
+    else groups.push([s]);
+  });
+
+  return groups
+    .map((g) => {
+      const appMin = new Map<string, number>();
+      const urlMin = new Map<string, number>();
+      g.forEach((s) => {
+        appMin.set(s.app, (appMin.get(s.app) ?? 0) + 5);
+        const list = appDomains[s.app] ?? ["localhost"];
+        const domain = list[Math.floor(rand(hashId(s.id)) * list.length) % list.length]!;
+        urlMin.set(domain, (urlMin.get(domain) ?? 0) + 5);
+      });
+      const toList = (m: Map<string, number>) =>
+        Array.from(m, ([name, minutes]) => ({ name, minutes })).sort(
+          (a, b) => b.minutes - a.minutes,
+        );
+      return {
+        id: g[0]!.id,
+        at: g[0]!.at,
+        endAt: g[g.length - 1]!.at,
+        apps: toList(appMin),
+        urls: toList(urlMin),
+      };
+    })
+    .sort((a, b) => b.at - a.at);
+}
+
+function hashId(s: string) {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0;
+  return Math.abs(h) % 1000;
+}
+
+export function formatUsage(min: number) {
+  const h = Math.floor(min / 60);
+  const m = min % 60;
+  return h ? `${h}h ${m}m` : `${m}m`;
+}
+
+
 export type LiveStatus = {
   name: string;
   department: string;

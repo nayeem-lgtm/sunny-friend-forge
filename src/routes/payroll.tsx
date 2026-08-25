@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import {
   BadgeCheck,
   Banknote,
+  CalendarIcon,
   ChevronLeft,
   ChevronRight,
   Download,
@@ -17,7 +18,9 @@ import {
   Wallet,
 } from "lucide-react";
 import { useMemo, useState } from "react";
+import type { DateRange } from "react-day-picker";
 import { toast } from "sonner";
+
 
 import { AppShell } from "@/components/layout/AppShell";
 import { PageHeader } from "@/components/shared/PageHeader";
@@ -25,6 +28,10 @@ import { StatCard } from "@/components/shared/StatCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+
+
 
 import {
   Dialog,
@@ -110,6 +117,7 @@ function Page() {
     { label: "2 months ago", date: new Date(base.getFullYear(), base.getMonth() - 2, 1) },
   ];
   const [month, setMonth] = useState(base);
+  const [custom, setCustom] = useState<DateRange | undefined>();
   const [rows, setRows] = useState<PayrollRow[]>(() => generatePayroll(base));
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState("all");
@@ -121,9 +129,20 @@ function Page() {
 
   const setMonthTo = (m: number, y: number) => {
     const next = new Date(y, m, 1);
+    setCustom(undefined);
     setMonth(next);
     setRows(generatePayroll(next));
   };
+
+  const applyCustom = (r: DateRange | undefined) => {
+    setCustom(r);
+    if (r?.from) {
+      const next = new Date(r.from.getFullYear(), r.from.getMonth(), 1);
+      setMonth(next);
+      setRows(generatePayroll(next));
+    }
+  };
+
 
   const shiftMonth = (delta: number) =>
     setMonthTo(month.getMonth() + delta, month.getFullYear());
@@ -197,7 +216,13 @@ function Page() {
     };
   }, [rows]);
 
-  const period = periodLabel(month);
+  const period =
+    custom?.from
+      ? {
+          from: custom.from.toLocaleDateString(),
+          to: (custom.to ?? custom.from).toLocaleDateString(),
+        }
+      : periodLabel(month);
 
   const update = (id: string, fn: (r: PayrollRow) => PayrollRow) =>
     setRows((prev) => prev.map((r) => (r.id === id ? fn(r) : r)));
@@ -340,7 +365,8 @@ function Page() {
                 onClick={() => setMonthTo(q.date.getMonth(), q.date.getFullYear())}
                 className={cn(
                   "rounded-full border px-3 py-1 text-xs transition-colors",
-                  q.date.getMonth() === month.getMonth() &&
+                  !custom?.from &&
+                    q.date.getMonth() === month.getMonth() &&
                     q.date.getFullYear() === month.getFullYear()
                     ? "border-primary/40 bg-primary/10 text-primary"
                     : "border-border text-muted-foreground hover:text-foreground",
@@ -349,7 +375,69 @@ function Page() {
                 {q.label}
               </button>
             ))}
+            <Popover>
+              <PopoverTrigger asChild>
+                <button
+                  type="button"
+                  className={cn(
+                    "flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs transition-colors",
+                    custom?.from
+                      ? "border-primary/40 bg-primary/10 text-primary"
+                      : "border-border text-muted-foreground hover:text-foreground",
+                  )}
+                >
+                  <CalendarIcon className="size-3.5" />
+                  {custom?.from
+                    ? `${custom.from.toLocaleDateString()}${custom.to ? ` – ${custom.to.toLocaleDateString()}` : ""}`
+                    : "Custom dates"}
+                </button>
+              </PopoverTrigger>
+              <PopoverContent align="start" className="w-auto p-0">
+                <div className="flex flex-wrap gap-1.5 border-b border-border p-3">
+                  {[0, 1, 2, 3].map((back) => {
+                    const d = new Date(base.getFullYear(), base.getMonth() - back, 1);
+                    return (
+                      <button
+                        key={back}
+                        type="button"
+                        onClick={() =>
+                          applyCustom({
+                            from: d,
+                            to: new Date(d.getFullYear(), d.getMonth() + 1, 0),
+                          })
+                        }
+                        className="rounded-full border border-border px-2.5 py-1 text-xs text-muted-foreground hover:text-foreground"
+                      >
+                        Full {monthNames[d.getMonth()]!.slice(0, 3)} {d.getFullYear()}
+                      </button>
+                    );
+                  })}
+                </div>
+                <Calendar
+                  mode="range"
+                  selected={custom}
+                  onSelect={applyCustom}
+                  numberOfMonths={2}
+                  defaultMonth={month}
+                  initialFocus
+                  className={cn("p-3 pointer-events-auto")}
+                />
+                {custom?.from && (
+                  <div className="border-t border-border p-3">
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="w-full"
+                      onClick={() => setMonthTo(month.getMonth(), month.getFullYear())}
+                    >
+                      Clear custom dates
+                    </Button>
+                  </div>
+                )}
+              </PopoverContent>
+            </Popover>
           </div>
+
 
 
           <div className="relative w-full max-w-xs">
