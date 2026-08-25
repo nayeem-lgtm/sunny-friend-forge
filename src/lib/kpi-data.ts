@@ -453,6 +453,9 @@ export function computeEmployeeKpi(
   const att = data.attendance.filter((a) => a.employee === employeeName && inRange(a.date, from, to));
   const logs = data.worklogs.filter((w) => w.employee === employeeName && inRange(w.date, from, to));
   const tasks = data.tasks.filter((t) => t.employee === employeeName && inRange(t.assignedDate, from, to));
+  const leaves = (data.leaves ?? []).filter(
+    (l) => l.employee === employeeName && l.to >= dateKey(from) && l.from <= dateKey(to),
+  );
 
   const schedIn = toMin(s.attendance.scheduleIn);
   const schedOut = toMin(s.attendance.scheduleOut);
@@ -481,7 +484,17 @@ export function computeEmployeeKpi(
       }
     }
   });
-  const attViolations = lateDays + earlyOuts + absentDays;
+
+  /* Company absence-conversion rules (late, short hours, work logs, denied leave) */
+  const absence = att.length
+    ? computeAbsenceBreakdown(att, logs, leaves, {
+        requiredHours: s.workHours.requiredHours,
+        graceMinutes: s.attendance.graceMinutes,
+        scheduleIn: s.attendance.scheduleIn,
+      })
+    : emptyAbsence();
+
+  const attViolations = earlyOuts + absence.equivalentAbsentDays;
   const attCalc = deduct(
     s.weights.attendance,
     attViolations,
