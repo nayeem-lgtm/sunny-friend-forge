@@ -346,7 +346,68 @@ function EmployeeShots({ person, onBack }: { person: LiveStatus; onBack: () => v
         </span>
       </div>
 
-      {shots.length === 0 ? (
+      <div className="mt-4 grid grid-cols-3 gap-1 rounded-xl border border-border bg-card p-1">
+        {(
+          [
+            ["shots", `Screenshots`, shots.length, Camera],
+            ["apps", `Apps`, appCount, Monitor],
+            ["urls", `URLs`, urlCount, Globe],
+          ] as const
+        ).map(([key, label, count, Icon]) => (
+          <button
+            key={key}
+            type="button"
+            onClick={() => setTab(key)}
+            className={cn(
+              "flex items-center justify-center gap-2 rounded-lg px-3 py-2 text-sm transition",
+              tab === key
+                ? "bg-primary/15 font-medium text-primary"
+                : "text-muted-foreground hover:text-foreground",
+            )}
+          >
+            <Icon className="size-4" /> {label}
+            <Badge variant="secondary" className="text-[10px]">
+              {count}
+            </Badge>
+          </button>
+        ))}
+      </div>
+
+      {tab !== "shots" ? (
+        sessions.length === 0 ? (
+          <div className="mt-4 flex h-56 items-center justify-center rounded-xl border border-dashed border-border bg-card text-sm text-muted-foreground">
+            No activity recorded for this selection.
+          </div>
+        ) : (
+          <div className="mt-4 space-y-3">
+            {sessions.map((s) => {
+              const list = tab === "apps" ? s.apps : s.urls;
+              return (
+                <div key={s.id} className="rounded-xl border border-border bg-card p-4">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <p className="text-sm font-medium">
+                      Session {s.id.slice(-8)}
+                    </p>
+                    <Badge className="text-[10px]">
+                      {formatDay(s.at)}, {formatTime(s.at)}
+                    </Badge>
+                  </div>
+                  <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+                    {list.map((u) => (
+                      <div key={u.name} className="rounded-lg bg-muted/40 p-3">
+                        <p className="truncate text-xs text-muted-foreground">{u.name}</p>
+                        <p className="mt-0.5 text-sm font-medium">
+                          Usage: {formatUsage(u.minutes)}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )
+      ) : shots.length === 0 ? (
         <div className="mt-4 flex h-56 items-center justify-center rounded-xl border border-dashed border-border bg-card text-sm text-muted-foreground">
           No screenshots captured for this selection.
         </div>
@@ -386,6 +447,7 @@ function EmployeeShots({ person, onBack }: { person: LiveStatus; onBack: () => v
           )}
         </>
       )}
+
 
       <Dialog open={!!active} onOpenChange={(o) => !o && setActive(null)}>
         <DialogContent className="max-w-4xl">
