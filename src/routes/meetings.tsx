@@ -332,7 +332,7 @@ function Page() {
         <StatCard label="Total meetings" value={String(meetings.length)} icon={Video} />
         <StatCard label="Invites delivered" value={String(totalInvited)} icon={Send} />
         <StatCard
-          title="Calendar synced"
+          label="Calendar synced"
           value={String(meetings.filter((m) => m.calendarSynced).length)}
           icon={CalendarPlus}
         />
