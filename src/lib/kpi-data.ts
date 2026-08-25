@@ -674,6 +674,8 @@ export function computeEmployeeKpi(
       scheduledDays: att.length,
       presentDays: att.length - absentDays,
       absentDays,
+      equivalentAbsentDays: absence.equivalentAbsentDays,
+      absenceBreakdown: absence,
       lateDays,
       lateMinutes,
       earlyOuts,
