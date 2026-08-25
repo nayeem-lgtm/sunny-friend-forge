@@ -32,6 +32,7 @@ import { Route as MeIndexRouteImport } from './routes/me.index'
 import { Route as MeAnnouncementsRouteImport } from './routes/me.announcements'
 import { Route as MeAttendanceRouteImport } from './routes/me.attendance'
 import { Route as MeBoardRouteImport } from './routes/me.board'
+import { Route as MeChatRouteImport } from './routes/me.chat'
 import { Route as MeKpiRouteImport } from './routes/me.kpi'
 import { Route as MeLeaveRouteImport } from './routes/me.leave'
 import { Route as MeWorklogsRouteImport } from './routes/me.worklogs'
@@ -152,6 +153,11 @@ const MeBoardRoute = MeBoardRouteImport.update({
   path: '/me/board',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MeChatRoute = MeChatRouteImport.update({
+  id: '/me/chat',
+  path: '/me/chat',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MeKpiRoute = MeKpiRouteImport.update({
   id: '/me/kpi',
   path: '/me/kpi',
@@ -196,6 +202,7 @@ export interface FileRoutesByFullPath {
   '/me/announcements': typeof MeAnnouncementsRoute
   '/me/attendance': typeof MeAttendanceRoute
   '/me/board': typeof MeBoardRoute
+  '/me/chat': typeof MeChatRoute
   '/me/kpi': typeof MeKpiRoute
   '/me/leave': typeof MeLeaveRoute
   '/me/worklogs': typeof MeWorklogsRoute
@@ -225,6 +232,7 @@ export interface FileRoutesByTo {
   '/me/announcements': typeof MeAnnouncementsRoute
   '/me/attendance': typeof MeAttendanceRoute
   '/me/board': typeof MeBoardRoute
+  '/me/chat': typeof MeChatRoute
   '/me/kpi': typeof MeKpiRoute
   '/me/leave': typeof MeLeaveRoute
   '/me/worklogs': typeof MeWorklogsRoute
@@ -255,6 +263,7 @@ export interface FileRoutesById {
   '/me/announcements': typeof MeAnnouncementsRoute
   '/me/attendance': typeof MeAttendanceRoute
   '/me/board': typeof MeBoardRoute
+  '/me/chat': typeof MeChatRoute
   '/me/kpi': typeof MeKpiRoute
   '/me/leave': typeof MeLeaveRoute
   '/me/worklogs': typeof MeWorklogsRoute
@@ -286,6 +295,7 @@ export interface FileRouteTypes {
     | '/me/announcements'
     | '/me/attendance'
     | '/me/board'
+    | '/me/chat'
     | '/me/kpi'
     | '/me/leave'
     | '/me/worklogs'
@@ -315,6 +325,7 @@ export interface FileRouteTypes {
     | '/me/announcements'
     | '/me/attendance'
     | '/me/board'
+    | '/me/chat'
     | '/me/kpi'
     | '/me/leave'
     | '/me/worklogs'
@@ -344,6 +355,7 @@ export interface FileRouteTypes {
     | '/me/announcements'
     | '/me/attendance'
     | '/me/board'
+    | '/me/chat'
     | '/me/kpi'
     | '/me/leave'
     | '/me/worklogs'
@@ -374,6 +386,7 @@ export interface RootRouteChildren {
   MeAnnouncementsRoute: typeof MeAnnouncementsRoute
   MeAttendanceRoute: typeof MeAttendanceRoute
   MeBoardRoute: typeof MeBoardRoute
+  MeChatRoute: typeof MeChatRoute
   MeKpiRoute: typeof MeKpiRoute
   MeLeaveRoute: typeof MeLeaveRoute
   MeWorklogsRoute: typeof MeWorklogsRoute
@@ -544,6 +557,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MeBoardRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/me/chat': {
+      id: '/me/chat'
+      path: '/me/chat'
+      fullPath: '/me/chat'
+      preLoaderRoute: typeof MeChatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/me/kpi': {
       id: '/me/kpi'
       path: '/me/kpi'
@@ -598,6 +618,7 @@ const rootRouteChildren: RootRouteChildren = {
   MeAnnouncementsRoute: MeAnnouncementsRoute,
   MeAttendanceRoute: MeAttendanceRoute,
   MeBoardRoute: MeBoardRoute,
+  MeChatRoute: MeChatRoute,
   MeKpiRoute: MeKpiRoute,
   MeLeaveRoute: MeLeaveRoute,
   MeWorklogsRoute: MeWorklogsRoute,
