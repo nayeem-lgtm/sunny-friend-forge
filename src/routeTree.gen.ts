@@ -31,6 +31,7 @@ import { Route as AuthResetPasswordRouteImport } from './routes/auth.reset-passw
 import { Route as MeIndexRouteImport } from './routes/me.index'
 import { Route as MeAnnouncementsRouteImport } from './routes/me.announcements'
 import { Route as MeAttendanceRouteImport } from './routes/me.attendance'
+import { Route as MeBoardRouteImport } from './routes/me.board'
 import { Route as MeKpiRouteImport } from './routes/me.kpi'
 import { Route as MeLeaveRouteImport } from './routes/me.leave'
 import { Route as MeWorklogsRouteImport } from './routes/me.worklogs'
@@ -146,6 +147,11 @@ const MeAttendanceRoute = MeAttendanceRouteImport.update({
   path: '/me/attendance',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MeBoardRoute = MeBoardRouteImport.update({
+  id: '/me/board',
+  path: '/me/board',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MeKpiRoute = MeKpiRouteImport.update({
   id: '/me/kpi',
   path: '/me/kpi',
@@ -189,6 +195,7 @@ export interface FileRoutesByFullPath {
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/me/announcements': typeof MeAnnouncementsRoute
   '/me/attendance': typeof MeAttendanceRoute
+  '/me/board': typeof MeBoardRoute
   '/me/kpi': typeof MeKpiRoute
   '/me/leave': typeof MeLeaveRoute
   '/me/worklogs': typeof MeWorklogsRoute
@@ -217,6 +224,7 @@ export interface FileRoutesByTo {
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/me/announcements': typeof MeAnnouncementsRoute
   '/me/attendance': typeof MeAttendanceRoute
+  '/me/board': typeof MeBoardRoute
   '/me/kpi': typeof MeKpiRoute
   '/me/leave': typeof MeLeaveRoute
   '/me/worklogs': typeof MeWorklogsRoute
@@ -246,6 +254,7 @@ export interface FileRoutesById {
   '/auth/reset-password': typeof AuthResetPasswordRoute
   '/me/announcements': typeof MeAnnouncementsRoute
   '/me/attendance': typeof MeAttendanceRoute
+  '/me/board': typeof MeBoardRoute
   '/me/kpi': typeof MeKpiRoute
   '/me/leave': typeof MeLeaveRoute
   '/me/worklogs': typeof MeWorklogsRoute
@@ -276,6 +285,7 @@ export interface FileRouteTypes {
     | '/auth/reset-password'
     | '/me/announcements'
     | '/me/attendance'
+    | '/me/board'
     | '/me/kpi'
     | '/me/leave'
     | '/me/worklogs'
@@ -304,6 +314,7 @@ export interface FileRouteTypes {
     | '/auth/reset-password'
     | '/me/announcements'
     | '/me/attendance'
+    | '/me/board'
     | '/me/kpi'
     | '/me/leave'
     | '/me/worklogs'
@@ -332,6 +343,7 @@ export interface FileRouteTypes {
     | '/auth/reset-password'
     | '/me/announcements'
     | '/me/attendance'
+    | '/me/board'
     | '/me/kpi'
     | '/me/leave'
     | '/me/worklogs'
@@ -361,6 +373,7 @@ export interface RootRouteChildren {
   AuthResetPasswordRoute: typeof AuthResetPasswordRoute
   MeAnnouncementsRoute: typeof MeAnnouncementsRoute
   MeAttendanceRoute: typeof MeAttendanceRoute
+  MeBoardRoute: typeof MeBoardRoute
   MeKpiRoute: typeof MeKpiRoute
   MeLeaveRoute: typeof MeLeaveRoute
   MeWorklogsRoute: typeof MeWorklogsRoute
@@ -524,6 +537,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MeAttendanceRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/me/board': {
+      id: '/me/board'
+      path: '/me/board'
+      fullPath: '/me/board'
+      preLoaderRoute: typeof MeBoardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/me/kpi': {
       id: '/me/kpi'
       path: '/me/kpi'
@@ -577,6 +597,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthResetPasswordRoute: AuthResetPasswordRoute,
   MeAnnouncementsRoute: MeAnnouncementsRoute,
   MeAttendanceRoute: MeAttendanceRoute,
+  MeBoardRoute: MeBoardRoute,
   MeKpiRoute: MeKpiRoute,
   MeLeaveRoute: MeLeaveRoute,
   MeWorklogsRoute: MeWorklogsRoute,
