@@ -1,6 +1,13 @@
 import { employees } from "@/lib/employee-data";
 import { generateAttendance, type AttendanceRecord } from "@/lib/attendance-data";
 import { generateWorklogs, type WorklogEntry } from "@/lib/worklog-data";
+import { generateLeaveRequests, type LeaveRequest } from "@/lib/leave-data";
+import {
+  absenceSummary,
+  computeAbsenceBreakdown,
+  emptyAbsence,
+  type AbsenceBreakdown,
+} from "@/lib/absence-rules";
 
 /* ------------------------------------------------------------------ */
 /* Config                                                              */
