@@ -17,7 +17,7 @@ import {
   payrollStatusTone,
   periodLabel,
   sumAdjustments,
-  type PayrollRow,
+
 } from "@/lib/payroll-data";
 
 
