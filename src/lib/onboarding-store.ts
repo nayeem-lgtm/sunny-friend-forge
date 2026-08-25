@@ -10,6 +10,17 @@ export type UploadedFile = {
 
 export type SubmissionStatus = "Pending" | "Approved" | "Rejected";
 
+export type ConsentRecord = {
+  /** ids of acknowledged consent clauses */
+  acknowledged: string[];
+  signedName: string;
+  signedAt: string;
+  /** data URL of the drawn signature, when provided */
+  signatureImage?: string | undefined;
+  documentTitle: string;
+  documentVersion: string;
+};
+
 export type OnboardingSubmission = {
   token: string;
   submittedAt: string;
@@ -17,6 +28,7 @@ export type OnboardingSubmission = {
   reviewNote?: string;
   fields: Record<string, string>;
   files: UploadedFile[];
+  consent?: ConsentRecord;
 };
 
 export type OnboardingInvite = {
@@ -144,12 +156,13 @@ export const defaultOnboardingGroups: OnboardingGroup[] = [
 
 export const defaultOnboardingDocuments = [
   "Resume/CV",
-  "ID Documents",
-  "Employee Contract",
+  "Gov Approved ID — National ID",
+  "Gov Approved ID — Passport",
+  "Gov Approved ID — Driving License",
   "Tax Forms",
-  "Benefits Enrollment",
-  "Certifications & License",
-  "Performance Reviews",
+  "Educational Certificates",
+  "Release Letter of Previous Employment",
+  "Recommendation Letter of Previous Employment",
 ];
 
 export const defaultOnboardingConfig: OnboardingFormConfig = {
@@ -157,7 +170,7 @@ export const defaultOnboardingConfig: OnboardingFormConfig = {
   documents: defaultOnboardingDocuments,
 };
 
-const CONFIG_KEY = "omniwork.onboarding.formConfig";
+const CONFIG_KEY = "omniwork.onboarding.formConfig.v2";
 
 export function loadFormConfig(): OnboardingFormConfig {
   const cfg = read<OnboardingFormConfig | null>(CONFIG_KEY, null);

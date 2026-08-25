@@ -1,11 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { CheckCircle2, Loader2, ShieldCheck } from "lucide-react";
+import { ArrowLeft, ArrowRight, CheckCircle2, Loader2, ShieldCheck } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { StatusPill } from "@/components/shared/StatusPill";
 import { OnboardingFormFields } from "@/components/employees/OnboardingFormFields";
+import { ConsentStep } from "@/components/employees/ConsentStep";
+import { consentClauses, consentDocument } from "@/lib/consent-data";
 import {
   defaultOnboardingConfig,
   findInvite,
@@ -13,6 +15,7 @@ import {
   loadFormConfig,
   setInviteStatus,
   upsertSubmission,
+  type ConsentRecord,
   type OnboardingFormConfig,
   type OnboardingInvite,
   type OnboardingSubmission,
@@ -53,6 +56,10 @@ function Page() {
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
   const [config, setConfig] = useState<OnboardingFormConfig>(defaultOnboardingConfig);
+  const [step, setStep] = useState<0 | 1>(0);
+  const [acknowledged, setAcknowledged] = useState<string[]>([]);
+  const [signedName, setSignedName] = useState("");
+  const [signatureImage, setSignatureImage] = useState<string | undefined>();
 
   useEffect(() => {
     const inv = findInvite(token);
@@ -87,22 +94,44 @@ function Page() {
     setFiles((prev) => [...prev.filter((f) => f.slot !== slot), entry]);
   };
 
-  const submit = () => {
+  const goToConsent = () => {
     const missing = config.groups
       .flatMap((g) => g.fields)
-
       .filter((f) => f.required && !values[f.key]?.trim());
     if (missing.length) {
       toast.error(`Please fill: ${missing.map((m) => m.label).join(", ")}`);
       return;
     }
+    setStep(1);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const submit = () => {
+    const pending = consentClauses.filter((c) => !acknowledged.includes(c.id));
+    if (pending.length) {
+      toast.error("Please accept all consent statements before signing.");
+      return;
+    }
+    if (!signedName.trim()) {
+      toast.error("Please type your full legal name to sign.");
+      return;
+    }
     setSubmitting(true);
+    const consent: ConsentRecord = {
+      acknowledged,
+      signedName: signedName.trim(),
+      signedAt: new Date().toISOString(),
+      signatureImage,
+      documentTitle: consentDocument.title,
+      documentVersion: consentDocument.version,
+    };
     const submission: OnboardingSubmission = {
       token,
       submittedAt: new Date().toISOString(),
       status: "Pending",
       fields: values,
       files,
+      consent,
     };
     upsertSubmission(submission);
     setInviteStatus(token, "Submitted");
@@ -173,24 +202,84 @@ function Page() {
         )}
       </div>
 
-      <div className="space-y-6">
-        <OnboardingFormFields
-          config={config}
-          values={values}
-          onChange={set}
-          files={files}
-          onFile={(slot, file) => void onFile(slot, file)}
-          onRemoveFile={(slot) => setFiles((prev) => prev.filter((f) => f.slot !== slot))}
-        />
+      <Stepper step={step} />
 
-        <div className="flex justify-end pb-12">
-          <Button size="lg" onClick={submit} disabled={submitting}>
-            {submitting && <Loader2 className="size-4 animate-spin" />} Submit onboarding
-          </Button>
-        </div>
+      <div className="space-y-6">
+        {step === 0 ? (
+          <>
+            <OnboardingFormFields
+              config={config}
+              values={values}
+              onChange={set}
+              files={files}
+              onFile={(slot, file) => void onFile(slot, file)}
+              onRemoveFile={(slot) => setFiles((prev) => prev.filter((f) => f.slot !== slot))}
+            />
+            <div className="flex justify-end pb-12">
+              <Button size="lg" onClick={goToConsent}>
+                Continue to consent <ArrowRight className="size-4" />
+              </Button>
+            </div>
+          </>
+        ) : (
+          <>
+            <ConsentStep
+              fullName={`${values["firstName"] ?? ""} ${values["lastName"] ?? ""}`.trim()}
+              acknowledged={acknowledged}
+              onToggle={(id, checked) =>
+                setAcknowledged((prev) =>
+                  checked ? [...new Set([...prev, id])] : prev.filter((x) => x !== id),
+                )
+              }
+              signedName={signedName}
+              onSignedName={setSignedName}
+              signatureImage={signatureImage}
+              onSignatureImage={setSignatureImage}
+            />
+            <div className="flex flex-wrap justify-between gap-3 pb-12">
+              <Button variant="outline" size="lg" onClick={() => setStep(0)}>
+                <ArrowLeft className="size-4" /> Back to details
+              </Button>
+              <Button size="lg" onClick={submit} disabled={submitting}>
+                {submitting && <Loader2 className="size-4 animate-spin" />} Sign & complete onboarding
+              </Button>
+            </div>
+          </>
+        )}
       </div>
 
     </Shell>
+  );
+}
+
+function Stepper({ step }: { step: 0 | 1 }) {
+  const steps = ["Your details & documents", "Policy consent & signature"];
+  return (
+    <div className="mb-6 grid gap-3 sm:grid-cols-2">
+      {steps.map((label, i) => {
+        const active = i === step;
+        const done = i < step;
+        return (
+          <div
+            key={label}
+            className={`flex items-center gap-3 rounded-xl border p-4 text-sm transition-colors ${
+              active
+                ? "border-primary/50 bg-primary/10 text-foreground"
+                : "border-border bg-card text-muted-foreground"
+            }`}
+          >
+            <span
+              className={`grid size-7 shrink-0 place-items-center rounded-full text-xs font-semibold ${
+                active || done ? "bg-primary text-primary-foreground" : "bg-secondary"
+              }`}
+            >
+              {done ? <CheckCircle2 className="size-4" /> : i + 1}
+            </span>
+            {label}
+          </div>
+        );
+      })}
+    </div>
   );
 }
 

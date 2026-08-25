@@ -627,6 +627,30 @@ function Page() {
                   )}
                 </div>
 
+                {review.consent && (
+                  <div className="rounded-lg border border-primary/25 bg-primary/5 p-4">
+                    <h3 className="mb-1 text-sm font-semibold">Policy consent signed</h3>
+                    <p className="text-xs text-muted-foreground">
+                      {review.consent.documentTitle} ({review.consent.documentVersion})
+                    </p>
+                    <p className="mt-2 text-sm">
+                      Signed by{" "}
+                      <span className="font-medium">{review.consent.signedName}</span> on{" "}
+                      {new Date(review.consent.signedAt).toLocaleString()} ·{" "}
+                      {review.consent.acknowledged.length} declarations accepted
+                    </p>
+                    {review.consent.signatureImage && (
+                      <img
+                        src={review.consent.signatureImage}
+                        alt="Employee signature"
+                        className="mt-3 h-24 rounded-lg border border-border bg-secondary/40 object-contain"
+                      />
+                    )}
+                  </div>
+                )}
+
+
+
                 <div className="space-y-1.5">
                   <Label className="text-xs text-muted-foreground">Review note (optional)</Label>
                   <Textarea
