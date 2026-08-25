@@ -8,6 +8,7 @@ import {
   Megaphone,
   Settings,
   Users2,
+  MessagesSquare,
   type LucideIcon,
 } from "lucide-react";
 
@@ -30,6 +31,14 @@ export const navItems: NavItem[] = [
     children: [
       { title: "Attendance Logs", url: "/attendance" },
       { title: "Worklogs", url: "/worklogs" },
+    ],
+  },
+  {
+    title: "Meeting & Chat Room",
+    icon: MessagesSquare,
+    children: [
+      { title: "Meetings", url: "/meetings" },
+      { title: "Omni Chat By Ray", url: "/chat" },
     ],
   },
   { title: "Leave", icon: CalendarCheck, url: "/leave" },
@@ -59,6 +68,8 @@ export const pageTitles: Record<string, string> = {
   "/attendance": "Attendance Logs",
   "/worklogs": "Worklogs",
   "/kpi-reports": "Employee KPI",
+  "/meetings": "Meetings",
+  "/chat": "Omni Chat By Ray",
   "/leave": "Leave",
   "/payroll": "Payroll",
   "/projects": "Workboard",
