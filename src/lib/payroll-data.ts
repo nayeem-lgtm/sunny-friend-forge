@@ -11,9 +11,15 @@ export type PayrollStatus = "Drafted" | "Approved" | "Paid";
 export type PayrollRow = {
   id: string;
   employeeId: string;
+  employeeCode: string;
   employee: string;
   designation: string;
   department: string;
+  accountNumber: string;
+  routingNumber: string;
+  accountType: string;
+  phone: string;
+  email: string;
   baseSalary: number;
   bonuses: PayrollAdjustment[];
   incentives: PayrollAdjustment[];
