@@ -82,9 +82,13 @@ export function formatCompact(n: number) {
   return `BDT ${n.toFixed(0)}`;
 }
 
-/** Deterministic payroll sheet for a given month. */
-export function generatePayroll(month: Date): PayrollRow[] {
+/** Working days used to derive a daily salary rate. */
+export const PAYROLL_DAYS_PER_MONTH = 26;
+
+/** Deterministic payroll sheet for a given month, including absence-rule deductions. */
+export function generatePayroll(month: Date, today: Date = new Date()): PayrollRow[] {
   const key = monthKey(month);
+  const absences = absencesForMonth(month, today);
   return employees
     .filter((e) => e.status !== "Inactive")
     .map((e, i) => {
@@ -98,15 +102,24 @@ export function generatePayroll(month: Date): PayrollRow[] {
         seeded % 5 === 1
           ? [{ id: `${key}-i-${i}`, amount: 1200 + (i % 4) * 800, note: "Campaign incentive" }]
           : [];
-      const deductions: PayrollAdjustment[] =
-        seeded % 6 === 2
-          ? [{ id: `${key}-d-${i}`, amount: 900 + (i % 3) * 400, note: "Late arrivals" }]
-          : [];
+      const name = `${e.firstName} ${e.lastName}`;
+      const absence = absences.get(name) ?? emptyAbsence();
+      const dailyRate = +(e.monthlySalary / PAYROLL_DAYS_PER_MONTH).toFixed(2);
+      const deductions: PayrollAdjustment[] = [];
+      if (absence.equivalentAbsentDays > 0) {
+        deductions.push({
+          id: `${key}-absence-${i}`,
+          amount: +(dailyRate * absence.equivalentAbsentDays).toFixed(2),
+          note: `Absence (${absence.equivalentAbsentDays} day${
+            absence.equivalentAbsentDays === 1 ? "" : "s"
+          }) — ${absenceSummary(absence)}`,
+        });
+      }
       return {
         id: `${key}-${e.id}`,
         employeeId: e.id,
         employeeCode: e.employeeId,
-        employee: `${e.firstName} ${e.lastName}`,
+        employee: name,
         designation: e.designation,
         department: e.department,
         accountNumber: e.accountNumber,
@@ -120,6 +133,8 @@ export function generatePayroll(month: Date): PayrollRow[] {
         deductions,
         status,
         notes: `Generated payroll for ${monthLabel(month)}`,
+        absence,
+        dailyRate,
       };
     });
 }
