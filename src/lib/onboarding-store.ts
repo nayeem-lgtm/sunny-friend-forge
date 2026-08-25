@@ -170,7 +170,7 @@ export const defaultOnboardingConfig: OnboardingFormConfig = {
   documents: defaultOnboardingDocuments,
 };
 
-const CONFIG_KEY = "omniwork.onboarding.formConfig";
+const CONFIG_KEY = "omniwork.onboarding.formConfig.v2";
 
 export function loadFormConfig(): OnboardingFormConfig {
   const cfg = read<OnboardingFormConfig | null>(CONFIG_KEY, null);
