@@ -52,15 +52,20 @@ import {
   type RoleType,
 } from "@/lib/employee-data";
 import {
+  defaultOnboardingConfig,
+  loadFormConfig,
   loadInvites,
   loadSubmissions,
   makeToken,
   onboardingLink,
   saveInvites,
   saveSubmissions,
+  type OnboardingFormConfig,
   type OnboardingInvite,
   type OnboardingSubmission,
 } from "@/lib/onboarding-store";
+import { OnboardingFormBuilder } from "@/components/employees/OnboardingFormBuilder";
+
 
 export const Route = createFileRoute("/employees")({
   head: () => ({
