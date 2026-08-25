@@ -508,6 +508,8 @@ export function WorkBoard({
                               start={sub.startDate}
                               due={sub.dueDate}
                               done={sub.status === "Completed"}
+                              onStartChange={(v) => patchSub(group.id, item.id, sub.id, { startDate: v })}
+                              onDueChange={(v) => patchSub(group.id, item.id, sub.id, { dueDate: v })}
                             />
 
                             {columns.map((col) => (
