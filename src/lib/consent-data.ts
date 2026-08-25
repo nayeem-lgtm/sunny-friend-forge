@@ -1,11 +1,12 @@
-import policyAsset from "@/assets/ray-corporate-service-rules-2026.pdf.asset.json";
+import consentAsset from "@/assets/ray-erp-consent-form.docx.asset.json";
 
 export const consentDocument = {
-  title: "Ray Advertising — Corporate Service Rules Manual",
-  version: "2026 · Effective 01 May 2026",
-  scope: "For Bangladesh Staff Only",
-  url: policyAsset.url,
+  title: "RAY Advertising — Employee Consent Form",
+  version: "ERP Workforce Monitoring & Tracking System",
+  scope: "Internal Administrative Document",
+  url: consentAsset.url,
 };
+
 
 export type ConsentSection = {
   id: string;
