@@ -1,12 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { CheckCircle2, FileText, FileWarning } from "lucide-react";
+import { CheckCircle2, FileText, FileWarning, History, Pencil, X } from "lucide-react";
 import { toast } from "sonner";
 
 import { EmployeeShell } from "@/components/layout/EmployeeShell";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { StatCard } from "@/components/shared/StatCard";
 import { StatusPill } from "@/components/shared/StatusPill";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { RichComposer } from "@/components/board/RichComposer";
 import { startOfToday, useEmployeeSession } from "@/lib/employee-session";
@@ -20,12 +21,14 @@ export const Route = createFileRoute("/me/worklogs")({
       { title: "My Worklogs — OmniWork Employee Portal" },
       {
         name: "description",
-        content: "Submit your end-of-day work report and review every worklog you have filed.",
+        content:
+          "Submit your end-of-day work report, edit earlier worklogs and see the full update audit trail.",
       },
       { property: "og:title", content: "My Worklogs — OmniWork Employee Portal" },
       {
         property: "og:description",
-        content: "Write today's EOD report and browse your submission history and missed days.",
+        content:
+          "Write today's EOD report, revise previous reports and review every submission and edit.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -34,13 +37,76 @@ export const Route = createFileRoute("/me/worklogs")({
   component: Page,
 });
 
+const richClasses =
+  "prose-sm max-w-none whitespace-pre-wrap [&_a]:text-primary [&_a]:underline [&_ol]:list-decimal [&_ol]:pl-5 [&_ul]:list-disc [&_ul]:pl-5";
+
+function fmtStamp(iso: string) {
+  const d = new Date(iso);
+  return d.toLocaleString(undefined, {
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  });
+}
+
+function AuditTrail({ log }: { log: MyWorklog }) {
+  const [open, setOpen] = useState(false);
+  const revisions = log.revisions ?? [];
+  return (
+    <div className="mt-3 rounded-lg border border-border bg-muted/30 p-3">
+      <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+        <History className="size-3.5" />
+        <span>Submitted {fmtStamp(log.submittedAt)}</span>
+        {log.updatedAt && (
+          <>
+            <span aria-hidden>·</span>
+            <span>Updated {fmtStamp(log.updatedAt)}</span>
+            <Badge variant="outline">
+              {revisions.length} edit{revisions.length === 1 ? "" : "s"}
+            </Badge>
+          </>
+        )}
+        {revisions.length > 0 && (
+          <Button
+            size="sm"
+            variant="ghost"
+            className="ml-auto h-6 px-2 text-xs"
+            onClick={() => setOpen((v) => !v)}
+          >
+            {open ? "Hide" : "View"} update history
+          </Button>
+        )}
+      </div>
+      {open && (
+        <ol className="mt-3 space-y-3 border-l border-border pl-3">
+          {revisions
+            .slice()
+            .reverse()
+            .map((rev, i) => (
+              <li key={`${rev.at}-${i}`}>
+                <p className="text-xs font-medium text-muted-foreground">
+                  Version before edit on {fmtStamp(rev.at)}
+                </p>
+                <div
+                  className={`${richClasses} mt-1 text-sm text-muted-foreground`}
+                  dangerouslySetInnerHTML={{ __html: rev.report }}
+                />
+              </li>
+            ))}
+        </ol>
+      )}
+    </div>
+  );
+}
+
 function Page() {
   const { employee, name } = useEmployeeSession();
   const today = useMemo(() => startOfToday(), []);
   const todayKey = toDateKey(today);
 
   const [mine, setMine] = useState<MyWorklog[]>([]);
-  const [draft, setDraft] = useState("");
+  const [editingId, setEditingId] = useState<string | null>(null);
 
   useEffect(() => {
     setMine(loadMyWorklogs().filter((w) => w.employeeId === employee.id));
@@ -54,17 +120,32 @@ function Page() {
     [name, today],
   );
 
+  const myLogs = useMemo(
+    () => [...mine].sort((a, b) => b.date.localeCompare(a.date)),
+    [mine],
+  );
   const submittedToday = mine.find((w) => w.date === todayKey);
   const submitted = history.filter((w) => w.status === "Submitted").length;
   const missing = history.filter((w) => w.status === "Not Submitted").length;
+  const totalEdits = mine.reduce((acc, w) => acc + (w.revisions?.length ?? 0), 0);
 
-  const submit = (html: string) => {
+  const persist = (next: MyWorklog[]) => {
+    saveMyWorklogs(next);
+    setMine(next.filter((w) => w.employeeId === employee.id));
+  };
+
+  const validate = (html: string) => {
     const text = html.replace(/<[^>]*>/g, " ").replace(/&nbsp;/g, " ").trim();
     if (text.length < 20) {
       toast.error("Add a bit more detail — at least a couple of sentences.");
-      return;
+      return false;
     }
-    const all = loadMyWorklogs().filter((w) => !(w.employeeId === employee.id && w.date === todayKey));
+    return true;
+  };
+
+  const submitToday = (html: string) => {
+    if (!validate(html)) return;
+    const all = loadMyWorklogs();
     const entry: MyWorklog = {
       id: `${employee.id}-${todayKey}`,
       employeeId: employee.id,
@@ -72,21 +153,36 @@ function Page() {
       report: html,
       submittedAt: new Date().toISOString(),
     };
-    const next = [...all, entry];
-    saveMyWorklogs(next);
-    setMine(next.filter((w) => w.employeeId === employee.id));
-    setDraft("");
+    persist([...all, entry]);
     toast.success("Worklog submitted for today");
+  };
+
+  const saveEdit = (log: MyWorklog, html: string) => {
+    if (!validate(html)) return;
+    const at = new Date().toISOString();
+    const all = loadMyWorklogs().map((w) =>
+      w.id === log.id
+        ? {
+            ...w,
+            report: html,
+            updatedAt: at,
+            revisions: [...(w.revisions ?? []), { at, report: w.report }],
+          }
+        : w,
+    );
+    persist(all);
+    setEditingId(null);
+    toast.success("Worklog updated", { description: "The edit was recorded in the audit trail." });
   };
 
   return (
     <EmployeeShell>
       <PageHeader
         title="My Worklogs"
-        description="File your end-of-day report before 11:59 PM. Missing three reports counts as one absent day."
+        description="File your end-of-day report before 11:59 PM. You can edit an earlier report — every update is recorded."
       />
 
-      <div className="mb-6 grid gap-4 sm:grid-cols-3">
+      <div className="mb-6 grid gap-4 sm:grid-cols-4">
         <StatCard
           icon={CheckCircle2}
           label="Submitted"
@@ -101,6 +197,7 @@ function Page() {
           value={submittedToday ? "Submitted" : "Pending"}
           caption={formatDate(todayKey)}
         />
+        <StatCard icon={History} label="Edits" value={totalEdits} caption="Recorded updates" />
       </div>
 
       <section className="mb-6 rounded-xl border border-border bg-card p-5">
@@ -119,59 +216,118 @@ function Page() {
                 })}
               </span>
             </div>
-            <div
-              className="prose-sm max-w-none whitespace-pre-wrap [&_a]:text-primary [&_a]:underline [&_ol]:list-decimal [&_ol]:pl-5 [&_ul]:list-disc [&_ul]:pl-5"
-              dangerouslySetInnerHTML={{ __html: submittedToday.report }}
-            />
-            <Button
-              variant="outline"
-              size="sm"
-              className="mt-3"
-              onClick={() => {
-                setDraft(submittedToday.report);
-                const next = loadMyWorklogs().filter(
-                  (w) => !(w.employeeId === employee.id && w.date === todayKey),
-                );
-                saveMyWorklogs(next);
-                setMine(next.filter((w) => w.employeeId === employee.id));
-              }}
-            >
-              Edit report
-            </Button>
+            {editingId === submittedToday.id ? (
+              <>
+                <RichComposer
+                  initialHtml={submittedToday.report}
+                  placeholder="Update today's report…"
+                  submitLabel="Save update"
+                  onPost={({ html }) => saveEdit(submittedToday, html)}
+                />
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="mt-2"
+                  onClick={() => setEditingId(null)}
+                >
+                  <X className="mr-1.5 size-4" /> Cancel
+                </Button>
+              </>
+            ) : (
+              <>
+                <div
+                  className={richClasses}
+                  dangerouslySetInnerHTML={{ __html: submittedToday.report }}
+                />
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="mt-3"
+                  onClick={() => setEditingId(submittedToday.id)}
+                >
+                  <Pencil className="mr-1.5 size-4" /> Edit report
+                </Button>
+              </>
+            )}
+            <AuditTrail log={submittedToday} />
           </div>
         ) : (
           <div className="mt-3">
             <RichComposer
-              key={draft ? "draft" : "fresh"}
-              initialHtml={draft}
               placeholder="Today I completed… (format your report, mention teammates with @)"
               submitLabel="Submit worklog"
-              onPost={({ html }) => submit(html)}
+              onPost={({ html }) => submitToday(html)}
             />
           </div>
         )}
       </section>
 
-      <section className="rounded-xl border border-border bg-card">
+      <section className="mb-6 rounded-xl border border-border bg-card">
         <div className="border-b border-border p-4">
-          <h2 className="text-sm font-semibold">Submission history</h2>
+          <h2 className="text-sm font-semibold">My submissions</h2>
+          <p className="mt-0.5 text-xs text-muted-foreground">
+            Reports you filed in OmniWork — edit any of them and the update audit is kept.
+          </p>
         </div>
         <ul className="divide-y divide-border">
-          {mine
+          {myLogs
             .filter((w) => w.date !== todayKey)
-            .sort((a, b) => b.date.localeCompare(a.date))
             .map((w) => (
               <li key={w.id} className="p-4">
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                   <span className="text-sm font-medium">{formatDate(w.date)}</span>
                   <StatusPill status="Submitted" />
+                  {w.updatedAt && <Badge variant="outline">Edited</Badge>}
+                  {editingId !== w.id && (
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="ml-auto"
+                      onClick={() => setEditingId(w.id)}
+                    >
+                      <Pencil className="mr-1.5 size-4" /> Edit
+                    </Button>
+                  )}
                 </div>
-                <div
-                  className="prose-sm mt-1.5 max-w-none text-sm text-muted-foreground [&_a]:text-primary [&_a]:underline [&_ol]:list-decimal [&_ol]:pl-5 [&_ul]:list-disc [&_ul]:pl-5"
-                  dangerouslySetInnerHTML={{ __html: w.report }}
-                />
+                {editingId === w.id ? (
+                  <div className="mt-3">
+                    <RichComposer
+                      initialHtml={w.report}
+                      placeholder="Update this report…"
+                      submitLabel="Save update"
+                      onPost={({ html }) => saveEdit(w, html)}
+                    />
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="mt-2"
+                      onClick={() => setEditingId(null)}
+                    >
+                      <X className="mr-1.5 size-4" /> Cancel
+                    </Button>
+                  </div>
+                ) : (
+                  <div
+                    className={`${richClasses} mt-1.5 text-sm text-muted-foreground`}
+                    dangerouslySetInnerHTML={{ __html: w.report }}
+                  />
+                )}
+                <AuditTrail log={w} />
               </li>
             ))}
+          {myLogs.filter((w) => w.date !== todayKey).length === 0 && (
+            <li className="p-4 text-sm text-muted-foreground">
+              No earlier reports filed from the portal yet.
+            </li>
+          )}
+        </ul>
+      </section>
+
+      <section className="rounded-xl border border-border bg-card">
+        <div className="border-b border-border p-4">
+          <h2 className="text-sm font-semibold">Earlier records</h2>
+        </div>
+        <ul className="divide-y divide-border">
           {history.map((w) => (
             <li key={w.id} className="p-4">
               <div className="flex flex-wrap items-center gap-2">
