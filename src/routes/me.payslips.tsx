@@ -146,14 +146,22 @@ function Page() {
                 <Badge variant="outline" className={payrollStatusTone[row.status]}>
                   {row.status}
                 </Badge>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="ml-auto"
-                  onClick={() => downloadPayslip(row, month)}
-                >
-                  <Download className="mr-1.5 size-4" /> Download
-                </Button>
+                <div className="ml-auto flex items-center gap-2">
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => openPayslipPdf(row, month, { bankName: employee.bankName })}
+                  >
+                    <Eye className="mr-1.5 size-4" /> Preview PDF
+                  </Button>
+                  <Button
+                    size="sm"
+                    onClick={() => downloadPayslipPdf(row, month, { bankName: employee.bankName })}
+                  >
+                    <Download className="mr-1.5 size-4" /> Download PDF
+                  </Button>
+                </div>
+
               </div>
 
               <Line label="Base salary" value={formatBDT(row.baseSalary)} />
