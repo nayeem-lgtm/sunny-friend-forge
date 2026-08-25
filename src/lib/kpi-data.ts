@@ -610,7 +610,7 @@ export function computeEmployeeKpi(
       score: attCalc.score,
       violations: attViolations,
       deducted: +(s.weights.attendance - attCalc.score).toFixed(2),
-      detail: `${lateDays} late · ${earlyOuts} early out · ${absentDays} absent`,
+      detail: `${absence.equivalentAbsentDays} absent-equivalent days · ${absenceSummary(absence)}`,
     },
     {
       key: "workHours",
