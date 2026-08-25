@@ -18,6 +18,7 @@ import { Route as EmployeesRouteImport } from './routes/employees'
 import { Route as HolidaysRouteImport } from './routes/holidays'
 import { Route as KpiReportsRouteImport } from './routes/kpi-reports'
 import { Route as LeaveRouteImport } from './routes/leave'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as MeetingsRouteImport } from './routes/meetings'
 import { Route as MonitoringRouteImport } from './routes/monitoring'
 import { Route as PayrollRouteImport } from './routes/payroll'
@@ -25,6 +26,8 @@ import { Route as ProjectsRouteImport } from './routes/projects'
 import { Route as SchedulesRouteImport } from './routes/schedules'
 import { Route as UserAccessRouteImport } from './routes/user-access'
 import { Route as WorklogsRouteImport } from './routes/worklogs'
+import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
+import { Route as AuthResetPasswordRouteImport } from './routes/auth.reset-password'
 import { Route as OnboardingTokenRouteImport } from './routes/onboarding.$token'
 
 const IndexRoute = IndexRouteImport.update({
@@ -72,6 +75,11 @@ const LeaveRoute = LeaveRouteImport.update({
   path: '/leave',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MeetingsRoute = MeetingsRouteImport.update({
   id: '/meetings',
   path: '/meetings',
@@ -107,6 +115,16 @@ const WorklogsRoute = WorklogsRouteImport.update({
   path: '/worklogs',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthCallbackRoute = AuthCallbackRouteImport.update({
+  id: '/auth/callback',
+  path: '/auth/callback',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthResetPasswordRoute = AuthResetPasswordRouteImport.update({
+  id: '/auth/reset-password',
+  path: '/auth/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const OnboardingTokenRoute = OnboardingTokenRouteImport.update({
   id: '/onboarding/$token',
   path: '/onboarding/$token',
@@ -123,6 +141,7 @@ export interface FileRoutesByFullPath {
   '/holidays': typeof HolidaysRoute
   '/kpi-reports': typeof KpiReportsRoute
   '/leave': typeof LeaveRoute
+  '/login': typeof LoginRoute
   '/meetings': typeof MeetingsRoute
   '/monitoring': typeof MonitoringRoute
   '/payroll': typeof PayrollRoute
@@ -130,6 +149,8 @@ export interface FileRoutesByFullPath {
   '/schedules': typeof SchedulesRoute
   '/user-access': typeof UserAccessRoute
   '/worklogs': typeof WorklogsRoute
+  '/auth/callback': typeof AuthCallbackRoute
+  '/auth/reset-password': typeof AuthResetPasswordRoute
   '/onboarding/$token': typeof OnboardingTokenRoute
 }
 export interface FileRoutesByTo {
@@ -142,6 +163,7 @@ export interface FileRoutesByTo {
   '/holidays': typeof HolidaysRoute
   '/kpi-reports': typeof KpiReportsRoute
   '/leave': typeof LeaveRoute
+  '/login': typeof LoginRoute
   '/meetings': typeof MeetingsRoute
   '/monitoring': typeof MonitoringRoute
   '/payroll': typeof PayrollRoute
@@ -149,6 +171,8 @@ export interface FileRoutesByTo {
   '/schedules': typeof SchedulesRoute
   '/user-access': typeof UserAccessRoute
   '/worklogs': typeof WorklogsRoute
+  '/auth/callback': typeof AuthCallbackRoute
+  '/auth/reset-password': typeof AuthResetPasswordRoute
   '/onboarding/$token': typeof OnboardingTokenRoute
 }
 export interface FileRoutesById {
@@ -162,6 +186,7 @@ export interface FileRoutesById {
   '/holidays': typeof HolidaysRoute
   '/kpi-reports': typeof KpiReportsRoute
   '/leave': typeof LeaveRoute
+  '/login': typeof LoginRoute
   '/meetings': typeof MeetingsRoute
   '/monitoring': typeof MonitoringRoute
   '/payroll': typeof PayrollRoute
@@ -169,6 +194,8 @@ export interface FileRoutesById {
   '/schedules': typeof SchedulesRoute
   '/user-access': typeof UserAccessRoute
   '/worklogs': typeof WorklogsRoute
+  '/auth/callback': typeof AuthCallbackRoute
+  '/auth/reset-password': typeof AuthResetPasswordRoute
   '/onboarding/$token': typeof OnboardingTokenRoute
 }
 export interface FileRouteTypes {
@@ -183,6 +210,7 @@ export interface FileRouteTypes {
     | '/holidays'
     | '/kpi-reports'
     | '/leave'
+    | '/login'
     | '/meetings'
     | '/monitoring'
     | '/payroll'
@@ -190,6 +218,8 @@ export interface FileRouteTypes {
     | '/schedules'
     | '/user-access'
     | '/worklogs'
+    | '/auth/callback'
+    | '/auth/reset-password'
     | '/onboarding/$token'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -202,6 +232,7 @@ export interface FileRouteTypes {
     | '/holidays'
     | '/kpi-reports'
     | '/leave'
+    | '/login'
     | '/meetings'
     | '/monitoring'
     | '/payroll'
@@ -209,6 +240,8 @@ export interface FileRouteTypes {
     | '/schedules'
     | '/user-access'
     | '/worklogs'
+    | '/auth/callback'
+    | '/auth/reset-password'
     | '/onboarding/$token'
   id:
     | '__root__'
@@ -221,6 +254,7 @@ export interface FileRouteTypes {
     | '/holidays'
     | '/kpi-reports'
     | '/leave'
+    | '/login'
     | '/meetings'
     | '/monitoring'
     | '/payroll'
@@ -228,6 +262,8 @@ export interface FileRouteTypes {
     | '/schedules'
     | '/user-access'
     | '/worklogs'
+    | '/auth/callback'
+    | '/auth/reset-password'
     | '/onboarding/$token'
   fileRoutesById: FileRoutesById
 }
@@ -241,6 +277,7 @@ export interface RootRouteChildren {
   HolidaysRoute: typeof HolidaysRoute
   KpiReportsRoute: typeof KpiReportsRoute
   LeaveRoute: typeof LeaveRoute
+  LoginRoute: typeof LoginRoute
   MeetingsRoute: typeof MeetingsRoute
   MonitoringRoute: typeof MonitoringRoute
   PayrollRoute: typeof PayrollRoute
@@ -248,6 +285,8 @@ export interface RootRouteChildren {
   SchedulesRoute: typeof SchedulesRoute
   UserAccessRoute: typeof UserAccessRoute
   WorklogsRoute: typeof WorklogsRoute
+  AuthCallbackRoute: typeof AuthCallbackRoute
+  AuthResetPasswordRoute: typeof AuthResetPasswordRoute
   OnboardingTokenRoute: typeof OnboardingTokenRoute
 }
 
@@ -316,6 +355,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LeaveRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/meetings': {
       id: '/meetings'
       path: '/meetings'
@@ -365,6 +411,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WorklogsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth/callback': {
+      id: '/auth/callback'
+      path: '/auth/callback'
+      fullPath: '/auth/callback'
+      preLoaderRoute: typeof AuthCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/reset-password': {
+      id: '/auth/reset-password'
+      path: '/auth/reset-password'
+      fullPath: '/auth/reset-password'
+      preLoaderRoute: typeof AuthResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/onboarding/$token': {
       id: '/onboarding/$token'
       path: '/onboarding/$token'
@@ -385,6 +445,7 @@ const rootRouteChildren: RootRouteChildren = {
   HolidaysRoute: HolidaysRoute,
   KpiReportsRoute: KpiReportsRoute,
   LeaveRoute: LeaveRoute,
+  LoginRoute: LoginRoute,
   MeetingsRoute: MeetingsRoute,
   MonitoringRoute: MonitoringRoute,
   PayrollRoute: PayrollRoute,
@@ -392,6 +453,8 @@ const rootRouteChildren: RootRouteChildren = {
   SchedulesRoute: SchedulesRoute,
   UserAccessRoute: UserAccessRoute,
   WorklogsRoute: WorklogsRoute,
+  AuthCallbackRoute: AuthCallbackRoute,
+  AuthResetPasswordRoute: AuthResetPasswordRoute,
   OnboardingTokenRoute: OnboardingTokenRoute,
 }
 export const routeTree = rootRouteImport

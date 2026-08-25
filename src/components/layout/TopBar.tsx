@@ -1,13 +1,15 @@
 import { useRouterState } from "@tanstack/react-router";
-import { Bell, Moon, Search, Sun } from "lucide-react";
+import { Bell, LogOut, Moon, Search, Sun } from "lucide-react";
 
 import { pageTitles } from "@/lib/nav";
+import { useAuth } from "@/hooks/useAuth";
 import { useTheme } from "@/hooks/use-theme";
 import { Input } from "@/components/ui/input";
 
 export function TopBar() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const { theme, toggle } = useTheme();
+  const { signOut } = useAuth();
   const title = pageTitles[pathname] ?? "Overview";
 
   return (
@@ -41,6 +43,14 @@ export function TopBar() {
         className="rounded-lg border border-border p-2 text-muted-foreground transition-colors hover:text-foreground"
       >
         {theme === "dark" ? <Sun className="size-4" /> : <Moon className="size-4" />}
+      </button>
+
+      <button
+        onClick={signOut}
+        aria-label="Sign out"
+        className="rounded-lg border border-border p-2 text-muted-foreground transition-colors hover:text-destructive"
+      >
+        <LogOut className="size-4" />
       </button>
     </header>
   );
