@@ -425,6 +425,7 @@ export type KpiDataset = {
   attendance: AttendanceRecord[];
   worklogs: WorklogEntry[];
   tasks: KpiTask[];
+  leaves: LeaveRequest[];
 };
 
 export function buildDataset(today: Date): KpiDataset {
@@ -432,6 +433,7 @@ export function buildDataset(today: Date): KpiDataset {
     attendance: generateAttendance(today),
     worklogs: generateWorklogs(today),
     tasks: generateTasks(today),
+    leaves: generateLeaveRequests(today),
   };
 }
 
