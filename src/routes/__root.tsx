@@ -10,6 +10,7 @@ import {
 import { useEffect, type ReactNode } from "react";
 
 import { AuthGuard } from "@/components/auth/AuthGuard";
+import { PortalRoleGuard } from "@/components/auth/PortalRoleGuard";
 import { Toaster } from "@/components/ui/sonner";
 
 import appCss from "../styles.css?url";
