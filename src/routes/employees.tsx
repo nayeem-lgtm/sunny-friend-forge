@@ -525,7 +525,22 @@ function Page() {
         </DialogContent>
       </Dialog>
 
+      {/* Onboarding form preview & builder */}
+      <Dialog open={builderOpen} onOpenChange={setBuilderOpen}>
+        <DialogContent className="max-h-[88vh] max-w-5xl overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Onboarding form</DialogTitle>
+            <DialogDescription>
+              Preview the form exactly as the employee sees it, and add or delete any section, field
+              or document.
+            </DialogDescription>
+          </DialogHeader>
+          <OnboardingFormBuilder config={formConfig} onConfigChange={setFormConfig} />
+        </DialogContent>
+      </Dialog>
+
       {/* Add employee dialog */}
+
       <Dialog open={addOpen} onOpenChange={setAddOpen}>
         <DialogContent className="max-h-[85vh] max-w-4xl overflow-y-auto">
           <DialogHeader>
