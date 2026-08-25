@@ -63,13 +63,13 @@ function Page() {
   const breaks = rows.reduce((s, r) => s + r.breakMinutes, 0);
 
   const columns: Column<AttendanceRecord>[] = [
-    { key: "date", header: "Date", render: (r) => formatDate(r.date) },
-    { key: "clockIn", header: "Clock in", render: (r) => r.clockIn ?? "—" },
-    { key: "clockOut", header: "Clock out", render: (r) => r.clockOut ?? "—" },
-    { key: "break", header: "Break", render: (r) => formatDuration(r.breakMinutes) },
-    { key: "idle", header: "Idle", render: (r) => formatDuration(r.idleMinutes) },
-    { key: "worked", header: "Worked", render: (r) => formatDuration(r.workedMinutes) },
-    { key: "status", header: "Status", render: (r) => <StatusPill status={r.status} /> },
+    { key: "date", header: "Date", cell: (r) => formatDate(r.date) },
+    { key: "clockIn", header: "Clock in", cell: (r) => r.clockIn ?? "—" },
+    { key: "clockOut", header: "Clock out", cell: (r) => r.clockOut ?? "—" },
+    { key: "breakMinutes", header: "Break", cell: (r) => formatDuration(r.breakMinutes) },
+    { key: "idleMinutes", header: "Idle", cell: (r) => formatDuration(r.idleMinutes) },
+    { key: "workedMinutes", header: "Worked", cell: (r) => formatDuration(r.workedMinutes) },
+    { key: "status", header: "Status", cell: (r) => <StatusPill status={r.status} /> },
   ];
 
   return (
