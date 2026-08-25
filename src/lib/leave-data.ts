@@ -1,7 +1,7 @@
 import { employees } from "@/lib/employee-data";
 
 export type LeaveType = "PTO" | "Unpaid";
-export type LeaveStatus = "Pending" | "Approved" | "Rejected" | "Cancelled";
+export type LeaveStatus = "Pending" | "Approved" | "Denied" | "Cancelled";
 
 export type LeaveFeedback = {
   id: string;
@@ -28,7 +28,7 @@ export type LeaveRequest = {
 };
 
 export const leaveTypes: LeaveType[] = ["PTO", "Unpaid"];
-export const leaveStatuses: LeaveStatus[] = ["Pending", "Approved", "Rejected", "Cancelled"];
+export const leaveStatuses: LeaveStatus[] = ["Pending", "Approved", "Denied", "Cancelled"];
 
 export const leaveTypeTone: Record<LeaveType, string> = {
   PTO: "bg-primary/15 text-primary border-primary/30",
@@ -77,7 +77,7 @@ export function generateLeaveRequests(today: Date): LeaveRequest[] {
     applied.setHours(9 + Math.floor(r1 * 10), Math.floor(r3 * 59), 0, 0);
 
     const status: LeaveStatus =
-      start > today ? (r3 > 0.45 ? "Pending" : "Approved") : r3 > 0.9 ? "Rejected" : r3 < 0.06 ? "Cancelled" : "Approved";
+      start > today ? (r3 > 0.45 ? "Pending" : "Approved") : r3 > 0.9 ? "Denied" : r3 < 0.06 ? "Cancelled" : "Approved";
 
     const type: LeaveType = r2 > 0.28 ? "PTO" : "Unpaid";
 
@@ -96,7 +96,7 @@ export function generateLeaveRequests(today: Date): LeaveRequest[] {
       reason: reasons[i % reasons.length]!,
       documents: r1 > 0.7 ? ["medical-certificate.pdf"] : [],
       feedback:
-        status === "Rejected"
+        status === "Denied"
           ? [
               {
                 id: `fb-${n}`,

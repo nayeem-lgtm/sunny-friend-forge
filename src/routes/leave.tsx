@@ -122,7 +122,7 @@ function Page() {
 
   const active = rows.find((r) => r.id === openId) ?? null;
 
-  const decide = (id: string, status: "Approved" | "Rejected") => {
+  const decide = (id: string, status: "Approved" | "Denied") => {
     const note = comment.trim();
     setRows((prev) =>
       prev.map((r) =>
@@ -219,8 +219,8 @@ function Page() {
             <Button size="sm" onClick={() => decide(r.id, "Approved")}>
               <Check className="size-3.5" /> Approve
             </Button>
-            <Button size="sm" variant="destructive" onClick={() => decide(r.id, "Rejected")}>
-              <X className="size-3.5" /> Reject
+            <Button size="sm" variant="destructive" onClick={() => decide(r.id, "Denied")}>
+              <X className="size-3.5" /> Deny
             </Button>
           </div>
         ) : (
@@ -336,6 +336,36 @@ function Page() {
                   </div>
                 </div>
 
+                {active.status === "Pending" ? (
+                  <div className="flex flex-col gap-4 rounded-xl border border-warning/30 bg-warning/10 p-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <Hourglass className="size-4 text-warning" />
+                        <p className="font-semibold text-foreground">Decision required</p>
+                      </div>
+                      <p className="mt-1 text-sm text-muted-foreground">
+                        This request is pending. Approve it or deny it after reviewing the details below.
+                      </p>
+                    </div>
+                    <div className="flex shrink-0 gap-2">
+                      <Button variant="destructive" onClick={() => decide(active.id, "Denied")}>
+                        <X className="size-4" /> Deny
+                      </Button>
+                      <Button onClick={() => decide(active.id, "Approved")}>
+                        <Check className="size-4" /> Approve
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-between gap-4 rounded-xl border border-border bg-secondary/40 p-4">
+                    <div>
+                      <p className="text-xs uppercase tracking-wide text-muted-foreground">Decision</p>
+                      <div className="mt-1"><StatusPill status={active.status} /></div>
+                    </div>
+                    <Button variant="outline" onClick={() => reopen(active.id)}>Reopen request</Button>
+                  </div>
+                )}
+
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="rounded-xl border border-info/25 bg-info/10 p-4">
                     <span className="flex size-9 items-center justify-center rounded-lg bg-info/20 text-info">
@@ -412,20 +442,6 @@ function Page() {
                       <Button variant="outline" disabled={!comment.trim()} onClick={() => postFeedback(active.id)}>
                         Send note
                       </Button>
-                      {active.status === "Pending" ? (
-                        <>
-                          <Button onClick={() => decide(active.id, "Approved")}>
-                            <Check className="size-4" /> Approve
-                          </Button>
-                          <Button variant="destructive" onClick={() => decide(active.id, "Rejected")}>
-                            <X className="size-4" /> Reject
-                          </Button>
-                        </>
-                      ) : (
-                        <Button variant="ghost" onClick={() => reopen(active.id)}>
-                          Reopen request
-                        </Button>
-                      )}
                     </div>
                     <p className="text-xs text-muted-foreground">
                       {active.status === "Pending"
