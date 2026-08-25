@@ -66,6 +66,7 @@ import {
   type OnboardingSubmission,
 } from "@/lib/onboarding-store";
 import { OnboardingFormBuilder } from "@/components/employees/OnboardingFormBuilder";
+import { downloadConsentPdf, openConsentPdf } from "@/lib/consent-pdf";
 
 
 export const Route = createFileRoute("/employees")({
