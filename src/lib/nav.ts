@@ -45,7 +45,7 @@ export const navItems: NavItem[] = [
       { title: "Employee Directory", url: "/employees" },
       { title: "Departments", url: "/departments" },
       { title: "Schedules", url: "/schedules" },
-      { title: "Permissions", url: "/permissions" },
+      { title: "User Access", url: "/user-access" },
     ],
   },
   { title: "HRMS", icon: Users2, external: "https://example.com/hrms" },
@@ -64,6 +64,6 @@ export const pageTitles: Record<string, string> = {
   "/projects": "Workboard",
   "/monitoring": "Monitoring",
   "/announcements": "Announcements",
-  "/permissions": "Permissions",
+  "/user-access": "User Access",
 };
 

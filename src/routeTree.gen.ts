@@ -20,9 +20,9 @@ import { Route as LeaveRouteImport } from './routes/leave'
 import { Route as MeetingsRouteImport } from './routes/meetings'
 import { Route as MonitoringRouteImport } from './routes/monitoring'
 import { Route as PayrollRouteImport } from './routes/payroll'
-import { Route as PermissionsRouteImport } from './routes/permissions'
 import { Route as ProjectsRouteImport } from './routes/projects'
 import { Route as SchedulesRouteImport } from './routes/schedules'
+import { Route as UserAccessRouteImport } from './routes/user-access'
 import { Route as WorklogsRouteImport } from './routes/worklogs'
 
 const IndexRoute = IndexRouteImport.update({
@@ -80,11 +80,6 @@ const PayrollRoute = PayrollRouteImport.update({
   path: '/payroll',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PermissionsRoute = PermissionsRouteImport.update({
-  id: '/permissions',
-  path: '/permissions',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ProjectsRoute = ProjectsRouteImport.update({
   id: '/projects',
   path: '/projects',
@@ -93,6 +88,11 @@ const ProjectsRoute = ProjectsRouteImport.update({
 const SchedulesRoute = SchedulesRouteImport.update({
   id: '/schedules',
   path: '/schedules',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UserAccessRoute = UserAccessRouteImport.update({
+  id: '/user-access',
+  path: '/user-access',
   getParentRoute: () => rootRouteImport,
 } as any)
 const WorklogsRoute = WorklogsRouteImport.update({
@@ -113,9 +113,9 @@ export interface FileRoutesByFullPath {
   '/meetings': typeof MeetingsRoute
   '/monitoring': typeof MonitoringRoute
   '/payroll': typeof PayrollRoute
-  '/permissions': typeof PermissionsRoute
   '/projects': typeof ProjectsRoute
   '/schedules': typeof SchedulesRoute
+  '/user-access': typeof UserAccessRoute
   '/worklogs': typeof WorklogsRoute
 }
 export interface FileRoutesByTo {
@@ -130,9 +130,9 @@ export interface FileRoutesByTo {
   '/meetings': typeof MeetingsRoute
   '/monitoring': typeof MonitoringRoute
   '/payroll': typeof PayrollRoute
-  '/permissions': typeof PermissionsRoute
   '/projects': typeof ProjectsRoute
   '/schedules': typeof SchedulesRoute
+  '/user-access': typeof UserAccessRoute
   '/worklogs': typeof WorklogsRoute
 }
 export interface FileRoutesById {
@@ -148,9 +148,9 @@ export interface FileRoutesById {
   '/meetings': typeof MeetingsRoute
   '/monitoring': typeof MonitoringRoute
   '/payroll': typeof PayrollRoute
-  '/permissions': typeof PermissionsRoute
   '/projects': typeof ProjectsRoute
   '/schedules': typeof SchedulesRoute
+  '/user-access': typeof UserAccessRoute
   '/worklogs': typeof WorklogsRoute
 }
 export interface FileRouteTypes {
@@ -167,9 +167,9 @@ export interface FileRouteTypes {
     | '/meetings'
     | '/monitoring'
     | '/payroll'
-    | '/permissions'
     | '/projects'
     | '/schedules'
+    | '/user-access'
     | '/worklogs'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -184,9 +184,9 @@ export interface FileRouteTypes {
     | '/meetings'
     | '/monitoring'
     | '/payroll'
-    | '/permissions'
     | '/projects'
     | '/schedules'
+    | '/user-access'
     | '/worklogs'
   id:
     | '__root__'
@@ -201,9 +201,9 @@ export interface FileRouteTypes {
     | '/meetings'
     | '/monitoring'
     | '/payroll'
-    | '/permissions'
     | '/projects'
     | '/schedules'
+    | '/user-access'
     | '/worklogs'
   fileRoutesById: FileRoutesById
 }
@@ -219,9 +219,9 @@ export interface RootRouteChildren {
   MeetingsRoute: typeof MeetingsRoute
   MonitoringRoute: typeof MonitoringRoute
   PayrollRoute: typeof PayrollRoute
-  PermissionsRoute: typeof PermissionsRoute
   ProjectsRoute: typeof ProjectsRoute
   SchedulesRoute: typeof SchedulesRoute
+  UserAccessRoute: typeof UserAccessRoute
   WorklogsRoute: typeof WorklogsRoute
 }
 
@@ -304,13 +304,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PayrollRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/permissions': {
-      id: '/permissions'
-      path: '/permissions'
-      fullPath: '/permissions'
-      preLoaderRoute: typeof PermissionsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/projects': {
       id: '/projects'
       path: '/projects'
@@ -323,6 +316,13 @@ declare module '@tanstack/react-router' {
       path: '/schedules'
       fullPath: '/schedules'
       preLoaderRoute: typeof SchedulesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/user-access': {
+      id: '/user-access'
+      path: '/user-access'
+      fullPath: '/user-access'
+      preLoaderRoute: typeof UserAccessRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/worklogs': {
@@ -347,9 +347,9 @@ const rootRouteChildren: RootRouteChildren = {
   MeetingsRoute: MeetingsRoute,
   MonitoringRoute: MonitoringRoute,
   PayrollRoute: PayrollRoute,
-  PermissionsRoute: PermissionsRoute,
   ProjectsRoute: ProjectsRoute,
   SchedulesRoute: SchedulesRoute,
+  UserAccessRoute: UserAccessRoute,
   WorklogsRoute: WorklogsRoute,
 }
 export const routeTree = rootRouteImport
