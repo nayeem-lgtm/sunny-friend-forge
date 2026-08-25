@@ -95,6 +95,9 @@ function Page() {
   const [review, setReview] = useState<OnboardingSubmission | null>(null);
   const [reviewNote, setReviewNote] = useState("");
   const [lastLink, setLastLink] = useState<string | null>(null);
+  const [builderOpen, setBuilderOpen] = useState(false);
+  const [formConfig, setFormConfig] = useState<OnboardingFormConfig>(defaultOnboardingConfig);
+
 
   const [form, setForm] = useState({
     firstName: "",
