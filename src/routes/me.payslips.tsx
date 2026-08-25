@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { ChevronLeft, ChevronRight, Download, Minus, Plus, Wallet } from "lucide-react";
+import { ChevronLeft, ChevronRight, Download, Eye, Minus, Plus, Wallet } from "lucide-react";
 
 import { EmployeeShell } from "@/components/layout/EmployeeShell";
 import { PageHeader } from "@/components/shared/PageHeader";
@@ -8,6 +8,7 @@ import { StatCard } from "@/components/shared/StatCard";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useEmployeeSession } from "@/lib/employee-session";
+import { downloadPayslipPdf, openPayslipPdf } from "@/lib/payslip-pdf";
 import {
   formatBDT,
   generatePayroll,
@@ -18,6 +19,7 @@ import {
   sumAdjustments,
   type PayrollRow,
 } from "@/lib/payroll-data";
+
 
 export const Route = createFileRoute("/me/payslips")({
   head: () => ({
