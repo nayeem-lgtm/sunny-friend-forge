@@ -210,6 +210,34 @@ function Page() {
       cell: (r) => <span className="whitespace-nowrap text-muted-foreground">{formatDateTime(r.appliedAt)}</span>,
     },
     { key: "department", header: "Department", accessor: (r) => r.department, className: "hidden" },
+    {
+      key: "actions",
+      header: "Actions",
+      cell: (r) =>
+        r.status === "Pending" ? (
+          <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
+            <Button size="sm" onClick={() => decide(r.id, "Approved")}>
+              <Check className="size-3.5" /> Approve
+            </Button>
+            <Button size="sm" variant="destructive" onClick={() => decide(r.id, "Rejected")}>
+              <X className="size-3.5" /> Reject
+            </Button>
+          </div>
+        ) : (
+          <button
+            type="button"
+            className="text-xs text-primary hover:underline"
+            onClick={(e) => {
+              e.stopPropagation();
+              setOpenId(r.id);
+              setComment("");
+            }}
+          >
+            Add note
+          </button>
+        ),
+    },
+
   ];
 
   const used = active ? usedDays(rows, active.employeeId, year) : 0;
