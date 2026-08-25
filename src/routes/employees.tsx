@@ -632,8 +632,17 @@ function Page() {
                         className="mt-3 h-24 rounded-lg border border-border bg-secondary/40 object-contain"
                       />
                     )}
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      <Button size="sm" variant="outline" onClick={() => openConsentPdf(review)}>
+                        View signed consent PDF
+                      </Button>
+                      <Button size="sm" variant="ghost" onClick={() => downloadConsentPdf(review)}>
+                        Download PDF
+                      </Button>
+                    </div>
                   </div>
                 )}
+
 
 
 
