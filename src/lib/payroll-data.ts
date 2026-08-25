@@ -32,6 +32,9 @@ export type PayrollRow = {
   deductions: PayrollAdjustment[];
   status: PayrollStatus;
   notes: string;
+  absence: AbsenceBreakdown;
+  dailyRate: number;
+
 };
 
 export const payrollStatuses: PayrollStatus[] = ["Drafted", "Approved", "Paid"];
