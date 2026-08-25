@@ -220,6 +220,7 @@ export function PeopleCell({
   );
 }
 
+/** value is "YYYY-MM-DD" or "YYYY-MM-DDTHH:mm" */
 export function DateCell({
   value,
   onChange,
@@ -230,7 +231,16 @@ export function DateCell({
   overdue?: boolean;
 }) {
   const [open, setOpen] = useState(false);
-  const selected = value ? new Date(`${value}T00:00:00`) : undefined;
+  const datePart = value ? value.slice(0, 10) : "";
+  const timePart = value && value.length > 10 ? value.slice(11, 16) : "";
+  const selected = datePart ? new Date(`${datePart}T00:00:00`) : undefined;
+
+  const setDate = (iso: string) => onChange(timePart ? `${iso}T${timePart}` : iso);
+  const setTime = (t: string) => {
+    const d = datePart || new Date().toISOString().slice(0, 10);
+    onChange(t ? `${d}T${t}` : d);
+  };
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -242,12 +252,11 @@ export function DateCell({
             !value && "text-muted-foreground",
           )}
         >
-          {value
-            ? selected!.toLocaleDateString(undefined, {
+          {datePart
+            ? `${selected!.toLocaleDateString(undefined, {
                 month: "short",
                 day: "numeric",
-                year: "numeric",
-              })
+              })}${timePart ? `, ${timePart}` : ""}`
             : "Set date"}
         </button>
       </PopoverTrigger>
@@ -259,17 +268,93 @@ export function DateCell({
           onSelect={(d) => {
             if (d) {
               const iso = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-              onChange(iso);
+              setDate(iso);
             }
-            setOpen(false);
           }}
           initialFocus
           className={cn("p-3 pointer-events-auto")}
         />
+        <div className="flex items-center gap-2 border-t border-border p-3">
+          <Clock className="h-3.5 w-3.5 text-muted-foreground" />
+          <Input
+            type="time"
+            value={timePart}
+            onChange={(e) => setTime(e.target.value)}
+            className="h-8 w-32 text-xs"
+          />
+          <Button variant="ghost" size="sm" className="ml-auto h-8 text-xs" onClick={() => setOpen(false)}>
+            Done
+          </Button>
+        </div>
       </PopoverContent>
     </Popover>
   );
 }
+
+function parseWhen(v: string): number | null {
+  if (!v) return null;
+  const t = new Date(v.length > 10 ? v : `${v}T00:00:00`).getTime();
+  return Number.isNaN(t) ? null : t;
+}
+
+function formatSpan(ms: number) {
+  const mins = Math.round(ms / 60000);
+  const d = Math.floor(mins / 1440);
+  const h = Math.floor((mins % 1440) / 60);
+  const m = mins % 60;
+  if (d > 0) return `${d}d ${h}h`;
+  if (h > 0) return `${h}h ${m}m`;
+  return `${m}m`;
+}
+
+/** Time-based progress between start and due datetimes. */
+export function TimingBar({
+  start,
+  due,
+  fallback = 0,
+  done,
+}: {
+  start: string;
+  due: string;
+  fallback?: number;
+  done?: boolean;
+}) {
+  const s = parseWhen(start);
+  const e = parseWhen(due);
+  const now = Date.now();
+
+  if (s === null || e === null || e <= s) {
+    return <ProgressBar value={fallback} />;
+  }
+
+  const pct = done ? 100 : Math.min(100, Math.max(0, Math.round(((now - s) / (e - s)) * 100)));
+  const remaining = e - now;
+  const overdue = !done && remaining < 0;
+  const label = done ? "Done" : overdue ? `${formatSpan(-remaining)} over` : `${formatSpan(remaining)} left`;
+
+  return (
+    <div className="mx-auto w-28">
+      <div className="h-2 overflow-hidden rounded-full bg-muted">
+        <div
+          className={cn(
+            "h-full rounded-full transition-all",
+            done ? "bg-success" : overdue ? "bg-destructive" : pct > 80 ? "bg-warning" : "bg-primary",
+          )}
+          style={{ width: `${pct}%` }}
+        />
+      </div>
+      <span
+        className={cn(
+          "mt-0.5 block text-center text-[10px]",
+          overdue ? "text-destructive" : "text-muted-foreground",
+        )}
+      >
+        {label}
+      </span>
+    </div>
+  );
+}
+
 
 
 export function NumberCell({
