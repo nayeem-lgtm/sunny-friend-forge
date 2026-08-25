@@ -29,6 +29,7 @@ import { Route as WorklogsRouteImport } from './routes/worklogs'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as AuthResetPasswordRouteImport } from './routes/auth.reset-password'
 import { Route as MeIndexRouteImport } from './routes/me.index'
+import { Route as MeAttendanceRouteImport } from './routes/me.attendance'
 import { Route as OnboardingTokenRouteImport } from './routes/onboarding.$token'
 
 const IndexRoute = IndexRouteImport.update({
@@ -131,6 +132,11 @@ const MeIndexRoute = MeIndexRouteImport.update({
   path: '/me/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MeAttendanceRoute = MeAttendanceRouteImport.update({
+  id: '/me/attendance',
+  path: '/me/attendance',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const OnboardingTokenRoute = OnboardingTokenRouteImport.update({
   id: '/onboarding/$token',
   path: '/onboarding/$token',
@@ -157,6 +163,7 @@ export interface FileRoutesByFullPath {
   '/worklogs': typeof WorklogsRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
+  '/me/attendance': typeof MeAttendanceRoute
   '/onboarding/$token': typeof OnboardingTokenRoute
   '/me/': typeof MeIndexRoute
 }
@@ -180,6 +187,7 @@ export interface FileRoutesByTo {
   '/worklogs': typeof WorklogsRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
+  '/me/attendance': typeof MeAttendanceRoute
   '/onboarding/$token': typeof OnboardingTokenRoute
   '/me': typeof MeIndexRoute
 }
@@ -204,6 +212,7 @@ export interface FileRoutesById {
   '/worklogs': typeof WorklogsRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
+  '/me/attendance': typeof MeAttendanceRoute
   '/onboarding/$token': typeof OnboardingTokenRoute
   '/me/': typeof MeIndexRoute
 }
@@ -229,6 +238,7 @@ export interface FileRouteTypes {
     | '/worklogs'
     | '/auth/callback'
     | '/auth/reset-password'
+    | '/me/attendance'
     | '/onboarding/$token'
     | '/me/'
   fileRoutesByTo: FileRoutesByTo
@@ -252,6 +262,7 @@ export interface FileRouteTypes {
     | '/worklogs'
     | '/auth/callback'
     | '/auth/reset-password'
+    | '/me/attendance'
     | '/onboarding/$token'
     | '/me'
   id:
@@ -275,6 +286,7 @@ export interface FileRouteTypes {
     | '/worklogs'
     | '/auth/callback'
     | '/auth/reset-password'
+    | '/me/attendance'
     | '/onboarding/$token'
     | '/me/'
   fileRoutesById: FileRoutesById
@@ -299,6 +311,7 @@ export interface RootRouteChildren {
   WorklogsRoute: typeof WorklogsRoute
   AuthCallbackRoute: typeof AuthCallbackRoute
   AuthResetPasswordRoute: typeof AuthResetPasswordRoute
+  MeAttendanceRoute: typeof MeAttendanceRoute
   OnboardingTokenRoute: typeof OnboardingTokenRoute
   MeIndexRoute: typeof MeIndexRoute
 }
@@ -445,6 +458,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MeIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/me/attendance': {
+      id: '/me/attendance'
+      path: '/me/attendance'
+      fullPath: '/me/attendance'
+      preLoaderRoute: typeof MeAttendanceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/onboarding/$token': {
       id: '/onboarding/$token'
       path: '/onboarding/$token'
@@ -475,6 +495,7 @@ const rootRouteChildren: RootRouteChildren = {
   WorklogsRoute: WorklogsRoute,
   AuthCallbackRoute: AuthCallbackRoute,
   AuthResetPasswordRoute: AuthResetPasswordRoute,
+  MeAttendanceRoute: MeAttendanceRoute,
   OnboardingTokenRoute: OnboardingTokenRoute,
   MeIndexRoute: MeIndexRoute,
 }
