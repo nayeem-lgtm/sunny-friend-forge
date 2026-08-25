@@ -233,7 +233,7 @@ function Page() {
         description="Generate the monthly payroll sheet, adjust compensation and release payments."
         actions={
           <>
-            <Button variant="outline" onClick={() => toast.success("Payroll report exported")}>
+            <Button variant="outline" onClick={exportReport}>
               <Download className="size-4" /> Export report
             </Button>
             <Button
