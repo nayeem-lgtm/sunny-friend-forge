@@ -85,8 +85,29 @@ const adjMeta: Record<AdjKind, { title: string; tone: string; sign: string }> = 
   deduction: { title: "Add Deduction", tone: "text-destructive", sign: "-" },
 };
 
+const monthNames = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
+
 function Page() {
   const base = new Date(2026, 7, 1);
+  const years = Array.from({ length: 5 }, (_, i) => base.getFullYear() - 3 + i);
+  const quickMonths = [
+    { label: "This month", date: base },
+    { label: "Last month", date: new Date(base.getFullYear(), base.getMonth() - 1, 1) },
+    { label: "2 months ago", date: new Date(base.getFullYear(), base.getMonth() - 2, 1) },
+  ];
   const [month, setMonth] = useState(base);
   const [rows, setRows] = useState<PayrollRow[]>(() => generatePayroll(base));
   const [query, setQuery] = useState("");
