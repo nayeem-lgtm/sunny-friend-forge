@@ -1,6 +1,18 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Mail, Plus, Send, UserCheck, UserPlus, Users } from "lucide-react";
-import { useMemo, useState } from "react";
+import {
+  CheckCircle2,
+  Copy,
+  Download,
+  FileText,
+  Mail,
+  Plus,
+  Send,
+  UserCheck,
+  UserPlus,
+  Users,
+  XCircle,
+} from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 
 import { AppShell } from "@/components/layout/AppShell";
@@ -12,6 +24,7 @@ import { EmployeeForm } from "@/components/employees/EmployeeForm";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Dialog,
@@ -34,9 +47,18 @@ import {
   initialInvites,
   roleTypes,
   type Employee,
-  type Invite,
   type RoleType,
 } from "@/lib/employee-data";
+import {
+  loadInvites,
+  loadSubmissions,
+  makeToken,
+  onboardingLink,
+  saveInvites,
+  saveSubmissions,
+  type OnboardingInvite,
+  type OnboardingSubmission,
+} from "@/lib/onboarding-store";
 
 export const Route = createFileRoute("/employees")({
   head: () => ({
@@ -44,12 +66,12 @@ export const Route = createFileRoute("/employees")({
       { title: "Employee Directory — OmniWork" },
       {
         name: "description",
-        content: "Invite employees, run onboarding, and manage full employee records.",
+        content: "Invite employees, run self-serve onboarding, and approve submitted documents.",
       },
       { property: "og:title", content: "Employee Directory — OmniWork" },
       {
         property: "og:description",
-        content: "Invite employees, run onboarding, and manage full employee records.",
+        content: "Invite employees, run self-serve onboarding, and approve submitted documents.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -58,11 +80,19 @@ export const Route = createFileRoute("/employees")({
   component: Page,
 });
 
+type InviteRow = OnboardingInvite & Record<string, unknown>;
+type SubmissionRow = OnboardingSubmission &
+  Record<string, unknown> & { name: string; email: string; department: string };
+
 function Page() {
-  const [invites, setInvites] = useState<Invite[]>(initialInvites);
+  const [invites, setInvites] = useState<OnboardingInvite[]>([]);
+  const [submissions, setSubmissions] = useState<OnboardingSubmission[]>([]);
   const [inviteOpen, setInviteOpen] = useState(false);
   const [addOpen, setAddOpen] = useState(false);
   const [selected, setSelected] = useState<Employee | null>(null);
+  const [review, setReview] = useState<OnboardingSubmission | null>(null);
+  const [reviewNote, setReviewNote] = useState("");
+  const [lastLink, setLastLink] = useState<string | null>(null);
 
   const [form, setForm] = useState({
     firstName: "",
@@ -73,36 +103,70 @@ function Page() {
     roleType: "Employee" as RoleType,
   });
 
+  useEffect(() => {
+    const stored = loadInvites();
+    if (stored.length) {
+      setInvites(stored);
+    } else {
+      const seeded: OnboardingInvite[] = initialInvites.map((i) => ({
+        ...i,
+        token: makeToken(),
+        status: i.status,
+      }));
+      saveInvites(seeded);
+      setInvites(seeded);
+    }
+    setSubmissions(loadSubmissions());
+  }, []);
+
+  const persistInvites = (next: OnboardingInvite[]) => {
+    setInvites(next);
+    saveInvites(next);
+  };
+  const persistSubmissions = (next: OnboardingSubmission[]) => {
+    setSubmissions(next);
+    saveSubmissions(next);
+  };
+
   const stats = useMemo(
     () => ({
       total: employees.length,
       active: employees.filter((e) => e.status === "Active").length,
-      onboarding: employees.filter((e) => e.status === "Onboarding").length,
-      pending: invites.filter((i) => i.status === "Pending").length,
+      pendingReview: submissions.filter((s) => s.status === "Pending").length,
+      pending: invites.filter((i) => i.status === "Pending" || i.status === "Opened").length,
     }),
-    [invites],
+    [invites, submissions],
   );
+
+  const copyLink = (token: string) => {
+    const link = onboardingLink(token);
+    void navigator.clipboard?.writeText(link);
+    setLastLink(link);
+    toast.success("Onboarding link copied");
+  };
 
   const sendInvite = () => {
     if (!form.email.trim() || !form.firstName.trim()) {
       toast.error("First name and email are required");
       return;
     }
-    setInvites((prev) => [
-      {
-        id: `inv-${Date.now()}`,
-        email: form.email.trim(),
-        firstName: form.firstName.trim(),
-        lastName: form.lastName.trim(),
-        department: form.department || "—",
-        designation: form.designation || "—",
-        roleType: form.roleType,
-        sentAt: new Date().toISOString().slice(0, 10),
-        status: "Pending",
-      },
-      ...prev,
-    ]);
-    toast.success(`Invite sent to ${form.email.trim()}`);
+    const token = makeToken();
+    const invite: OnboardingInvite = {
+      id: `inv-${Date.now()}`,
+      token,
+      email: form.email.trim(),
+      firstName: form.firstName.trim(),
+      lastName: form.lastName.trim(),
+      department: form.department || "—",
+      designation: form.designation || "—",
+      roleType: form.roleType,
+      sentAt: new Date().toISOString().slice(0, 10),
+      status: "Pending",
+    };
+    persistInvites([invite, ...invites]);
+    setLastLink(onboardingLink(token));
+    void navigator.clipboard?.writeText(onboardingLink(token));
+    toast.success(`Onboarding link sent to ${invite.email} (copied to clipboard)`);
     setForm({
       firstName: "",
       lastName: "",
@@ -113,6 +177,32 @@ function Page() {
     });
     setInviteOpen(false);
   };
+
+  const decide = (status: "Approved" | "Rejected") => {
+    if (!review) return;
+    const next = submissions.map((s) =>
+      s.token === review.token ? { ...s, status, reviewNote: reviewNote.trim() } : s,
+    );
+    persistSubmissions(next);
+    persistInvites(invites.map((i) => (i.token === review.token ? { ...i, status } : i)));
+    toast.success(status === "Approved" ? "Onboarding approved" : "Submission sent back to employee");
+    setReview(null);
+    setReviewNote("");
+  };
+
+  const inviteFor = (token: string) => invites.find((i) => i.token === token);
+
+  const submissionRows: SubmissionRow[] = submissions.map((s) => {
+    const inv = inviteFor(s.token);
+    return {
+      ...s,
+      name:
+        `${s.fields["firstName"] ?? inv?.firstName ?? ""} ${s.fields["lastName"] ?? inv?.lastName ?? ""}`.trim() ||
+        "Unknown",
+      email: s.fields["email"] ?? inv?.email ?? "—",
+      department: inv?.department ?? "—",
+    };
+  });
 
   const employeeColumns: Column<Employee & Record<string, unknown>>[] = [
     { key: "employeeId", header: "ID", searchable: true },
@@ -147,7 +237,7 @@ function Page() {
     { key: "status", header: "Status", cell: (r) => <StatusPill status={r.status} /> },
   ];
 
-  const inviteColumns: Column<Invite & Record<string, unknown>>[] = [
+  const inviteColumns: Column<InviteRow>[] = [
     {
       key: "name",
       header: "Invitee",
@@ -166,13 +256,55 @@ function Page() {
     { key: "roleType", header: "Role" },
     { key: "sentAt", header: "Sent" },
     { key: "status", header: "Status", cell: (r) => <StatusPill status={r.status} /> },
+    {
+      key: "link",
+      header: "Onboarding link",
+      cell: (r) => (
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={(e) => {
+            e.stopPropagation();
+            copyLink(r.token);
+          }}
+        >
+          <Copy className="size-3.5" /> Copy link
+        </Button>
+      ),
+    },
+  ];
+
+  const submissionColumns: Column<SubmissionRow>[] = [
+    {
+      key: "name",
+      header: "Employee",
+      searchable: true,
+      cell: (r) => (
+        <div>
+          <p className="font-medium">{r.name}</p>
+          <p className="text-xs text-muted-foreground">{r.email}</p>
+        </div>
+      ),
+    },
+    { key: "department", header: "Department" },
+    {
+      key: "submittedAt",
+      header: "Submitted",
+      cell: (r) => new Date(r.submittedAt).toLocaleString(),
+    },
+    {
+      key: "files",
+      header: "Documents",
+      cell: (r) => <span className="text-sm">{r.files.length} uploaded</span>,
+    },
+    { key: "status", header: "Status", cell: (r) => <StatusPill status={r.status} /> },
   ];
 
   return (
     <AppShell>
       <PageHeader
         title="Employee Directory"
-        description="Invites, onboarding and complete employee records in one place."
+        description="Send onboarding links, review employee submissions and manage records."
         actions={
           <>
             <Button variant="outline" onClick={() => setInviteOpen(true)}>
@@ -188,14 +320,31 @@ function Page() {
       <div className="mb-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard icon={Users} label="Total Employees" value={stats.total} />
         <StatCard icon={UserCheck} label="Active" value={stats.active} />
-        <StatCard icon={UserPlus} label="In Onboarding" value={stats.onboarding} />
-        <StatCard icon={Mail} label="Pending Invites" value={stats.pending} />
+        <StatCard icon={FileText} label="Awaiting Review" value={stats.pendingReview} />
+        <StatCard icon={UserPlus} label="Open Invites" value={stats.pending} />
       </div>
+
+      {lastLink && (
+        <div className="mb-6 flex flex-wrap items-center gap-3 rounded-xl border border-primary/25 bg-primary/5 p-4">
+          <span className="text-sm text-muted-foreground">Latest onboarding link:</span>
+          <code className="truncate rounded bg-secondary px-2 py-1 text-xs">{lastLink}</code>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              void navigator.clipboard?.writeText(lastLink);
+              toast.success("Copied");
+            }}
+          >
+            <Copy className="size-3.5" /> Copy
+          </Button>
+        </div>
+      )}
 
       <Tabs defaultValue="directory">
         <TabsList>
           <TabsTrigger value="directory">Directory</TabsTrigger>
-          <TabsTrigger value="onboarding">Onboarding</TabsTrigger>
+          <TabsTrigger value="submissions">Onboarding Submissions</TabsTrigger>
           <TabsTrigger value="invites">Invites</TabsTrigger>
         </TabsList>
 
@@ -211,34 +360,45 @@ function Page() {
           />
         </TabsContent>
 
-        <TabsContent value="onboarding" className="mt-4">
+        <TabsContent value="submissions" className="mt-4">
           <DataTable
-            data={
-              employees.filter((e) => e.onboardingProgress < 100) as (Employee &
-                Record<string, unknown>)[]
-            }
-            columns={employeeColumns}
-            emptyMessage="No employees currently onboarding."
-            onRowClick={(row) => setSelected(row)}
+            data={submissionRows}
+            columns={submissionColumns}
+            filters={[{ key: "status", label: "Status", options: ["Pending", "Approved", "Rejected"] }]}
+            emptyMessage="No onboarding submissions yet. Invite an employee to get started."
+            onRowClick={(row) => {
+              setReview(row);
+              setReviewNote(row.reviewNote ?? "");
+            }}
           />
         </TabsContent>
 
         <TabsContent value="invites" className="mt-4">
           <DataTable
-            data={invites as (Invite & Record<string, unknown>)[]}
+            data={invites as InviteRow[]}
             columns={inviteColumns}
-            filters={[{ key: "status", label: "Status", options: ["Pending", "Accepted", "Expired"] }]}
+            filters={[
+              {
+                key: "status",
+                label: "Status",
+                options: ["Pending", "Opened", "Submitted", "Approved", "Rejected", "Expired"],
+              },
+            ]}
             emptyMessage="No invites sent yet."
             actions={[
               {
+                label: "Copy onboarding link",
+                onSelect: (row) => copyLink(row.token),
+              },
+              {
                 label: "Resend invite",
-                onSelect: (row) => toast.success(`Invite resent to ${row.email}`),
+                onSelect: (row) => toast.success(`Onboarding link resent to ${row.email}`),
               },
               {
                 label: "Revoke invite",
                 destructive: true,
                 onSelect: (row) => {
-                  setInvites((prev) => prev.filter((i) => i.id !== row.id));
+                  persistInvites(invites.filter((i) => i.id !== row.id));
                   toast.success("Invite revoked");
                 },
               },
@@ -253,7 +413,8 @@ function Page() {
           <DialogHeader>
             <DialogTitle>Invite employee</DialogTitle>
             <DialogDescription>
-              Send a signup link so the employee can complete their own onboarding.
+              We generate a secure onboarding link. The employee fills in their details and uploads
+              documents; you approve them here.
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 sm:grid-cols-2">
@@ -342,7 +503,7 @@ function Page() {
               Cancel
             </Button>
             <Button onClick={sendInvite}>
-              <Send className="size-4" /> Send Invite
+              <Send className="size-4" /> Send onboarding link
             </Button>
           </div>
         </DialogContent>
@@ -373,6 +534,87 @@ function Page() {
                 </DialogDescription>
               </DialogHeader>
               <EmployeeForm employee={selected} />
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Submission review dialog */}
+      <Dialog open={!!review} onOpenChange={(o) => !o && setReview(null)}>
+        <DialogContent className="max-h-[85vh] max-w-3xl overflow-y-auto">
+          {review && (
+            <>
+              <DialogHeader>
+                <DialogTitle>Review onboarding submission</DialogTitle>
+                <DialogDescription>
+                  Submitted {new Date(review.submittedAt).toLocaleString()} ·{" "}
+                  {inviteFor(review.token)?.email}
+                </DialogDescription>
+              </DialogHeader>
+
+              <div className="space-y-6">
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {Object.entries(review.fields).map(([key, value]) => (
+                    <div key={key} className="rounded-lg border border-border bg-card p-3">
+                      <p className="text-xs capitalize text-muted-foreground">
+                        {key.replace(/([A-Z])/g, " $1")}
+                      </p>
+                      <p className="text-sm">{value || "—"}</p>
+                    </div>
+                  ))}
+                </div>
+
+                <div>
+                  <h3 className="mb-2 text-sm font-semibold">Uploaded documents</h3>
+                  {review.files.length === 0 ? (
+                    <p className="text-sm text-muted-foreground">No documents uploaded.</p>
+                  ) : (
+                    <div className="grid gap-2 sm:grid-cols-2">
+                      {review.files.map((f) => (
+                        <div
+                          key={f.slot}
+                          className="flex items-center justify-between gap-2 rounded-lg border border-border p-3"
+                        >
+                          <div className="min-w-0">
+                            <p className="text-xs text-muted-foreground">{f.slot}</p>
+                            <p className="truncate text-sm">{f.name}</p>
+                          </div>
+                          {f.dataUrl ? (
+                            <Button asChild variant="outline" size="sm">
+                              <a href={f.dataUrl} download={f.name}>
+                                <Download className="size-3.5" /> Open
+                              </a>
+                            </Button>
+                          ) : (
+                            <span className="text-xs text-muted-foreground">
+                              {(f.size / 1_000_000).toFixed(1)} MB
+                            </span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <div className="space-y-1.5">
+                  <Label className="text-xs text-muted-foreground">Review note (optional)</Label>
+                  <Textarea
+                    rows={3}
+                    value={reviewNote}
+                    onChange={(e) => setReviewNote(e.target.value)}
+                    placeholder="Tell the employee what needs fixing if you send it back."
+                  />
+                </div>
+
+                <div className="flex justify-end gap-2">
+                  <Button variant="outline" onClick={() => decide("Rejected")}>
+                    <XCircle className="size-4" /> Send back
+                  </Button>
+                  <Button onClick={() => decide("Approved")}>
+                    <CheckCircle2 className="size-4" /> Approve
+                  </Button>
+                </div>
+              </div>
             </>
           )}
         </DialogContent>

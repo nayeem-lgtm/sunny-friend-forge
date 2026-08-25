@@ -24,6 +24,7 @@ import { Route as ProjectsRouteImport } from './routes/projects'
 import { Route as SchedulesRouteImport } from './routes/schedules'
 import { Route as UserAccessRouteImport } from './routes/user-access'
 import { Route as WorklogsRouteImport } from './routes/worklogs'
+import { Route as OnboardingTokenRouteImport } from './routes/onboarding.$token'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -100,6 +101,11 @@ const WorklogsRoute = WorklogsRouteImport.update({
   path: '/worklogs',
   getParentRoute: () => rootRouteImport,
 } as any)
+const OnboardingTokenRoute = OnboardingTokenRouteImport.update({
+  id: '/onboarding/$token',
+  path: '/onboarding/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -117,6 +123,7 @@ export interface FileRoutesByFullPath {
   '/schedules': typeof SchedulesRoute
   '/user-access': typeof UserAccessRoute
   '/worklogs': typeof WorklogsRoute
+  '/onboarding/$token': typeof OnboardingTokenRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -134,6 +141,7 @@ export interface FileRoutesByTo {
   '/schedules': typeof SchedulesRoute
   '/user-access': typeof UserAccessRoute
   '/worklogs': typeof WorklogsRoute
+  '/onboarding/$token': typeof OnboardingTokenRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -152,6 +160,7 @@ export interface FileRoutesById {
   '/schedules': typeof SchedulesRoute
   '/user-access': typeof UserAccessRoute
   '/worklogs': typeof WorklogsRoute
+  '/onboarding/$token': typeof OnboardingTokenRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -171,6 +180,7 @@ export interface FileRouteTypes {
     | '/schedules'
     | '/user-access'
     | '/worklogs'
+    | '/onboarding/$token'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -188,6 +198,7 @@ export interface FileRouteTypes {
     | '/schedules'
     | '/user-access'
     | '/worklogs'
+    | '/onboarding/$token'
   id:
     | '__root__'
     | '/'
@@ -205,6 +216,7 @@ export interface FileRouteTypes {
     | '/schedules'
     | '/user-access'
     | '/worklogs'
+    | '/onboarding/$token'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -223,6 +235,7 @@ export interface RootRouteChildren {
   SchedulesRoute: typeof SchedulesRoute
   UserAccessRoute: typeof UserAccessRoute
   WorklogsRoute: typeof WorklogsRoute
+  OnboardingTokenRoute: typeof OnboardingTokenRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -332,6 +345,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WorklogsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/onboarding/$token': {
+      id: '/onboarding/$token'
+      path: '/onboarding/$token'
+      fullPath: '/onboarding/$token'
+      preLoaderRoute: typeof OnboardingTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -351,6 +371,7 @@ const rootRouteChildren: RootRouteChildren = {
   SchedulesRoute: SchedulesRoute,
   UserAccessRoute: UserAccessRoute,
   WorklogsRoute: WorklogsRoute,
+  OnboardingTokenRoute: OnboardingTokenRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
