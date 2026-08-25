@@ -435,7 +435,13 @@ export function WorkBoard({
                         overdue={item.status !== "Completed" && item.dueDate < new Date().toISOString().slice(0, 10)}
                         onChange={(v) => patchItem(group.id, item.id, { dueDate: v })}
                       />
-                      <ProgressBar value={itemProgress(item, board.statusLabels)} />
+                      <TimingBar
+                        start={item.startDate}
+                        due={item.dueDate}
+                        fallback={itemProgress(item, board.statusLabels)}
+                        done={item.status === "Completed"}
+                      />
+
                       {columns.map((col) => (
                         <ColumnCell
                           key={col.id}
