@@ -51,6 +51,9 @@ export function OnboardingFormBuilder({
   const [newGroup, setNewGroup] = useState("");
   const [newDoc, setNewDoc] = useState("");
   const [newField, setNewField] = useState<Record<string, { label: string; type: string }>>({});
+  const [previewStep, setPreviewStep] = useState<0 | 1 | 2>(0);
+  const [previewConsents, setPreviewConsents] = useState<string[]>([]);
+  const [previewSignature, setPreviewSignature] = useState("");
 
   const update = (next: OnboardingFormConfig) => setDraft(next);
 
