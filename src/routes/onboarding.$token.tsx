@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { StatusPill } from "@/components/shared/StatusPill";
 import { OnboardingFormFields } from "@/components/employees/OnboardingFormFields";
 import { ConsentStep } from "@/components/employees/ConsentStep";
-import { DocumentReviewStep, POLICY_DOC_SLOT } from "@/components/employees/DocumentReviewStep";
+import { DocumentReviewStep } from "@/components/employees/DocumentReviewStep";
 import { ConfirmSubmitStep } from "@/components/employees/ConfirmSubmitStep";
 import { consentClauses, consentDocument } from "@/lib/consent-data";
 import {
