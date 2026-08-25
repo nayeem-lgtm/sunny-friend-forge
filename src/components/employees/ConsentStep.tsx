@@ -23,9 +23,9 @@ export function ConsentStep({
   onToggle?: (id: string, checked: boolean) => void;
   signedName: string;
   onSignedName?: (value: string) => void;
-  signatureImage?: string;
+  signatureImage?: string | undefined;
   onSignatureImage?: (value: string | undefined) => void;
-  disabled?: boolean;
+  disabled?: boolean | undefined;
 }) {
   const [reviewed, setReviewed] = useState(false);
 
@@ -163,9 +163,9 @@ function SignaturePad({
   onChange,
   disabled,
 }: {
-  value?: string;
+  value?: string | undefined;
   onChange: (v: string | undefined) => void;
-  disabled?: boolean;
+  disabled?: boolean | undefined;
 }) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const drawing = useRef(false);

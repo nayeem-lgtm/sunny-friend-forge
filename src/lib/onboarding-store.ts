@@ -16,7 +16,7 @@ export type ConsentRecord = {
   signedName: string;
   signedAt: string;
   /** data URL of the drawn signature, when provided */
-  signatureImage?: string;
+  signatureImage?: string | undefined;
   documentTitle: string;
   documentVersion: string;
 };
