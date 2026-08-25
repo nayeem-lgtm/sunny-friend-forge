@@ -11,6 +11,7 @@ import {
   X,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
 
 import { AppShell } from "@/components/layout/AppShell";
 import { PageHeader } from "@/components/shared/PageHeader";
@@ -122,20 +123,35 @@ function Page() {
   const active = rows.find((r) => r.id === openId) ?? null;
 
   const decide = (id: string, status: "Approved" | "Rejected") => {
+    const note = comment.trim();
     setRows((prev) =>
       prev.map((r) =>
         r.id === id
           ? {
               ...r,
               status,
-              feedback: comment.trim()
-                ? [...r.feedback, { id: `fb-${Date.now()}`, author: "HR Admin", text: comment.trim(), at: new Date().toISOString() }]
-                : r.feedback,
+              feedback: [
+                ...r.feedback,
+                {
+                  id: `fb-${Date.now()}`,
+                  author: "HR Admin",
+                  text: note ? `${status}: ${note}` : `Request ${status.toLowerCase()} by HR Admin.`,
+                  at: new Date().toISOString(),
+                },
+              ],
             }
           : r,
       ),
     );
     setComment("");
+    const row = rows.find((r) => r.id === id);
+    if (status === "Approved") toast.success(`Leave approved for ${row?.employee ?? "employee"}`);
+    else toast.error(`Leave rejected for ${row?.employee ?? "employee"}`);
+  };
+
+  const reopen = (id: string) => {
+    setRows((prev) => prev.map((r) => (r.id === id ? { ...r, status: "Pending" } : r)));
+    toast.info("Request reopened — it is pending again");
   };
 
   const postFeedback = (id: string) => {
@@ -154,7 +170,9 @@ function Page() {
       ),
     );
     setComment("");
+    toast.success("Note sent to the employee");
   };
+
 
   const columns: Column<LeaveRequest>[] = [
     {
@@ -192,6 +210,34 @@ function Page() {
       cell: (r) => <span className="whitespace-nowrap text-muted-foreground">{formatDateTime(r.appliedAt)}</span>,
     },
     { key: "department", header: "Department", accessor: (r) => r.department, className: "hidden" },
+    {
+      key: "actions",
+      header: "Actions",
+      cell: (r) =>
+        r.status === "Pending" ? (
+          <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
+            <Button size="sm" onClick={() => decide(r.id, "Approved")}>
+              <Check className="size-3.5" /> Approve
+            </Button>
+            <Button size="sm" variant="destructive" onClick={() => decide(r.id, "Rejected")}>
+              <X className="size-3.5" /> Reject
+            </Button>
+          </div>
+        ) : (
+          <button
+            type="button"
+            className="text-xs text-primary hover:underline"
+            onClick={(e) => {
+              e.stopPropagation();
+              setOpenId(r.id);
+              setComment("");
+            }}
+          >
+            Add note
+          </button>
+        ),
+    },
+
   ];
 
   const used = active ? usedDays(rows, active.employeeId, year) : 0;
@@ -352,37 +398,41 @@ function Page() {
 
                   <div className="space-y-4 rounded-xl border border-border bg-card p-4">
                     <div>
-                      <p className="mb-2 text-xs uppercase tracking-wide text-muted-foreground">Comment</p>
+                      <p className="mb-2 text-xs uppercase tracking-wide text-muted-foreground">
+                        Note / comment for employee
+                      </p>
                       <Textarea
                         value={comment}
                         onChange={(e) => setComment(e.target.value)}
                         placeholder="Type a note for the employee…"
                         rows={4}
-                        disabled={active.status !== "Pending"}
                       />
                     </div>
                     <div className="flex flex-wrap gap-2">
-                      <Button
-                        variant="ghost"
-                        disabled={active.status !== "Pending" || !comment.trim()}
-                        onClick={() => postFeedback(active.id)}
-                      >
-                        Post feedback
+                      <Button variant="outline" disabled={!comment.trim()} onClick={() => postFeedback(active.id)}>
+                        Send note
                       </Button>
-                      <Button disabled={active.status !== "Pending"} onClick={() => decide(active.id, "Approved")}>
-                        <Check className="size-4" /> Approve
-                      </Button>
-                      <Button
-                        variant="destructive"
-                        disabled={active.status !== "Pending"}
-                        onClick={() => decide(active.id, "Rejected")}
-                      >
-                        <X className="size-4" /> Reject
-                      </Button>
+                      {active.status === "Pending" ? (
+                        <>
+                          <Button onClick={() => decide(active.id, "Approved")}>
+                            <Check className="size-4" /> Approve
+                          </Button>
+                          <Button variant="destructive" onClick={() => decide(active.id, "Rejected")}>
+                            <X className="size-4" /> Reject
+                          </Button>
+                        </>
+                      ) : (
+                        <Button variant="ghost" onClick={() => reopen(active.id)}>
+                          Reopen request
+                        </Button>
+                      )}
                     </div>
                     <p className="text-xs text-muted-foreground">
-                      Feedback and decisions are available only while the request is pending.
+                      {active.status === "Pending"
+                        ? "Any note typed above is attached to your decision."
+                        : `This request is ${active.status.toLowerCase()}. You can still add notes or reopen it.`}
                     </p>
+
 
                     <div>
                       <p className="mb-2 text-xs uppercase tracking-wide text-muted-foreground">Feedback history</p>
