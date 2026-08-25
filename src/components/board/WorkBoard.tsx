@@ -502,7 +502,12 @@ export function WorkBoard({
                               value={sub.dueDate}
                               onChange={(v) => patchSub(group.id, item.id, sub.id, { dueDate: v })}
                             />
-                            <div />
+                            <TimingBar
+                              start={sub.startDate}
+                              due={sub.dueDate}
+                              done={sub.status === "Completed"}
+                            />
+
                             {columns.map((col) => (
                               <div key={col.id} />
                             ))}
