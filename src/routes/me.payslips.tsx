@@ -39,6 +39,11 @@ export const Route = createFileRoute("/me/payslips")({
   component: Page,
 });
 
+const periodText = (m: Date) => {
+  const p = periodLabel(m);
+  return `${p.from} – ${p.to}`;
+};
+
 function Line({
   label,
   value,
@@ -68,7 +73,7 @@ function Line({
 
 function downloadPayslip(row: PayrollRow, month: Date) {
   const lines = [
-    `OmniWork Payslip — ${periodLabel(month)}`,
+    `OmniWork Payslip — ${periodText(month)}`,
     "",
     `Employee: ${row.employee} (${row.employeeCode})`,
     `Designation: ${row.designation}`,
@@ -149,7 +154,7 @@ function Page() {
       ) : (
         <>
           <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <StatCard icon={Wallet} label="Net pay" value={formatBDT(netPay(row))} caption={periodLabel(month)} highlight />
+            <StatCard icon={Wallet} label="Net pay" value={formatBDT(netPay(row))} caption={periodText(month)} highlight />
             <StatCard icon={Plus} label="Earnings added" value={formatBDT(sumAdjustments(row.bonuses) + sumAdjustments(row.incentives))} caption="Bonuses + incentives" />
             <StatCard icon={Minus} label="Deductions" value={formatBDT(sumAdjustments(row.deductions) + absenceDeduction)} caption="Including absences" />
             <StatCard icon={Wallet} label="Daily rate" value={formatBDT(row.dailyRate)} caption="Used for absence maths" />
@@ -158,7 +163,7 @@ function Page() {
           <div className="grid gap-6 lg:grid-cols-3">
             <section className="rounded-xl border border-border bg-card p-5 lg:col-span-2">
               <div className="mb-4 flex flex-wrap items-center gap-2">
-                <h2 className="text-sm font-semibold">Payslip · {periodLabel(month)}</h2>
+                <h2 className="text-sm font-semibold">Payslip · {periodText(month)}</h2>
                 <Badge variant="outline" className={payrollStatusTone[row.status]}>
                   {row.status}
                 </Badge>
@@ -174,13 +179,13 @@ function Page() {
 
               <Line label="Base salary" value={formatBDT(row.baseSalary)} />
               {row.bonuses.map((b) => (
-                <Line key={b.id} label={`Bonus · ${b.label}`} value={`+${formatBDT(b.amount)}`} tone="positive" />
+                <Line key={b.id} label={`Bonus · ${b.note}`} value={`+${formatBDT(b.amount)}`} tone="positive" />
               ))}
               {row.incentives.map((b) => (
-                <Line key={b.id} label={`Incentive · ${b.label}`} value={`+${formatBDT(b.amount)}`} tone="positive" />
+                <Line key={b.id} label={`Incentive · ${b.note}`} value={`+${formatBDT(b.amount)}`} tone="positive" />
               ))}
               {row.deductions.map((b) => (
-                <Line key={b.id} label={`Deduction · ${b.label}`} value={`-${formatBDT(b.amount)}`} tone="negative" />
+                <Line key={b.id} label={`Deduction · ${b.note}`} value={`-${formatBDT(b.amount)}`} tone="negative" />
               ))}
               {absenceDeduction > 0 && (
                 <Line
