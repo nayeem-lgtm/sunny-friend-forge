@@ -435,13 +435,24 @@ export function TimingBar({
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <button
-          type="button"
+        <div
+          role="button"
+          tabIndex={0}
           aria-label="Open timing schedule"
-          className="w-full cursor-pointer rounded py-1 hover:bg-muted/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          onClick={(event) => {
+            event.stopPropagation();
+            setOpen(true);
+          }}
+          onKeyDown={(event) => {
+            if (event.key === "Enter" || event.key === " ") {
+              event.preventDefault();
+              setOpen(true);
+            }
+          }}
+          className="w-full cursor-pointer py-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
         >
           {bar}
-        </button>
+        </div>
       </PopoverTrigger>
       <PopoverContent className="w-auto max-w-[calc(100vw-2rem)] p-3" align="center">
         <div className="mb-3 flex items-center justify-between gap-6">
