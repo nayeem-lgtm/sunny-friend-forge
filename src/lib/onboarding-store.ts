@@ -29,6 +29,7 @@ export type OnboardingSubmission = {
   fields: Record<string, string>;
   files: UploadedFile[];
   consent?: ConsentRecord;
+  reviewedDocuments?: string[];
 };
 
 export type OnboardingInvite = {
