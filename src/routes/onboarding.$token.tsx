@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { StatusPill } from "@/components/shared/StatusPill";
 import { OnboardingFormFields } from "@/components/employees/OnboardingFormFields";
 import { ConsentStep } from "@/components/employees/ConsentStep";
-import { DocumentReviewStep } from "@/components/employees/DocumentReviewStep";
 import { ConfirmSubmitStep } from "@/components/employees/ConfirmSubmitStep";
 import { consentClauses, consentDocument } from "@/lib/consent-data";
 import {
@@ -48,7 +47,7 @@ export const Route = createFileRoute("/onboarding/$token")({
 
 const MAX_INLINE = 1_500_000;
 
-type Step = 0 | 1 | 2 | 3;
+type Step = 0 | 1 | 2;
 
 function Page() {
   const { token } = Route.useParams();
@@ -61,7 +60,6 @@ function Page() {
   const [done, setDone] = useState(false);
   const [config, setConfig] = useState<OnboardingFormConfig>(defaultOnboardingConfig);
   const [step, setStep] = useState<Step>(0);
-  const [reviewedDocs, setReviewedDocs] = useState<string[]>([]);
   const [acknowledged, setAcknowledged] = useState<string[]>([]);
   const [signedName, setSignedName] = useState("");
   const [signatureImage, setSignatureImage] = useState<string | undefined>();
@@ -99,14 +97,12 @@ function Page() {
     setFiles((prev) => [...prev.filter((f) => f.slot !== slot), entry]);
   };
 
-  const reviewTotal = config.documents.length + 1;
-
   const go = (next: Step) => {
     setStep(next);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const goToDocuments = () => {
+  const goToConsent = () => {
     const missing = config.groups
       .flatMap((g) => g.fields)
       .filter((f) => f.required && !values[f.key]?.trim());
@@ -115,14 +111,6 @@ function Page() {
       return;
     }
     go(1);
-  };
-
-  const goToConsent = () => {
-    if (reviewedDocs.length < reviewTotal) {
-      toast.error("Please open and mark every document as reviewed before signing.");
-      return;
-    }
-    go(2);
   };
 
   const goToConfirm = () => {
@@ -135,7 +123,7 @@ function Page() {
       toast.error("Signing is required — type your full legal name to sign.");
       return;
     }
-    go(3);
+    go(2);
   };
 
   const submit = () => {
@@ -164,7 +152,6 @@ function Page() {
       fields: values,
       files,
       consent,
-      reviewedDocuments: reviewedDocs,
     };
     upsertSubmission(submission);
     setInviteStatus(token, "Submitted");
@@ -249,37 +236,14 @@ function Page() {
               onRemoveFile={(slot) => setFiles((prev) => prev.filter((f) => f.slot !== slot))}
             />
             <div className="flex justify-end pb-12">
-              <Button size="lg" onClick={goToDocuments}>
-                Continue to document review <ArrowRight className="size-4" />
+              <Button size="lg" onClick={goToConsent}>
+                Continue to consent & signature <ArrowRight className="size-4" />
               </Button>
             </div>
           </>
         )}
 
         {step === 1 && (
-          <>
-            <DocumentReviewStep
-              documents={config.documents}
-              files={files}
-              reviewed={reviewedDocs}
-              onToggle={(slot, checked) =>
-                setReviewedDocs((prev) =>
-                  checked ? [...new Set([...prev, slot])] : prev.filter((x) => x !== slot),
-                )
-              }
-            />
-            <div className="flex flex-wrap justify-between gap-3 pb-12">
-              <Button variant="outline" size="lg" onClick={() => go(0)}>
-                <ArrowLeft className="size-4" /> Back to details
-              </Button>
-              <Button size="lg" onClick={goToConsent}>
-                Continue to consent <ArrowRight className="size-4" />
-              </Button>
-            </div>
-          </>
-        )}
-
-        {step === 2 && (
           <>
             <ConsentStep
               fullName={`${values["firstName"] ?? ""} ${values["lastName"] ?? ""}`.trim()}
@@ -295,8 +259,8 @@ function Page() {
               onSignatureImage={setSignatureImage}
             />
             <div className="flex flex-wrap justify-between gap-3 pb-12">
-              <Button variant="outline" size="lg" onClick={() => go(1)}>
-                <ArrowLeft className="size-4" /> Back to documents
+              <Button variant="outline" size="lg" onClick={() => go(0)}>
+                <ArrowLeft className="size-4" /> Back to details
               </Button>
               <Button size="lg" onClick={goToConfirm}>
                 Continue to confirm <ArrowRight className="size-4" />
@@ -305,21 +269,19 @@ function Page() {
           </>
         )}
 
-        {step === 3 && (
+        {step === 2 && (
           <>
             <ConfirmSubmitStep
               fullName={`${values["firstName"] ?? ""} ${values["lastName"] ?? ""}`.trim()}
               email={values["email"] ?? invite.email}
               documents={config.documents}
               files={files}
-              reviewedCount={reviewedDocs.length}
-              reviewedTotal={reviewTotal}
               acknowledged={acknowledged}
               signedName={signedName}
               signatureImage={signatureImage}
             />
             <div className="flex flex-wrap justify-between gap-3 pb-12">
-              <Button variant="outline" size="lg" onClick={() => go(2)}>
+              <Button variant="outline" size="lg" onClick={() => go(1)}>
                 <ArrowLeft className="size-4" /> Back to signature
               </Button>
               <Button size="lg" onClick={submit} disabled={submitting || !signedName.trim()}>
@@ -335,9 +297,9 @@ function Page() {
 }
 
 function Stepper({ step }: { step: Step }) {
-  const steps = ["Your details", "Document review", "Consent & signature", "Confirm & submit"];
+  const steps = ["Your details", "Consent & signature", "Confirm & submit"];
   return (
-    <div className="mb-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="mb-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
       {steps.map((label, i) => {
         const active = i === step;
         const done = i < step;

@@ -13,12 +13,14 @@ export function DocumentReviewStep({
   reviewed,
   onToggle,
   disabled,
+  hrMode,
 }: {
   documents: string[];
   files: UploadedFile[];
   reviewed: string[];
   onToggle?: (slot: string, checked: boolean) => void;
   disabled?: boolean;
+  hrMode?: boolean;
 }) {
   const rows = [
     {
@@ -36,7 +38,9 @@ export function DocumentReviewStep({
         label: slot,
         hint: file
           ? `${file.name} · ${(file.size / 1000).toFixed(0)} KB`
-          : "Not uploaded — you can go back and add it",
+          : hrMode
+            ? "Not uploaded by the employee"
+            : "Not uploaded — you can go back and add it",
         name: file?.name ?? "",
         href: file?.dataUrl,
         uploaded: Boolean(file),
@@ -50,9 +54,13 @@ export function DocumentReviewStep({
     <section className="rounded-xl border border-border bg-card p-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="text-base font-semibold">Review your documents</h2>
+          <h2 className="text-base font-semibold">
+            {hrMode ? "Document review" : "Review your documents"}
+          </h2>
           <p className="text-sm text-muted-foreground">
-            Open each file, confirm it is correct and readable, then mark it as reviewed.
+            {hrMode
+              ? "Open each submitted file, verify it, and mark it reviewed before approving."
+              : "Open each file, confirm it is correct and readable, then mark it as reviewed."}
           </p>
         </div>
         <span className="rounded-full border border-border px-3 py-1 text-xs text-muted-foreground">
@@ -115,8 +123,12 @@ export function DocumentReviewStep({
       >
         <CheckCircle2 className="size-3.5" />
         {doneCount === rows.length
-          ? "All documents reviewed — you can continue to signing."
-          : "Mark every document as reviewed to continue to signing."}
+          ? hrMode
+            ? "All documents reviewed — you can approve this submission."
+            : "All documents reviewed — you can continue to signing."
+          : hrMode
+            ? "Mark every document as reviewed to enable approval."
+            : "Mark every document as reviewed to continue to signing."}
       </p>
     </section>
   );
