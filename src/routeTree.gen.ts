@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AnnouncementsRouteImport } from './routes/announcements'
 import { Route as AttendanceRouteImport } from './routes/attendance'
+import { Route as ChatRouteImport } from './routes/chat'
 import { Route as DepartmentsRouteImport } from './routes/departments'
 import { Route as EmployeesRouteImport } from './routes/employees'
 import { Route as HolidaysRouteImport } from './routes/holidays'
@@ -39,6 +40,11 @@ const AnnouncementsRoute = AnnouncementsRouteImport.update({
 const AttendanceRoute = AttendanceRouteImport.update({
   id: '/attendance',
   path: '/attendance',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ChatRoute = ChatRouteImport.update({
+  id: '/chat',
+  path: '/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DepartmentsRoute = DepartmentsRouteImport.update({
@@ -111,6 +117,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/announcements': typeof AnnouncementsRoute
   '/attendance': typeof AttendanceRoute
+  '/chat': typeof ChatRoute
   '/departments': typeof DepartmentsRoute
   '/employees': typeof EmployeesRoute
   '/holidays': typeof HolidaysRoute
@@ -129,6 +136,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/announcements': typeof AnnouncementsRoute
   '/attendance': typeof AttendanceRoute
+  '/chat': typeof ChatRoute
   '/departments': typeof DepartmentsRoute
   '/employees': typeof EmployeesRoute
   '/holidays': typeof HolidaysRoute
@@ -148,6 +156,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/announcements': typeof AnnouncementsRoute
   '/attendance': typeof AttendanceRoute
+  '/chat': typeof ChatRoute
   '/departments': typeof DepartmentsRoute
   '/employees': typeof EmployeesRoute
   '/holidays': typeof HolidaysRoute
@@ -168,6 +177,7 @@ export interface FileRouteTypes {
     | '/'
     | '/announcements'
     | '/attendance'
+    | '/chat'
     | '/departments'
     | '/employees'
     | '/holidays'
@@ -186,6 +196,7 @@ export interface FileRouteTypes {
     | '/'
     | '/announcements'
     | '/attendance'
+    | '/chat'
     | '/departments'
     | '/employees'
     | '/holidays'
@@ -204,6 +215,7 @@ export interface FileRouteTypes {
     | '/'
     | '/announcements'
     | '/attendance'
+    | '/chat'
     | '/departments'
     | '/employees'
     | '/holidays'
@@ -223,6 +235,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AnnouncementsRoute: typeof AnnouncementsRoute
   AttendanceRoute: typeof AttendanceRoute
+  ChatRoute: typeof ChatRoute
   DepartmentsRoute: typeof DepartmentsRoute
   EmployeesRoute: typeof EmployeesRoute
   HolidaysRoute: typeof HolidaysRoute
@@ -259,6 +272,13 @@ declare module '@tanstack/react-router' {
       path: '/attendance'
       fullPath: '/attendance'
       preLoaderRoute: typeof AttendanceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/chat': {
+      id: '/chat'
+      path: '/chat'
+      fullPath: '/chat'
+      preLoaderRoute: typeof ChatRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/departments': {
@@ -359,6 +379,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AnnouncementsRoute: AnnouncementsRoute,
   AttendanceRoute: AttendanceRoute,
+  ChatRoute: ChatRoute,
   DepartmentsRoute: DepartmentsRoute,
   EmployeesRoute: EmployeesRoute,
   HolidaysRoute: HolidaysRoute,
