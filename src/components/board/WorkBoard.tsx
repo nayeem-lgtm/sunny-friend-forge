@@ -8,7 +8,7 @@ import {
   X,
 } from "lucide-react";
 
-import { DateCell, PeopleCell, PriorityCell, ProgressBar, StatusCell, TextCell } from "@/components/board/cells";
+import { DateCell, PeopleCell, PriorityCell, StatusCell, TextCell, TimingBar } from "@/components/board/cells";
 import { ItemPanel } from "@/components/board/ItemPanel";
 import { MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -331,7 +331,7 @@ export function WorkBoard({
                 <div className="text-center">Priority</div>
                 <div className="text-center">Start</div>
                 <div className="text-center">Due</div>
-                <div className="text-center">Progress</div>
+                <div className="text-center">Timing</div>
                 {columns.map((col) => (
                   <div key={col.id} className="flex items-center justify-center gap-1">
                     <span className="truncate">{col.label}</span>
@@ -435,7 +435,13 @@ export function WorkBoard({
                         overdue={item.status !== "Completed" && item.dueDate < new Date().toISOString().slice(0, 10)}
                         onChange={(v) => patchItem(group.id, item.id, { dueDate: v })}
                       />
-                      <ProgressBar value={itemProgress(item, board.statusLabels)} />
+                      <TimingBar
+                        start={item.startDate}
+                        due={item.dueDate}
+                        fallback={itemProgress(item, board.statusLabels)}
+                        done={item.status === "Completed"}
+                      />
+
                       {columns.map((col) => (
                         <ColumnCell
                           key={col.id}
@@ -496,7 +502,12 @@ export function WorkBoard({
                               value={sub.dueDate}
                               onChange={(v) => patchSub(group.id, item.id, sub.id, { dueDate: v })}
                             />
-                            <div />
+                            <TimingBar
+                              start={sub.startDate}
+                              due={sub.dueDate}
+                              done={sub.status === "Completed"}
+                            />
+
                             {columns.map((col) => (
                               <div key={col.id} />
                             ))}
