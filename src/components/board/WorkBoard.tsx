@@ -8,7 +8,7 @@ import {
   X,
 } from "lucide-react";
 
-import { DateCell, PeopleCell, PriorityCell, ProgressBar, StatusCell, TextCell } from "@/components/board/cells";
+import { DateCell, PeopleCell, PriorityCell, StatusCell, TextCell, TimingBar } from "@/components/board/cells";
 import { ItemPanel } from "@/components/board/ItemPanel";
 import { MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
