@@ -307,32 +307,44 @@ function formatSpan(ms: number) {
   return `${m}m`;
 }
 
-/** Time-based progress between start and due datetimes. */
+/** Time-based progress between start and due datetimes. Clicking opens timing options. */
 export function TimingBar({
   start,
   due,
   fallback = 0,
   done,
+  onStartChange,
+  onDueChange,
 }: {
   start: string;
   due: string;
   fallback?: number;
   done?: boolean;
+  onStartChange?: (v: string) => void;
+  onDueChange?: (v: string) => void;
 }) {
+  const [open, setOpen] = useState(false);
   const s = parseWhen(start);
   const e = parseWhen(due);
   const now = Date.now();
 
-  if (s === null || e === null || e <= s) {
-    return <ProgressBar value={fallback} />;
-  }
+  const valid = s !== null && e !== null && e > s;
+  const pct = !valid
+    ? fallback
+    : done
+      ? 100
+      : Math.min(100, Math.max(0, Math.round(((now - s!) / (e! - s!)) * 100)));
+  const remaining = valid ? e! - now : 0;
+  const overdue = valid && !done && remaining < 0;
+  const label = !valid
+    ? "Set timing"
+    : done
+      ? "Done"
+      : overdue
+        ? `${formatSpan(-remaining)} over`
+        : `${formatSpan(remaining)} left`;
 
-  const pct = done ? 100 : Math.min(100, Math.max(0, Math.round(((now - s) / (e - s)) * 100)));
-  const remaining = e - now;
-  const overdue = !done && remaining < 0;
-  const label = done ? "Done" : overdue ? `${formatSpan(-remaining)} over` : `${formatSpan(remaining)} left`;
-
-  return (
+  const bar = (
     <div className="mx-auto w-28">
       <div className="h-2 overflow-hidden rounded-full bg-muted">
         <div
@@ -353,7 +365,48 @@ export function TimingBar({
       </span>
     </div>
   );
+
+  if (!onStartChange && !onDueChange) return bar;
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <button type="button" className="w-full rounded py-1 hover:bg-muted/60">
+          {bar}
+        </button>
+      </PopoverTrigger>
+      <PopoverContent className="w-64 space-y-3 p-3" align="center">
+        <div className="text-xs font-semibold">Timing</div>
+        {onStartChange ? (
+          <label className="block space-y-1">
+            <span className="text-[11px] text-muted-foreground">Start</span>
+            <Input
+              type="datetime-local"
+              value={start ? (start.length > 10 ? start.slice(0, 16) : `${start}T09:00`) : ""}
+              onChange={(ev) => onStartChange(ev.target.value)}
+              className="h-8 text-xs"
+            />
+          </label>
+        ) : null}
+        {onDueChange ? (
+          <label className="block space-y-1">
+            <span className="text-[11px] text-muted-foreground">Due</span>
+            <Input
+              type="datetime-local"
+              value={due ? (due.length > 10 ? due.slice(0, 16) : `${due}T18:00`) : ""}
+              onChange={(ev) => onDueChange(ev.target.value)}
+              className="h-8 text-xs"
+            />
+          </label>
+        ) : null}
+        <Button variant="ghost" size="sm" className="h-7 w-full text-xs" onClick={() => setOpen(false)}>
+          Done
+        </Button>
+      </PopoverContent>
+    </Popover>
+  );
 }
+
 
 
 
