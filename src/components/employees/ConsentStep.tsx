@@ -6,7 +6,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { consentClauses, consentDocument, consentSections } from "@/lib/consent-data";
+import { consentClauses, consentDocument } from "@/lib/consent-data";
+import { policySections } from "@/lib/policy-text";
 
 export function ConsentStep({
   fullName,
@@ -105,7 +106,7 @@ export function ConsentStep({
           }`}
         >
           <CheckCircle2 className="size-3.5" />
-          {reviewed ? "You have reviewed the full policy summary." : "Scroll to the end to review the full policy."}
+          {reviewed ? "You have reviewed the full policy text." : "Scroll to the end to review the full policy text."}
         </p>
       </section>
 
