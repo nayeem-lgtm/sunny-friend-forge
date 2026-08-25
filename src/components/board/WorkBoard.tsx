@@ -331,7 +331,7 @@ export function WorkBoard({
                 <div className="text-center">Priority</div>
                 <div className="text-center">Start</div>
                 <div className="text-center">Due</div>
-                <div className="text-center">Progress</div>
+                <div className="text-center">Timing</div>
                 {columns.map((col) => (
                   <div key={col.id} className="flex items-center justify-center gap-1">
                     <span className="truncate">{col.label}</span>
