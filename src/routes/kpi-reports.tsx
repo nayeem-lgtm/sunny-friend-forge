@@ -1361,3 +1361,321 @@ function KpiSettingsPanel({
     </div>
   );
 }
+
+/* ------------------------- Email reports ------------------------- */
+
+function EmailReportsPanel({
+  kpis,
+  periodLabel,
+  today,
+  previousScore,
+  onLog,
+}: {
+  kpis: EmployeeKpi[];
+  periodLabel: string;
+  today: Date;
+  previousScore: (name: string) => number | null;
+  onLog: (count: number) => void;
+}) {
+  const [settings, setSettings] = useState<KpiEmailSettings>(defaultKpiEmailSettings);
+  const [history, setHistory] = useState<KpiEmailRecord[]>([]);
+  const [selected, setSelected] = useState<string[]>([]);
+  const [preview, setPreview] = useState<EmployeeKpi | null>(null);
+  const [sending, setSending] = useState(false);
+
+  useEffect(() => {
+    setSettings(loadKpiEmailSettings());
+    setHistory(loadKpiEmailHistory());
+  }, []);
+
+  useEffect(() => {
+    setSelected(kpis.map((k) => k.name));
+  }, [kpis]);
+
+  const patch = (p: Partial<KpiEmailSettings>) => {
+    const next = { ...settings, ...p };
+    setSettings(next);
+    saveKpiEmailSettings(next);
+  };
+
+  const toggle = (name: string) =>
+    setSelected((prev) => (prev.includes(name) ? prev.filter((n) => n !== name) : [...prev, name]));
+
+  const recipients = kpis.filter((k) => selected.includes(k.name));
+
+  const send = () => {
+    if (!recipients.length) {
+      toast.error("Select at least one employee");
+      return;
+    }
+    setSending(true);
+    window.setTimeout(() => {
+      const rows: KpiEmailRecord[] = recipients.map((k) => ({
+        id: `mail-${Date.now()}-${k.employeeId}`,
+        employee: k.name,
+        employeeId: k.employeeId,
+        email: employeeEmail(k.name),
+        subject: fillSubject(settings.subject, periodLabel, k),
+        period: periodLabel,
+        score: k.total,
+        tier: k.tier.label,
+        sentAt: new Date().toISOString(),
+        status: "Sent",
+      }));
+      const next = [...rows, ...history];
+      setHistory(next);
+      saveKpiEmailHistory(next);
+      onLog(rows.length);
+      setSending(false);
+      toast.success(`KPI report sent to ${rows.length} employee(s)`, {
+        description: `Period ${periodLabel}${settings.ccManagement ? ` · copy to ${settings.ccManagement}` : ""}`,
+      });
+    }, 600);
+  };
+
+  const downloadOne = (k: EmployeeKpi) => {
+    const html = buildKpiEmailHtml(k, periodLabel, settings, {
+      previousScore: previousScore(k.name),
+    });
+    const url = URL.createObjectURL(new Blob([html], { type: "text/html" }));
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `kpi-report-${k.employeeId}.html`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const next = nextSendDate(settings, today);
+
+  return (
+    <div className="grid gap-5 lg:grid-cols-[1fr_360px]">
+      {/* recipients */}
+      <div className="space-y-5">
+        <div className="rounded-xl border border-border bg-card p-5">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h3 className="text-sm font-semibold">Recipients</h3>
+              <p className="mt-1 text-xs text-muted-foreground">
+                {recipients.length} of {kpis.length} employees in the current filter · period {periodLabel}
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button variant="outline" size="sm" onClick={() => setSelected(kpis.map((k) => k.name))}>
+                Select all
+              </Button>
+              <Button variant="outline" size="sm" onClick={() => setSelected([])}>
+                Clear
+              </Button>
+              <Button size="sm" onClick={send} disabled={sending}>
+                <Send className="mr-2 size-4" />
+                {sending ? "Sending…" : `Send report (${recipients.length})`}
+              </Button>
+            </div>
+          </div>
+
+          <div className="mt-4 max-h-[420px] overflow-y-auto rounded-lg border border-border">
+            <table className="w-full text-sm">
+              <thead className="sticky top-0 bg-secondary/60 text-xs uppercase text-muted-foreground">
+                <tr>
+                  <th className="w-10 px-3 py-2" />
+                  <th className="px-3 py-2 text-left">Employee</th>
+                  <th className="px-3 py-2 text-left">Email</th>
+                  <th className="px-3 py-2 text-right">Score</th>
+                  <th className="px-3 py-2 text-right">Report</th>
+                </tr>
+              </thead>
+              <tbody>
+                {kpis.map((k) => (
+                  <tr key={k.employeeId} className="border-t border-border">
+                    <td className="px-3 py-2">
+                      <Checkbox
+                        checked={selected.includes(k.name)}
+                        onCheckedChange={() => toggle(k.name)}
+                        aria-label={`Select ${k.name}`}
+                      />
+                    </td>
+                    <td className="px-3 py-2">
+                      <p className="font-medium">{k.name}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {k.employeeId} · {k.department}
+                      </p>
+                    </td>
+                    <td className="px-3 py-2 text-xs text-muted-foreground">
+                      {employeeEmail(k.name)}
+                    </td>
+                    <td className="px-3 py-2 text-right font-semibold">{k.total.toFixed(1)}</td>
+                    <td className="px-3 py-2 text-right">
+                      <Button variant="ghost" size="sm" onClick={() => setPreview(k)}>
+                        Preview
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+                {!kpis.length && (
+                  <tr>
+                    <td colSpan={5} className="px-3 py-8 text-center text-sm text-muted-foreground">
+                      No employees in the current filter.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* history */}
+        <div className="rounded-xl border border-border bg-card p-5">
+          <h3 className="text-sm font-semibold">Send history</h3>
+          {history.length ? (
+            <div className="mt-3 max-h-72 space-y-2 overflow-y-auto">
+              {history.map((h) => (
+                <div
+                  key={h.id}
+                  className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-border px-3 py-2 text-sm"
+                >
+                  <span className="flex items-center gap-2">
+                    <Mail className="size-4 text-primary" />
+                    <span className="font-medium">{h.employee}</span>
+                    <span className="text-xs text-muted-foreground">{h.email}</span>
+                  </span>
+                  <span className="text-xs text-muted-foreground">
+                    {h.score.toFixed(1)} · {h.tier} · {formatDateTime(h.sentAt)}
+                  </span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="mt-2 text-sm text-muted-foreground">No KPI emails sent yet.</p>
+          )}
+        </div>
+      </div>
+
+      {/* settings */}
+      <div className="space-y-5">
+        <div className="rounded-xl border border-border bg-card p-5">
+          <h3 className="text-sm font-semibold">Monthly schedule</h3>
+          <div className="mt-4 flex items-center justify-between gap-3">
+            <div>
+              <p className="text-sm">Auto-send at month end</p>
+              <p className="text-xs text-muted-foreground">
+                Next dispatch {formatDate(next)}
+              </p>
+            </div>
+            <Switch
+              checked={settings.autoSend}
+              onCheckedChange={(v) => patch({ autoSend: v })}
+            />
+          </div>
+          <div className="mt-4">
+            <label className="text-xs text-muted-foreground">Send day</label>
+            <Select
+              value={String(settings.sendDay)}
+              onValueChange={(v) => patch({ sendDay: Number(v) })}
+            >
+              <SelectTrigger className="mt-1">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="0">Last day of month</SelectItem>
+                {[1, 5, 10, 15, 25, 28].map((d) => (
+                  <SelectItem key={d} value={String(d)}>
+                    Day {d}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        <div className="rounded-xl border border-border bg-card p-5 space-y-4">
+          <h3 className="text-sm font-semibold">Email content</h3>
+          <div>
+            <label className="text-xs text-muted-foreground">
+              Subject — {"{period} {name} {score} {tier}"}
+            </label>
+            <Input
+              className="mt-1"
+              value={settings.subject}
+              onChange={(e) => patch({ subject: e.target.value })}
+            />
+          </div>
+          <div>
+            <label className="text-xs text-muted-foreground">Intro message</label>
+            <Textarea
+              className="mt-1"
+              rows={4}
+              value={settings.intro}
+              onChange={(e) => patch({ intro: e.target.value })}
+            />
+          </div>
+          <div>
+            <label className="text-xs text-muted-foreground">Signature</label>
+            <Input
+              className="mt-1"
+              value={settings.signature}
+              onChange={(e) => patch({ signature: e.target.value })}
+            />
+          </div>
+          <div>
+            <label className="text-xs text-muted-foreground">Copy to management</label>
+            <Input
+              className="mt-1"
+              value={settings.ccManagement}
+              onChange={(e) => patch({ ccManagement: e.target.value })}
+            />
+          </div>
+          {(
+            [
+              ["includeAttendance", "Attendance, work hours, breaks & work logs"],
+              ["includeTaskBreakdown", "Task & work performance breakdown"],
+              ["includeTrendNote", "Comparison with previous period"],
+            ] as const
+          ).map(([key, label]) => (
+            <div key={key} className="flex items-center justify-between gap-3">
+              <span className="text-sm">{label}</span>
+              <Switch checked={settings[key]} onCheckedChange={(v) => patch({ [key]: v })} />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* preview */}
+      <Dialog open={!!preview} onOpenChange={(o) => !o && setPreview(null)}>
+        <DialogContent className="max-h-[88vh] max-w-3xl overflow-y-auto">
+          {preview && (
+            <>
+              <DialogHeader>
+                <DialogTitle>{fillSubject(settings.subject, periodLabel, preview)}</DialogTitle>
+              </DialogHeader>
+              <p className="text-xs text-muted-foreground">
+                To {employeeEmail(preview.name)}
+                {settings.ccManagement ? ` · cc ${settings.ccManagement}` : ""}
+              </p>
+              <iframe
+                title="KPI email preview"
+                className="h-[520px] w-full rounded-lg border border-border bg-white"
+                srcDoc={buildKpiEmailHtml(preview, periodLabel, settings, {
+                  previousScore: previousScore(preview.name),
+                })}
+              />
+              <div className="flex flex-wrap justify-end gap-2">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    void navigator.clipboard?.writeText(buildKpiEmailText(preview, periodLabel));
+                    toast.success("Plain-text summary copied");
+                  }}
+                >
+                  Copy summary
+                </Button>
+                <Button variant="outline" onClick={() => downloadOne(preview)}>
+                  Download HTML
+                </Button>
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
