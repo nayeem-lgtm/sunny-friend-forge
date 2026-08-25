@@ -6,8 +6,10 @@ import {
   CircleSlash,
   Eye,
   Globe,
+  Monitor,
   Search,
 } from "lucide-react";
+
 import { useEffect, useMemo, useState } from "react";
 import type { DateRange } from "react-day-picker";
 
