@@ -182,12 +182,18 @@ function LoginPage() {
 
           <div className="mb-8 space-y-2 text-center">
             <h2 className="text-2xl font-semibold tracking-tight text-foreground">
-              {mode === "signin" ? "Welcome back" : "Create your account"}
+              {mode === "signin"
+                ? "Welcome back"
+                : mode === "signup"
+                ? "Create your account"
+                : "Reset your password"}
             </h2>
             <p className="text-sm text-muted-foreground">
               {mode === "signin"
                 ? "Sign in to access your workspace."
-                : "Sign up to join the OmniWork workspace."}
+                : mode === "signup"
+                ? "Sign up to join the OmniWork workspace."
+                : "Enter your work email and we'll send you a reset link."}
             </p>
           </div>
 
