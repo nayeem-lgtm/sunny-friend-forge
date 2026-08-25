@@ -35,6 +35,7 @@ import { Route as MeBoardRouteImport } from './routes/me.board'
 import { Route as MeChatRouteImport } from './routes/me.chat'
 import { Route as MeKpiRouteImport } from './routes/me.kpi'
 import { Route as MeLeaveRouteImport } from './routes/me.leave'
+import { Route as MeMeetingsRouteImport } from './routes/me.meetings'
 import { Route as MeWorklogsRouteImport } from './routes/me.worklogs'
 import { Route as OnboardingTokenRouteImport } from './routes/onboarding.$token'
 
@@ -168,6 +169,11 @@ const MeLeaveRoute = MeLeaveRouteImport.update({
   path: '/me/leave',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MeMeetingsRoute = MeMeetingsRouteImport.update({
+  id: '/me/meetings',
+  path: '/me/meetings',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MeWorklogsRoute = MeWorklogsRouteImport.update({
   id: '/me/worklogs',
   path: '/me/worklogs',
@@ -205,6 +211,7 @@ export interface FileRoutesByFullPath {
   '/me/chat': typeof MeChatRoute
   '/me/kpi': typeof MeKpiRoute
   '/me/leave': typeof MeLeaveRoute
+  '/me/meetings': typeof MeMeetingsRoute
   '/me/worklogs': typeof MeWorklogsRoute
   '/onboarding/$token': typeof OnboardingTokenRoute
   '/me/': typeof MeIndexRoute
@@ -235,6 +242,7 @@ export interface FileRoutesByTo {
   '/me/chat': typeof MeChatRoute
   '/me/kpi': typeof MeKpiRoute
   '/me/leave': typeof MeLeaveRoute
+  '/me/meetings': typeof MeMeetingsRoute
   '/me/worklogs': typeof MeWorklogsRoute
   '/onboarding/$token': typeof OnboardingTokenRoute
   '/me': typeof MeIndexRoute
@@ -266,6 +274,7 @@ export interface FileRoutesById {
   '/me/chat': typeof MeChatRoute
   '/me/kpi': typeof MeKpiRoute
   '/me/leave': typeof MeLeaveRoute
+  '/me/meetings': typeof MeMeetingsRoute
   '/me/worklogs': typeof MeWorklogsRoute
   '/onboarding/$token': typeof OnboardingTokenRoute
   '/me/': typeof MeIndexRoute
@@ -298,6 +307,7 @@ export interface FileRouteTypes {
     | '/me/chat'
     | '/me/kpi'
     | '/me/leave'
+    | '/me/meetings'
     | '/me/worklogs'
     | '/onboarding/$token'
     | '/me/'
@@ -328,6 +338,7 @@ export interface FileRouteTypes {
     | '/me/chat'
     | '/me/kpi'
     | '/me/leave'
+    | '/me/meetings'
     | '/me/worklogs'
     | '/onboarding/$token'
     | '/me'
@@ -358,6 +369,7 @@ export interface FileRouteTypes {
     | '/me/chat'
     | '/me/kpi'
     | '/me/leave'
+    | '/me/meetings'
     | '/me/worklogs'
     | '/onboarding/$token'
     | '/me/'
@@ -389,6 +401,7 @@ export interface RootRouteChildren {
   MeChatRoute: typeof MeChatRoute
   MeKpiRoute: typeof MeKpiRoute
   MeLeaveRoute: typeof MeLeaveRoute
+  MeMeetingsRoute: typeof MeMeetingsRoute
   MeWorklogsRoute: typeof MeWorklogsRoute
   OnboardingTokenRoute: typeof OnboardingTokenRoute
   MeIndexRoute: typeof MeIndexRoute
@@ -578,6 +591,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MeLeaveRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/me/meetings': {
+      id: '/me/meetings'
+      path: '/me/meetings'
+      fullPath: '/me/meetings'
+      preLoaderRoute: typeof MeMeetingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/me/worklogs': {
       id: '/me/worklogs'
       path: '/me/worklogs'
@@ -621,6 +641,7 @@ const rootRouteChildren: RootRouteChildren = {
   MeChatRoute: MeChatRoute,
   MeKpiRoute: MeKpiRoute,
   MeLeaveRoute: MeLeaveRoute,
+  MeMeetingsRoute: MeMeetingsRoute,
   MeWorklogsRoute: MeWorklogsRoute,
   OnboardingTokenRoute: OnboardingTokenRoute,
   MeIndexRoute: MeIndexRoute,
