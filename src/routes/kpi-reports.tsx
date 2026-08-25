@@ -443,8 +443,10 @@ function Page() {
           <TabsTrigger value="alerts">Alerts</TabsTrigger>
           <TabsTrigger value="disputes">Disputes</TabsTrigger>
           <TabsTrigger value="adjustments">Adjustments & Audit</TabsTrigger>
+          <TabsTrigger value="email">Email Reports</TabsTrigger>
           <TabsTrigger value="settings">KPI Settings</TabsTrigger>
         </TabsList>
+
 
         {/* ---------------- Dashboard ---------------- */}
         <TabsContent value="dashboard" className="space-y-5">
