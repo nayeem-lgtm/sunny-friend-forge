@@ -3,6 +3,7 @@ import {
   CheckCircle2,
   Copy,
   Download,
+  Eye,
   FileText,
   Mail,
   Plus,
@@ -12,6 +13,7 @@ import {
   Users,
   XCircle,
 } from "lucide-react";
+
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 
@@ -50,15 +52,20 @@ import {
   type RoleType,
 } from "@/lib/employee-data";
 import {
+  defaultOnboardingConfig,
+  loadFormConfig,
   loadInvites,
   loadSubmissions,
   makeToken,
   onboardingLink,
   saveInvites,
   saveSubmissions,
+  type OnboardingFormConfig,
   type OnboardingInvite,
   type OnboardingSubmission,
 } from "@/lib/onboarding-store";
+import { OnboardingFormBuilder } from "@/components/employees/OnboardingFormBuilder";
+
 
 export const Route = createFileRoute("/employees")({
   head: () => ({
@@ -93,6 +100,9 @@ function Page() {
   const [review, setReview] = useState<OnboardingSubmission | null>(null);
   const [reviewNote, setReviewNote] = useState("");
   const [lastLink, setLastLink] = useState<string | null>(null);
+  const [builderOpen, setBuilderOpen] = useState(false);
+  const [formConfig, setFormConfig] = useState<OnboardingFormConfig>(defaultOnboardingConfig);
+
 
   const [form, setForm] = useState({
     firstName: "",
@@ -117,6 +127,8 @@ function Page() {
       setInvites(seeded);
     }
     setSubmissions(loadSubmissions());
+    setFormConfig(loadFormConfig());
+
   }, []);
 
   const persistInvites = (next: OnboardingInvite[]) => {
@@ -307,6 +319,9 @@ function Page() {
         description="Send onboarding links, review employee submissions and manage records."
         actions={
           <>
+            <Button variant="outline" onClick={() => setBuilderOpen(true)}>
+              <Eye className="size-4" /> Preview & Customize Form
+            </Button>
             <Button variant="outline" onClick={() => setInviteOpen(true)}>
               <Mail className="size-4" /> Invite Employee
             </Button>
@@ -315,6 +330,7 @@ function Page() {
             </Button>
           </>
         }
+
       />
 
       <div className="mb-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -509,7 +525,22 @@ function Page() {
         </DialogContent>
       </Dialog>
 
+      {/* Onboarding form preview & builder */}
+      <Dialog open={builderOpen} onOpenChange={setBuilderOpen}>
+        <DialogContent className="max-h-[88vh] max-w-5xl overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Onboarding form</DialogTitle>
+            <DialogDescription>
+              Preview the form exactly as the employee sees it, and add or delete any section, field
+              or document.
+            </DialogDescription>
+          </DialogHeader>
+          <OnboardingFormBuilder config={formConfig} onConfigChange={setFormConfig} />
+        </DialogContent>
+      </Dialog>
+
       {/* Add employee dialog */}
+
       <Dialog open={addOpen} onOpenChange={setAddOpen}>
         <DialogContent className="max-h-[85vh] max-w-4xl overflow-y-auto">
           <DialogHeader>
