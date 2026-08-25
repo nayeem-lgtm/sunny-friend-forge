@@ -359,7 +359,8 @@ function Page() {
                 onClick={() => setMonthTo(q.date.getMonth(), q.date.getFullYear())}
                 className={cn(
                   "rounded-full border px-3 py-1 text-xs transition-colors",
-                  q.date.getMonth() === month.getMonth() &&
+                  !custom?.from &&
+                    q.date.getMonth() === month.getMonth() &&
                     q.date.getFullYear() === month.getFullYear()
                     ? "border-primary/40 bg-primary/10 text-primary"
                     : "border-border text-muted-foreground hover:text-foreground",
@@ -368,7 +369,69 @@ function Page() {
                 {q.label}
               </button>
             ))}
+            <Popover>
+              <PopoverTrigger asChild>
+                <button
+                  type="button"
+                  className={cn(
+                    "flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs transition-colors",
+                    custom?.from
+                      ? "border-primary/40 bg-primary/10 text-primary"
+                      : "border-border text-muted-foreground hover:text-foreground",
+                  )}
+                >
+                  <CalendarIcon className="size-3.5" />
+                  {custom?.from
+                    ? `${custom.from.toLocaleDateString()}${custom.to ? ` – ${custom.to.toLocaleDateString()}` : ""}`
+                    : "Custom dates"}
+                </button>
+              </PopoverTrigger>
+              <PopoverContent align="start" className="w-auto p-0">
+                <div className="flex flex-wrap gap-1.5 border-b border-border p-3">
+                  {[0, 1, 2, 3].map((back) => {
+                    const d = new Date(base.getFullYear(), base.getMonth() - back, 1);
+                    return (
+                      <button
+                        key={back}
+                        type="button"
+                        onClick={() =>
+                          applyCustom({
+                            from: d,
+                            to: new Date(d.getFullYear(), d.getMonth() + 1, 0),
+                          })
+                        }
+                        className="rounded-full border border-border px-2.5 py-1 text-xs text-muted-foreground hover:text-foreground"
+                      >
+                        Full {monthNames[d.getMonth()]!.slice(0, 3)} {d.getFullYear()}
+                      </button>
+                    );
+                  })}
+                </div>
+                <Calendar
+                  mode="range"
+                  selected={custom}
+                  onSelect={applyCustom}
+                  numberOfMonths={2}
+                  defaultMonth={month}
+                  initialFocus
+                  className={cn("p-3 pointer-events-auto")}
+                />
+                {custom?.from && (
+                  <div className="border-t border-border p-3">
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="w-full"
+                      onClick={() => setMonthTo(month.getMonth(), month.getFullYear())}
+                    >
+                      Clear custom dates
+                    </Button>
+                  </div>
+                )}
+              </PopoverContent>
+            </Popover>
           </div>
+
 
 
           <div className="relative w-full max-w-xs">
