@@ -1,5 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { ChevronDown, ExternalLink, PanelLeftClose, PanelLeftOpen, MoreHorizontal } from "lucide-react";
+import { ChevronDown, ExternalLink, PanelLeftClose, PanelLeftOpen, MoreHorizontal, UserRound } from "lucide-react";
 import { useState } from "react";
 
 import logoAsset from "@/assets/omniwork-mark.png.asset.json";
