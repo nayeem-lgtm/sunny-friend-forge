@@ -220,6 +220,18 @@ function LoginPage() {
               </div>
             </div>
 
+            {mode === "signin" && (
+              <div className="flex justify-end">
+                <button
+                  type="button"
+                  onClick={() => setMode("forgot")}
+                  className="text-sm font-medium text-primary hover:underline"
+                >
+                  Forgot password?
+                </button>
+              </div>
+            )}
+
             <Button
               type="submit"
               disabled={isSubmitting}
