@@ -44,6 +44,14 @@ export function TopBar() {
       >
         {theme === "dark" ? <Sun className="size-4" /> : <Moon className="size-4" />}
       </button>
+
+      <button
+        onClick={signOut}
+        aria-label="Sign out"
+        className="rounded-lg border border-border p-2 text-muted-foreground transition-colors hover:text-destructive"
+      >
+        <LogOut className="size-4" />
+      </button>
     </header>
   );
 }
