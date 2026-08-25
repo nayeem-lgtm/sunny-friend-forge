@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { CalendarCheck, CalendarPlus, CalendarX, Clock3 } from "lucide-react";
+import { AlertTriangle, CalendarCheck, CalendarPlus, CalendarX, Clock3, Paperclip, Upload, X } from "lucide-react";
 import { toast } from "sonner";
 
 import { EmployeeShell } from "@/components/layout/EmployeeShell";
@@ -81,6 +81,7 @@ function Page() {
   const [from, setFrom] = useState(todayKey);
   const [to, setTo] = useState(todayKey);
   const [reason, setReason] = useState("");
+  const [docs, setDocs] = useState<string[]>([]);
 
   useEffect(() => {
     setLocal(loadMyLeave().filter((l) => l.employeeId === employee.id));
