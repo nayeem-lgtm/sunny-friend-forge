@@ -54,8 +54,25 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Switch } from "@/components/ui/switch";
+import { Checkbox } from "@/components/ui/checkbox";
 import { departments, employees } from "@/lib/employee-data";
+import {
+  buildKpiEmailHtml,
+  buildKpiEmailText,
+  defaultKpiEmailSettings,
+  employeeEmail,
+  fillSubject,
+  loadKpiEmailHistory,
+  loadKpiEmailSettings,
+  nextSendDate,
+  saveKpiEmailHistory,
+  saveKpiEmailSettings,
+  type KpiEmailRecord,
+  type KpiEmailSettings,
+} from "@/lib/kpi-email";
 import { cn } from "@/lib/utils";
+
 import {
   buildAlerts,
   buildDataset,
