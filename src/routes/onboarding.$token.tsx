@@ -174,83 +174,14 @@ function Page() {
       </div>
 
       <div className="space-y-6">
-        {onboardingFieldGroups.map((group) => (
-          <section key={group.title} className="rounded-xl border border-border bg-card p-6">
-            <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-              {group.title}
-            </h2>
-            <div className="grid gap-5 md:grid-cols-2">
-              {group.fields.map((f) => (
-                <div
-                  key={f.key}
-                  className={f.key.toLowerCase().includes("address") ? "space-y-1.5 md:col-span-2" : "space-y-1.5"}
-                >
-                  <Label className="text-xs text-muted-foreground">
-                    {f.label}
-                    {f.required && <span className="ml-0.5 text-destructive">*</span>}
-                  </Label>
-                  {f.key.toLowerCase().includes("address") ? (
-                    <Textarea
-                      rows={2}
-                      value={values[f.key] ?? ""}
-                      onChange={(e) => set(f.key, e.target.value)}
-                    />
-                  ) : (
-                    <Input
-                      type={f.type ?? "text"}
-                      value={values[f.key] ?? ""}
-                      onChange={(e) => set(f.key, e.target.value)}
-                    />
-                  )}
-                </div>
-              ))}
-            </div>
-          </section>
-        ))}
-
-        <section className="rounded-xl border border-border bg-card p-6">
-          <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-            Documents
-          </h2>
-          <div className="grid gap-5 md:grid-cols-2">
-            {documentSlots.map((slot) => {
-              const uploaded = files.find((f) => f.slot === slot);
-              return (
-                <div key={slot} className="space-y-1.5">
-                  <Label className="text-xs text-muted-foreground">{slot}</Label>
-                  {uploaded ? (
-                    <div className="flex items-center justify-between gap-2 rounded-lg border border-border bg-secondary/40 px-3 py-3 text-sm">
-                      <span className="flex min-w-0 items-center gap-2">
-                        <FileText className="size-4 shrink-0 text-primary" />
-                        <span className="truncate">{uploaded.name}</span>
-                      </span>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => setFiles((prev) => prev.filter((f) => f.slot !== slot))}
-                      >
-                        <X className="size-4" />
-                      </Button>
-                    </div>
-                  ) : (
-                    <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-border px-4 py-6 text-center text-sm text-muted-foreground transition-colors hover:border-primary/50 hover:bg-secondary/40">
-                      <span>Click to upload (PDF, DOC, DOCX, JPG, PNG)</span>
-                      <span className="inline-flex items-center gap-1.5 text-foreground">
-                        <FolderOpen className="size-4" /> Select File
-                      </span>
-                      <input
-                        type="file"
-                        className="hidden"
-                        accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
-                        onChange={(e) => void onFile(slot, e.target.files?.[0])}
-                      />
-                    </label>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </section>
+        <OnboardingFormFields
+          config={config}
+          values={values}
+          onChange={set}
+          files={files}
+          onFile={(slot, file) => void onFile(slot, file)}
+          onRemoveFile={(slot) => setFiles((prev) => prev.filter((f) => f.slot !== slot))}
+        />
 
         <div className="flex justify-end pb-12">
           <Button size="lg" onClick={submit} disabled={submitting}>
@@ -258,6 +189,7 @@ function Page() {
           </Button>
         </div>
       </div>
+
     </Shell>
   );
 }
