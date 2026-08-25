@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Check, ChevronDown, Plus } from "lucide-react";
+import { Check, ChevronDown, Clock, Plus } from "lucide-react";
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
