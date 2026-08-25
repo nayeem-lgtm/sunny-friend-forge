@@ -49,6 +49,19 @@ export type OnboardingInvite = {
 const INVITES_KEY = "omniwork.onboarding.invites";
 const SUBMISSIONS_KEY = "omniwork.onboarding.submissions";
 
+const TEST_INVITE: OnboardingInvite = {
+  id: "inv-preview-nayeem",
+  token: "lqky7z9qqtqm9264",
+  email: "nayeem@rayadvertising.com",
+  firstName: "Nayeem",
+  lastName: "Ahmad",
+  department: "Admin Department",
+  designation: "Team Member",
+  roleType: "Employee",
+  sentAt: "2026-08-25",
+  status: "Pending",
+};
+
 function read<T>(key: string, fallback: T): T {
   if (typeof window === "undefined") return fallback;
   try {
@@ -75,7 +88,7 @@ export const loadSubmissions = () => read<OnboardingSubmission[]>(SUBMISSIONS_KE
 export const saveSubmissions = (subs: OnboardingSubmission[]) => write(SUBMISSIONS_KEY, subs);
 
 export function findInvite(token: string) {
-  return loadInvites().find((i) => i.token === token);
+  return loadInvites().find((i) => i.token === token) ?? (token === TEST_INVITE.token ? TEST_INVITE : undefined);
 }
 
 export function findSubmission(token: string) {
