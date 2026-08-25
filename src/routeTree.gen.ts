@@ -18,6 +18,7 @@ import { Route as EmployeesRouteImport } from './routes/employees'
 import { Route as HolidaysRouteImport } from './routes/holidays'
 import { Route as KpiReportsRouteImport } from './routes/kpi-reports'
 import { Route as LeaveRouteImport } from './routes/leave'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as MeetingsRouteImport } from './routes/meetings'
 import { Route as MonitoringRouteImport } from './routes/monitoring'
 import { Route as PayrollRouteImport } from './routes/payroll'
@@ -72,6 +73,11 @@ const LeaveRoute = LeaveRouteImport.update({
   path: '/leave',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MeetingsRoute = MeetingsRouteImport.update({
   id: '/meetings',
   path: '/meetings',
@@ -123,6 +129,7 @@ export interface FileRoutesByFullPath {
   '/holidays': typeof HolidaysRoute
   '/kpi-reports': typeof KpiReportsRoute
   '/leave': typeof LeaveRoute
+  '/login': typeof LoginRoute
   '/meetings': typeof MeetingsRoute
   '/monitoring': typeof MonitoringRoute
   '/payroll': typeof PayrollRoute
@@ -142,6 +149,7 @@ export interface FileRoutesByTo {
   '/holidays': typeof HolidaysRoute
   '/kpi-reports': typeof KpiReportsRoute
   '/leave': typeof LeaveRoute
+  '/login': typeof LoginRoute
   '/meetings': typeof MeetingsRoute
   '/monitoring': typeof MonitoringRoute
   '/payroll': typeof PayrollRoute
@@ -162,6 +170,7 @@ export interface FileRoutesById {
   '/holidays': typeof HolidaysRoute
   '/kpi-reports': typeof KpiReportsRoute
   '/leave': typeof LeaveRoute
+  '/login': typeof LoginRoute
   '/meetings': typeof MeetingsRoute
   '/monitoring': typeof MonitoringRoute
   '/payroll': typeof PayrollRoute
@@ -183,6 +192,7 @@ export interface FileRouteTypes {
     | '/holidays'
     | '/kpi-reports'
     | '/leave'
+    | '/login'
     | '/meetings'
     | '/monitoring'
     | '/payroll'
@@ -202,6 +212,7 @@ export interface FileRouteTypes {
     | '/holidays'
     | '/kpi-reports'
     | '/leave'
+    | '/login'
     | '/meetings'
     | '/monitoring'
     | '/payroll'
@@ -221,6 +232,7 @@ export interface FileRouteTypes {
     | '/holidays'
     | '/kpi-reports'
     | '/leave'
+    | '/login'
     | '/meetings'
     | '/monitoring'
     | '/payroll'
@@ -241,6 +253,7 @@ export interface RootRouteChildren {
   HolidaysRoute: typeof HolidaysRoute
   KpiReportsRoute: typeof KpiReportsRoute
   LeaveRoute: typeof LeaveRoute
+  LoginRoute: typeof LoginRoute
   MeetingsRoute: typeof MeetingsRoute
   MonitoringRoute: typeof MonitoringRoute
   PayrollRoute: typeof PayrollRoute
@@ -316,6 +329,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LeaveRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/meetings': {
       id: '/meetings'
       path: '/meetings'
@@ -385,6 +405,7 @@ const rootRouteChildren: RootRouteChildren = {
   HolidaysRoute: HolidaysRoute,
   KpiReportsRoute: KpiReportsRoute,
   LeaveRoute: LeaveRoute,
+  LoginRoute: LoginRoute,
   MeetingsRoute: MeetingsRoute,
   MonitoringRoute: MonitoringRoute,
   PayrollRoute: PayrollRoute,
