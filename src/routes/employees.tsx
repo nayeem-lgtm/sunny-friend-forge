@@ -307,6 +307,9 @@ function Page() {
         description="Send onboarding links, review employee submissions and manage records."
         actions={
           <>
+            <Button variant="outline" onClick={() => setBuilderOpen(true)}>
+              <Eye className="size-4" /> Preview & Customize Form
+            </Button>
             <Button variant="outline" onClick={() => setInviteOpen(true)}>
               <Mail className="size-4" /> Invite Employee
             </Button>
@@ -315,6 +318,7 @@ function Page() {
             </Button>
           </>
         }
+
       />
 
       <div className="mb-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
