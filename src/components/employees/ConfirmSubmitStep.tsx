@@ -8,8 +8,6 @@ export function ConfirmSubmitStep({
   email,
   documents,
   files,
-  reviewedCount,
-  reviewedTotal,
   acknowledged,
   signedName,
   signatureImage,
@@ -18,8 +16,6 @@ export function ConfirmSubmitStep({
   email: string;
   documents: string[];
   files: UploadedFile[];
-  reviewedCount: number;
-  reviewedTotal: number;
   acknowledged: string[];
   signedName: string;
   signatureImage?: string | undefined;
@@ -38,9 +34,9 @@ export function ConfirmSubmitStep({
         <div className="mt-5 grid gap-3 sm:grid-cols-3">
           <Tile label="Applicant" value={fullName || "—"} hint={email} />
           <Tile
-            label="Documents reviewed"
-            value={`${reviewedCount} / ${reviewedTotal}`}
-            hint={`${files.length} of ${documents.length} uploaded`}
+            label="Documents uploaded"
+            value={`${files.length} / ${documents.length}`}
+            hint="HR will review these"
           />
           <Tile
             label="Consents accepted"
