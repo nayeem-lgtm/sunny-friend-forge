@@ -6,7 +6,7 @@ import { useAuth } from "@/hooks/useAuth";
 
 const PUBLIC_PATHS = ["/login", "/auth/callback", "/onboarding/$token"];
 
-export function AuthGuard({ children }: { children: React.ReactNode }) {
+export function AuthGuard({ children }: { children: ReactNode }) {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
