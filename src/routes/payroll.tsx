@@ -432,7 +432,13 @@ function Page() {
                       </div>
                     </div>
                   </td>
-                  <td className="px-4 py-3 tabular-nums">{formatBDT(row.baseSalary)}</td>
+                  <SalaryCell
+                    value={row.baseSalary}
+                    onChange={(v) => {
+                      update(row.id, (r) => ({ ...r, baseSalary: v }));
+                      toast.success(`Base salary updated for ${row.employee}`);
+                    }}
+                  />
                   <AdjustCell
                     value={sumAdjustments(row.bonuses)}
                     kind="bonus"
