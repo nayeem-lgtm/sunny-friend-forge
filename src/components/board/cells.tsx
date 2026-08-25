@@ -307,6 +307,70 @@ function formatSpan(ms: number) {
   return `${m}m`;
 }
 
+function dateFromValue(value: string) {
+  const datePart = value.slice(0, 10);
+  return datePart ? new Date(`${datePart}T00:00:00`) : undefined;
+}
+
+function updateDateTime(
+  value: string,
+  date: Date | undefined,
+  fallbackTime: string,
+  onChange: (value: string) => void,
+) {
+  if (!date) return;
+  const datePart = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+  const timePart = value.length > 10 ? value.slice(11, 16) : fallbackTime;
+  onChange(`${datePart}T${timePart}`);
+}
+
+function TimingDateTimeEditor({
+  label,
+  value,
+  fallbackTime,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  fallbackTime: string;
+  onChange: (value: string) => void;
+}) {
+  const selected = dateFromValue(value);
+  const time = value.length > 10 ? value.slice(11, 16) : fallbackTime;
+
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center justify-between px-1">
+        <span className="text-xs font-semibold">{label}</span>
+        <span className="text-[11px] text-muted-foreground">
+          {selected ? selected.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" }) : "Choose date"}
+        </span>
+      </div>
+      <Calendar
+        mode="single"
+        selected={selected}
+        {...(selected ? { defaultMonth: selected } : {})}
+        onSelect={(date) => updateDateTime(value, date, fallbackTime, onChange)}
+        initialFocus={label === "Start"}
+        className={cn("pointer-events-auto rounded-md border border-border p-3")}
+      />
+      <div className="flex items-center gap-2 px-1">
+        <Clock className="h-4 w-4 text-muted-foreground" />
+        <Input
+          type="time"
+          aria-label={`${label} time`}
+          value={time}
+          onChange={(event) => {
+            const datePart = value.slice(0, 10) || new Date().toISOString().slice(0, 10);
+            onChange(`${datePart}T${event.target.value}`);
+          }}
+          className="h-8 text-xs"
+        />
+      </div>
+    </div>
+  );
+}
+
 /** Time-based progress between start and due datetimes. Clicking opens timing options. */
 export function TimingBar({
   start,
@@ -333,8 +397,8 @@ export function TimingBar({
     ? fallback
     : done
       ? 100
-      : Math.min(100, Math.max(0, Math.round(((now - s!) / (e! - s!)) * 100)));
-  const remaining = valid ? e! - now : 0;
+      : Math.min(100, Math.max(0, Math.round(((now - s) / (e - s)) * 100)));
+  const remaining = valid ? e - now : 0;
   const overdue = valid && !done && remaining < 0;
   const label = !valid
     ? "Set timing"
@@ -371,37 +435,42 @@ export function TimingBar({
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <button type="button" className="w-full rounded py-1 hover:bg-muted/60">
+        <button
+          type="button"
+          aria-label="Open timing schedule"
+          className="w-full cursor-pointer rounded py-1 hover:bg-muted/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        >
           {bar}
         </button>
       </PopoverTrigger>
-      <PopoverContent className="w-64 space-y-3 p-3" align="center">
-        <div className="text-xs font-semibold">Timing</div>
-        {onStartChange ? (
-          <label className="block space-y-1">
-            <span className="text-[11px] text-muted-foreground">Start</span>
-            <Input
-              type="datetime-local"
-              value={start ? (start.length > 10 ? start.slice(0, 16) : `${start}T09:00`) : ""}
-              onChange={(ev) => onStartChange(ev.target.value)}
-              className="h-8 text-xs"
+      <PopoverContent className="w-auto max-w-[calc(100vw-2rem)] p-3" align="center">
+        <div className="mb-3 flex items-center justify-between gap-6">
+          <div>
+            <div className="text-sm font-semibold">Timing schedule</div>
+            <div className="text-[11px] text-muted-foreground">Set the start and due date with time</div>
+          </div>
+          <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => setOpen(false)}>
+            Done
+          </Button>
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2">
+          {onStartChange ? (
+            <TimingDateTimeEditor
+              label="Start"
+              value={start}
+              fallbackTime="09:00"
+              onChange={onStartChange}
             />
-          </label>
-        ) : null}
-        {onDueChange ? (
-          <label className="block space-y-1">
-            <span className="text-[11px] text-muted-foreground">Due</span>
-            <Input
-              type="datetime-local"
-              value={due ? (due.length > 10 ? due.slice(0, 16) : `${due}T18:00`) : ""}
-              onChange={(ev) => onDueChange(ev.target.value)}
-              className="h-8 text-xs"
+          ) : null}
+          {onDueChange ? (
+            <TimingDateTimeEditor
+              label="Due"
+              value={due}
+              fallbackTime="18:00"
+              onChange={onDueChange}
             />
-          </label>
-        ) : null}
-        <Button variant="ghost" size="sm" className="h-7 w-full text-xs" onClick={() => setOpen(false)}>
-          Done
-        </Button>
+          ) : null}
+        </div>
       </PopoverContent>
     </Popover>
   );
