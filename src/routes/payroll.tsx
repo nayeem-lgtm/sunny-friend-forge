@@ -8,6 +8,7 @@ import {
   Eye,
   Gift,
   Minus,
+  Pencil,
   Plus,
   Search,
   Send,
