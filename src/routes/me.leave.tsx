@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { CalendarCheck, CalendarPlus, CalendarX, Clock3 } from "lucide-react";
+import { AlertTriangle, CalendarCheck, CalendarPlus, CalendarX, Clock3, Paperclip, Upload, X } from "lucide-react";
 import { toast } from "sonner";
 
 import { EmployeeShell } from "@/components/layout/EmployeeShell";
@@ -81,6 +81,7 @@ function Page() {
   const [from, setFrom] = useState(todayKey);
   const [to, setTo] = useState(todayKey);
   const [reason, setReason] = useState("");
+  const [docs, setDocs] = useState<string[]>([]);
 
   useEffect(() => {
     setLocal(loadMyLeave().filter((l) => l.employeeId === employee.id));
@@ -113,6 +114,10 @@ function Page() {
       return;
     }
     const days = daysBetween(from, to);
+    if (days > MONTHLY_CAP) {
+      toast.error(`You can request at most ${MONTHLY_CAP} days of leave per month.`);
+      return;
+    }
     const request: LeaveRequest = {
       id: `my-lv-${Date.now()}`,
       employeeId: employee.id,
@@ -126,7 +131,7 @@ function Page() {
       status: "Pending",
       appliedAt: new Date().toISOString(),
       reason: reason.trim(),
-      documents: [],
+      documents: docs,
       feedback: [],
     };
     const next = [request, ...loadMyLeave()];
@@ -134,6 +139,7 @@ function Page() {
     setLocal(next.filter((l) => l.employeeId === employee.id));
     setOpen(false);
     setReason("");
+    setDocs([]);
     toast.success("Leave request submitted — HR will review it shortly.");
   };
 
@@ -219,6 +225,63 @@ function Page() {
                     onChange={(e) => setReason(e.target.value)}
                     placeholder="Tell your manager why you need this leave and how work is covered."
                   />
+                </div>
+
+                <div>
+                  <Label>Supporting documents</Label>
+                  <label
+                    htmlFor="leave-docs"
+                    className="mt-1.5 flex cursor-pointer flex-col items-center justify-center gap-1 rounded-lg border border-dashed border-border bg-secondary/30 p-5 text-center transition-colors hover:border-primary/40 hover:bg-primary/5"
+                  >
+                    <Upload className="size-5 text-muted-foreground" />
+                    <span className="text-sm font-medium">Upload supporting materials</span>
+                    <span className="text-xs text-muted-foreground">
+                      Medical certificate, travel proof or any relevant file (PDF, image, doc)
+                    </span>
+                    <input
+                      id="leave-docs"
+                      type="file"
+                      multiple
+                      accept=".pdf,.doc,.docx,image/*"
+                      className="hidden"
+                      onChange={(e) => {
+                        const names = Array.from(e.target.files ?? []).map((f) => f.name);
+                        if (names.length) setDocs((prev) => [...prev, ...names]);
+                        e.target.value = "";
+                      }}
+                    />
+                  </label>
+                  {docs.length > 0 && (
+                    <ul className="mt-2 space-y-1.5">
+                      {docs.map((d, i) => (
+                        <li
+                          key={`${d}-${i}`}
+                          className="flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-2 text-xs"
+                        >
+                          <Paperclip className="size-3.5 shrink-0 text-muted-foreground" />
+                          <span className="truncate">{d}</span>
+                          <button
+                            type="button"
+                            className="ml-auto text-muted-foreground hover:text-destructive"
+                            onClick={() => setDocs((prev) => prev.filter((_, idx) => idx !== i))}
+                            aria-label={`Remove ${d}`}
+                          >
+                            <X className="size-3.5" />
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+
+                <div className="flex items-start gap-2 rounded-lg border border-warning/30 bg-warning/10 p-3">
+                  <AlertTriangle className="mt-0.5 size-4 shrink-0 text-warning" />
+                  <p className="text-xs text-muted-foreground">
+                    <span className="font-semibold text-foreground">Caution:</span> the maximum allowed
+                    leave — PTO or unpaid — is {MONTHLY_CAP} days per month. Requests longer than that
+                    cannot be submitted, and anything beyond the cap may be denied or treated as
+                    unauthorised absence.
+                  </p>
                 </div>
               </div>
               <DialogFooter>
