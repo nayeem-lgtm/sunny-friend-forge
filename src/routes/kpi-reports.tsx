@@ -39,6 +39,8 @@ import {
 
 import { AppShell } from "@/components/layout/AppShell";
 import { PageHeader } from "@/components/shared/PageHeader";
+import { EmployeeCombobox } from "@/components/shared/EmployeeCombobox";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -427,21 +429,14 @@ function Page() {
               ))}
             </SelectContent>
           </Select>
-          <Select value={employeeFilter} onValueChange={setEmployeeFilter}>
-            <SelectTrigger className="w-[220px]">
-              <SelectValue placeholder="All employees" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All employees</SelectItem>
-              {employees
-                .filter((e) => e.status !== "Inactive")
-                .map((e) => (
-                  <SelectItem key={e.id} value={`${e.firstName} ${e.lastName}`}>
-                    {e.firstName} {e.lastName}
-                  </SelectItem>
-                ))}
-            </SelectContent>
-          </Select>
+          <EmployeeCombobox
+            value={employeeFilter}
+            onChange={setEmployeeFilter}
+            names={employees
+              .filter((e) => e.status !== "Inactive")
+              .map((e) => `${e.firstName} ${e.lastName}`)}
+          />
+
           <Input
             placeholder="Search employee…"
             value={search}
@@ -539,8 +534,8 @@ function Page() {
                 <AreaChart data={trend}>
                   <defs>
                     <linearGradient id="kpiGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.5} />
-                      <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0} />
+                      <stop offset="0%" stopColor="var(--primary)" stopOpacity={0.5} />
+                      <stop offset="100%" stopColor="var(--primary)" stopOpacity={0} />
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" className="stroke-border" vertical={false} />
@@ -548,8 +543,8 @@ function Page() {
                   <YAxis domain={[60, 100]} tickLine={false} axisLine={false} className="text-xs" />
                   <RTooltip
                     contentStyle={{
-                      background: "hsl(var(--card))",
-                      border: "1px solid hsl(var(--border))",
+                      background: "var(--card)",
+                      border: "1px solid var(--border)",
                       borderRadius: 10,
                       fontSize: 12,
                     }}
@@ -557,7 +552,7 @@ function Page() {
                   <Area
                     type="monotone"
                     dataKey="score"
-                    stroke="hsl(var(--primary))"
+                    stroke="var(--primary)"
                     strokeWidth={2}
                     fill="url(#kpiGrad)"
                   />
@@ -580,8 +575,8 @@ function Page() {
                   <YAxis tickLine={false} axisLine={false} className="text-xs" />
                   <RTooltip
                     contentStyle={{
-                      background: "hsl(var(--card))",
-                      border: "1px solid hsl(var(--border))",
+                      background: "var(--card)",
+                      border: "1px solid var(--border)",
                       borderRadius: 10,
                       fontSize: 12,
                     }}
@@ -591,7 +586,7 @@ function Page() {
                       <Cell
                         key={c.key}
                         fill={
-                          c.score / c.max > 0.9 ? "hsl(var(--primary))" : "hsl(var(--warning))"
+                          c.score / c.max > 0.9 ? "var(--primary)" : "var(--warning)"
                         }
                       />
                     ))}
