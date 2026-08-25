@@ -59,26 +59,44 @@ export function ConsentStep({
             if (el.scrollHeight - el.scrollTop - el.clientHeight < 40) setReviewed(true);
           }}
         >
-          <div className="space-y-5 pr-3">
-            {consentSections.map((s) => (
-              <article key={s.id}>
-                <h3 className="text-sm font-semibold text-foreground">{s.title}</h3>
-                <p className="mt-1 text-sm text-muted-foreground">{s.summary}</p>
-                <ul className="mt-2 space-y-1.5">
-                  {s.points.map((p) => (
-                    <li key={p} className="flex gap-2 text-sm text-muted-foreground">
+          <div className="space-y-6 pr-3">
+            <header className="space-y-1 text-center">
+              <h3 className="text-sm font-bold uppercase tracking-wide text-foreground">
+                Ray Advertising — Corporate Service Rules Manual 2026
+              </h3>
+              <p className="text-xs text-muted-foreground">
+                For Bangladesh Staff Only · Effective Date: 01 May 2026
+              </p>
+            </header>
+            {policySections.map((s) => (
+              <article key={s.id} className="space-y-2">
+                <h3 className="text-sm font-semibold uppercase tracking-wide text-foreground">
+                  {s.title}
+                </h3>
+                {s.blocks.map((b, i) =>
+                  b.type === "h" ? (
+                    <h4 key={i} className="pt-1 text-sm font-semibold text-foreground">
+                      {b.text}
+                    </h4>
+                  ) : b.type === "li" ? (
+                    <div key={i} className="flex gap-2 text-sm leading-relaxed text-muted-foreground">
                       <span className="mt-2 size-1.5 shrink-0 rounded-full bg-primary/70" />
-                      {p}
-                    </li>
-                  ))}
-                </ul>
+                      <span>{b.text}</span>
+                    </div>
+                  ) : (
+                    <p key={i} className="text-sm leading-relaxed text-muted-foreground">
+                      {b.text}
+                    </p>
+                  ),
+                )}
               </article>
             ))}
             <p className="rounded-lg border border-border bg-card p-3 text-xs text-muted-foreground">
-              This is a structured summary for review. The complete and binding text is in the attached
-              PDF of the Corporate Service Rules Manual 2026.
+              The text above is reproduced verbatim from the Corporate Service Rules Manual 2026. The
+              attached PDF is the official signed copy.
             </p>
           </div>
+
         </ScrollArea>
 
         <p
