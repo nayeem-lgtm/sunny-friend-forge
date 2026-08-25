@@ -152,7 +152,7 @@ function LoginPage() {
         <div className="w-full max-w-md overflow-hidden rounded-3xl border border-border/60 bg-card/80 p-8 shadow-2xl backdrop-blur-xl sm:p-10">
           {/* Mobile-only brand header */}
           <div className="mb-8 flex items-center justify-center gap-3 lg:hidden">
-            <img src={omniMark} alt="OmniWork mark" className="size-9 object-contain" />
+            <img src={omniMarkUrl.url} alt="OmniWork mark" className="size-9 object-contain" />
             <span className="text-xl font-semibold tracking-tight text-foreground">OmniWork</span>
           </div>
 
