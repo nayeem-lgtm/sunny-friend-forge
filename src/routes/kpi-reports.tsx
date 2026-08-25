@@ -427,21 +427,14 @@ function Page() {
               ))}
             </SelectContent>
           </Select>
-          <Select value={employeeFilter} onValueChange={setEmployeeFilter}>
-            <SelectTrigger className="w-[220px]">
-              <SelectValue placeholder="All employees" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All employees</SelectItem>
-              {employees
-                .filter((e) => e.status !== "Inactive")
-                .map((e) => (
-                  <SelectItem key={e.id} value={`${e.firstName} ${e.lastName}`}>
-                    {e.firstName} {e.lastName}
-                  </SelectItem>
-                ))}
-            </SelectContent>
-          </Select>
+          <EmployeeCombobox
+            value={employeeFilter}
+            onChange={setEmployeeFilter}
+            names={employees
+              .filter((e) => e.status !== "Inactive")
+              .map((e) => `${e.firstName} ${e.lastName}`)}
+          />
+
           <Input
             placeholder="Search employee…"
             value={search}
