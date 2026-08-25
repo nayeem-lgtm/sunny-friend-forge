@@ -223,32 +223,34 @@ function LoginPage() {
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="password" className="text-sm font-medium text-foreground">
-                Password
-              </Label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-                <Input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="h-11 rounded-xl border-border/60 bg-background/50 pl-10 pr-10 text-foreground placeholder:text-muted-foreground focus-visible:ring-primary"
-                  autoComplete={mode === "signin" ? "current-password" : "new-password"}
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword((s) => !s)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                  aria-label={showPassword ? "Hide password" : "Show password"}
-                >
-                  {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
-                </button>
+            {mode !== "forgot" && (
+              <div className="space-y-2">
+                <Label htmlFor="password" className="text-sm font-medium text-foreground">
+                  Password
+                </Label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="h-11 rounded-xl border-border/60 bg-background/50 pl-10 pr-10 text-foreground placeholder:text-muted-foreground focus-visible:ring-primary"
+                    autoComplete={mode === "signin" ? "current-password" : "new-password"}
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((s) => !s)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                  >
+                    {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+                  </button>
+                </div>
               </div>
-            </div>
+            )}
 
             {mode === "signin" && (
               <div className="flex justify-end">
