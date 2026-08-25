@@ -37,6 +37,7 @@ import { Route as MeKpiRouteImport } from './routes/me.kpi'
 import { Route as MeLeaveRouteImport } from './routes/me.leave'
 import { Route as MeMeetingsRouteImport } from './routes/me.meetings'
 import { Route as MePayslipsRouteImport } from './routes/me.payslips'
+import { Route as MeProfileRouteImport } from './routes/me.profile'
 import { Route as MeWorklogsRouteImport } from './routes/me.worklogs'
 import { Route as OnboardingTokenRouteImport } from './routes/onboarding.$token'
 
@@ -180,6 +181,11 @@ const MePayslipsRoute = MePayslipsRouteImport.update({
   path: '/me/payslips',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MeProfileRoute = MeProfileRouteImport.update({
+  id: '/me/profile',
+  path: '/me/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MeWorklogsRoute = MeWorklogsRouteImport.update({
   id: '/me/worklogs',
   path: '/me/worklogs',
@@ -219,6 +225,7 @@ export interface FileRoutesByFullPath {
   '/me/leave': typeof MeLeaveRoute
   '/me/meetings': typeof MeMeetingsRoute
   '/me/payslips': typeof MePayslipsRoute
+  '/me/profile': typeof MeProfileRoute
   '/me/worklogs': typeof MeWorklogsRoute
   '/onboarding/$token': typeof OnboardingTokenRoute
   '/me/': typeof MeIndexRoute
@@ -251,6 +258,7 @@ export interface FileRoutesByTo {
   '/me/leave': typeof MeLeaveRoute
   '/me/meetings': typeof MeMeetingsRoute
   '/me/payslips': typeof MePayslipsRoute
+  '/me/profile': typeof MeProfileRoute
   '/me/worklogs': typeof MeWorklogsRoute
   '/onboarding/$token': typeof OnboardingTokenRoute
   '/me': typeof MeIndexRoute
@@ -284,6 +292,7 @@ export interface FileRoutesById {
   '/me/leave': typeof MeLeaveRoute
   '/me/meetings': typeof MeMeetingsRoute
   '/me/payslips': typeof MePayslipsRoute
+  '/me/profile': typeof MeProfileRoute
   '/me/worklogs': typeof MeWorklogsRoute
   '/onboarding/$token': typeof OnboardingTokenRoute
   '/me/': typeof MeIndexRoute
@@ -318,6 +327,7 @@ export interface FileRouteTypes {
     | '/me/leave'
     | '/me/meetings'
     | '/me/payslips'
+    | '/me/profile'
     | '/me/worklogs'
     | '/onboarding/$token'
     | '/me/'
@@ -350,6 +360,7 @@ export interface FileRouteTypes {
     | '/me/leave'
     | '/me/meetings'
     | '/me/payslips'
+    | '/me/profile'
     | '/me/worklogs'
     | '/onboarding/$token'
     | '/me'
@@ -382,6 +393,7 @@ export interface FileRouteTypes {
     | '/me/leave'
     | '/me/meetings'
     | '/me/payslips'
+    | '/me/profile'
     | '/me/worklogs'
     | '/onboarding/$token'
     | '/me/'
@@ -415,6 +427,7 @@ export interface RootRouteChildren {
   MeLeaveRoute: typeof MeLeaveRoute
   MeMeetingsRoute: typeof MeMeetingsRoute
   MePayslipsRoute: typeof MePayslipsRoute
+  MeProfileRoute: typeof MeProfileRoute
   MeWorklogsRoute: typeof MeWorklogsRoute
   OnboardingTokenRoute: typeof OnboardingTokenRoute
   MeIndexRoute: typeof MeIndexRoute
@@ -618,6 +631,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MePayslipsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/me/profile': {
+      id: '/me/profile'
+      path: '/me/profile'
+      fullPath: '/me/profile'
+      preLoaderRoute: typeof MeProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/me/worklogs': {
       id: '/me/worklogs'
       path: '/me/worklogs'
@@ -663,6 +683,7 @@ const rootRouteChildren: RootRouteChildren = {
   MeLeaveRoute: MeLeaveRoute,
   MeMeetingsRoute: MeMeetingsRoute,
   MePayslipsRoute: MePayslipsRoute,
+  MeProfileRoute: MeProfileRoute,
   MeWorklogsRoute: MeWorklogsRoute,
   OnboardingTokenRoute: OnboardingTokenRoute,
   MeIndexRoute: MeIndexRoute,
