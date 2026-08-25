@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import {
   BadgeCheck,
   Banknote,
+  CalendarIcon,
   ChevronLeft,
   ChevronRight,
   Download,
@@ -17,7 +18,9 @@ import {
   Wallet,
 } from "lucide-react";
 import { useMemo, useState } from "react";
+import type { DateRange } from "react-day-picker";
 import { toast } from "sonner";
+
 
 import { AppShell } from "@/components/layout/AppShell";
 import { PageHeader } from "@/components/shared/PageHeader";
