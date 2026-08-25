@@ -27,6 +27,7 @@ import { Route as SchedulesRouteImport } from './routes/schedules'
 import { Route as UserAccessRouteImport } from './routes/user-access'
 import { Route as WorklogsRouteImport } from './routes/worklogs'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
+import { Route as AuthResetPasswordRouteImport } from './routes/auth.reset-password'
 import { Route as OnboardingTokenRouteImport } from './routes/onboarding.$token'
 
 const IndexRoute = IndexRouteImport.update({
@@ -119,6 +120,11 @@ const AuthCallbackRoute = AuthCallbackRouteImport.update({
   path: '/auth/callback',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthResetPasswordRoute = AuthResetPasswordRouteImport.update({
+  id: '/auth/reset-password',
+  path: '/auth/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const OnboardingTokenRoute = OnboardingTokenRouteImport.update({
   id: '/onboarding/$token',
   path: '/onboarding/$token',
@@ -144,6 +150,7 @@ export interface FileRoutesByFullPath {
   '/user-access': typeof UserAccessRoute
   '/worklogs': typeof WorklogsRoute
   '/auth/callback': typeof AuthCallbackRoute
+  '/auth/reset-password': typeof AuthResetPasswordRoute
   '/onboarding/$token': typeof OnboardingTokenRoute
 }
 export interface FileRoutesByTo {
@@ -165,6 +172,7 @@ export interface FileRoutesByTo {
   '/user-access': typeof UserAccessRoute
   '/worklogs': typeof WorklogsRoute
   '/auth/callback': typeof AuthCallbackRoute
+  '/auth/reset-password': typeof AuthResetPasswordRoute
   '/onboarding/$token': typeof OnboardingTokenRoute
 }
 export interface FileRoutesById {
@@ -187,6 +195,7 @@ export interface FileRoutesById {
   '/user-access': typeof UserAccessRoute
   '/worklogs': typeof WorklogsRoute
   '/auth/callback': typeof AuthCallbackRoute
+  '/auth/reset-password': typeof AuthResetPasswordRoute
   '/onboarding/$token': typeof OnboardingTokenRoute
 }
 export interface FileRouteTypes {
@@ -210,6 +219,7 @@ export interface FileRouteTypes {
     | '/user-access'
     | '/worklogs'
     | '/auth/callback'
+    | '/auth/reset-password'
     | '/onboarding/$token'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -231,6 +241,7 @@ export interface FileRouteTypes {
     | '/user-access'
     | '/worklogs'
     | '/auth/callback'
+    | '/auth/reset-password'
     | '/onboarding/$token'
   id:
     | '__root__'
@@ -252,6 +263,7 @@ export interface FileRouteTypes {
     | '/user-access'
     | '/worklogs'
     | '/auth/callback'
+    | '/auth/reset-password'
     | '/onboarding/$token'
   fileRoutesById: FileRoutesById
 }
@@ -274,6 +286,7 @@ export interface RootRouteChildren {
   UserAccessRoute: typeof UserAccessRoute
   WorklogsRoute: typeof WorklogsRoute
   AuthCallbackRoute: typeof AuthCallbackRoute
+  AuthResetPasswordRoute: typeof AuthResetPasswordRoute
   OnboardingTokenRoute: typeof OnboardingTokenRoute
 }
 
@@ -405,6 +418,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthCallbackRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth/reset-password': {
+      id: '/auth/reset-password'
+      path: '/auth/reset-password'
+      fullPath: '/auth/reset-password'
+      preLoaderRoute: typeof AuthResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/onboarding/$token': {
       id: '/onboarding/$token'
       path: '/onboarding/$token'
@@ -434,6 +454,7 @@ const rootRouteChildren: RootRouteChildren = {
   UserAccessRoute: UserAccessRoute,
   WorklogsRoute: WorklogsRoute,
   AuthCallbackRoute: AuthCallbackRoute,
+  AuthResetPasswordRoute: AuthResetPasswordRoute,
   OnboardingTokenRoute: OnboardingTokenRoute,
 }
 export const routeTree = rootRouteImport

@@ -4,14 +4,16 @@ import { Loader2 } from "lucide-react";
 
 import { useAuth } from "@/hooks/useAuth";
 
-const PUBLIC_PATHS = ["/login", "/auth/callback", "/onboarding/$token"];
+const PUBLIC_PATHS = ["/login", "/auth/callback", "/auth/reset-password", "/onboarding/$token"];
 
 export function AuthGuard({ children }: { children: ReactNode }) {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
-  const isPublic = PUBLIC_PATHS.some((p) => location.pathname === p || location.pathname.startsWith("/onboarding/"));
+  const isPublic = PUBLIC_PATHS.some(
+    (p) => location.pathname === p || location.pathname.startsWith("/onboarding/")
+  );
 
   useEffect(() => {
     if (loading) return;
