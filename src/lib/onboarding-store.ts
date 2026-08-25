@@ -87,8 +87,27 @@ export function onboardingLink(token: string) {
   return `${origin}/onboarding/${token}`;
 }
 
-export const onboardingFieldGroups: { title: string; fields: { key: string; label: string; type?: string; required?: boolean }[] }[] = [
+export type OnboardingField = {
+  key: string;
+  label: string;
+  type?: string;
+  required?: boolean;
+};
+
+export type OnboardingGroup = {
+  id: string;
+  title: string;
+  fields: OnboardingField[];
+};
+
+export type OnboardingFormConfig = {
+  groups: OnboardingGroup[];
+  documents: string[];
+};
+
+export const defaultOnboardingGroups: OnboardingGroup[] = [
   {
+    id: "personal",
     title: "Personal Information",
     fields: [
       { key: "firstName", label: "First Name", required: true },
@@ -100,6 +119,7 @@ export const onboardingFieldGroups: { title: string; fields: { key: string; labe
     ],
   },
   {
+    id: "contact",
     title: "Contact",
     fields: [
       { key: "address", label: "Present Address", required: true },
@@ -109,6 +129,7 @@ export const onboardingFieldGroups: { title: string; fields: { key: string; labe
     ],
   },
   {
+    id: "banking",
     title: "Banking",
     fields: [
       { key: "bankName", label: "Bank Name", required: true },
@@ -120,3 +141,34 @@ export const onboardingFieldGroups: { title: string; fields: { key: string; labe
     ],
   },
 ];
+
+export const defaultOnboardingDocuments = [
+  "Resume/CV",
+  "ID Documents",
+  "Employee Contract",
+  "Tax Forms",
+  "Benefits Enrollment",
+  "Certifications & License",
+  "Performance Reviews",
+];
+
+export const defaultOnboardingConfig: OnboardingFormConfig = {
+  groups: defaultOnboardingGroups,
+  documents: defaultOnboardingDocuments,
+};
+
+const CONFIG_KEY = "omniwork.onboarding.formConfig";
+
+export function loadFormConfig(): OnboardingFormConfig {
+  const cfg = read<OnboardingFormConfig | null>(CONFIG_KEY, null);
+  if (!cfg || !Array.isArray(cfg.groups) || !Array.isArray(cfg.documents)) {
+    return defaultOnboardingConfig;
+  }
+  return cfg;
+}
+
+export const saveFormConfig = (config: OnboardingFormConfig) => write(CONFIG_KEY, config);
+
+/** Legacy export kept for compatibility. */
+export const onboardingFieldGroups = defaultOnboardingGroups;
+
