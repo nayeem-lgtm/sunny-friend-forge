@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { consentClauses, consentDocument } from "@/lib/consent-data";
-import { policySections } from "@/lib/policy-text";
+import { policyFooterNote, policySections } from "@/lib/policy-text";
 
 export function ConsentStep({
   fullName,
@@ -47,7 +47,7 @@ export function ConsentStep({
           </div>
           <Button variant="outline" size="sm" asChild>
             <a href={consentDocument.url} target="_blank" rel="noreferrer">
-              <FileText className="size-4" /> Open full PDF
+              <FileText className="size-4" /> Open original document
               <ExternalLink className="size-3.5" />
             </a>
           </Button>
@@ -63,10 +63,10 @@ export function ConsentStep({
           <div className="space-y-6 pr-3">
             <header className="space-y-1 text-center">
               <h3 className="text-sm font-bold uppercase tracking-wide text-foreground">
-                Ray Advertising — Corporate Service Rules Manual 2026
+                RAY Advertising — Employee Consent Form
               </h3>
               <p className="text-xs text-muted-foreground">
-                For Bangladesh Staff Only · Effective Date: 01 May 2026
+                ERP Workforce Monitoring &amp; Tracking System
               </p>
             </header>
             {policySections.map((s) => (
@@ -93,8 +93,7 @@ export function ConsentStep({
               </article>
             ))}
             <p className="rounded-lg border border-border bg-card p-3 text-xs text-muted-foreground">
-              The text above is reproduced verbatim from the Corporate Service Rules Manual 2026. The
-              attached PDF is the official signed copy.
+              {policyFooterNote}
             </p>
           </div>
 
@@ -106,13 +105,13 @@ export function ConsentStep({
           }`}
         >
           <CheckCircle2 className="size-3.5" />
-          {reviewed ? "You have reviewed the full policy text." : "Scroll to the end to review the full policy text."}
+          {reviewed ? "You have reviewed the full consent form." : "Scroll to the end to review the full consent form."}
         </p>
       </section>
 
       <section className="rounded-xl border border-border bg-card p-6">
         <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-          Consent & Declarations
+          Acknowledgment & Consent
         </h2>
         <div className="space-y-3">
           {consentClauses.map((c) => (
