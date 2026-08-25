@@ -539,8 +539,8 @@ function Page() {
                 <AreaChart data={trend}>
                   <defs>
                     <linearGradient id="kpiGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.5} />
-                      <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0} />
+                      <stop offset="0%" stopColor="var(--primary)" stopOpacity={0.5} />
+                      <stop offset="100%" stopColor="var(--primary)" stopOpacity={0} />
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" className="stroke-border" vertical={false} />
@@ -548,8 +548,8 @@ function Page() {
                   <YAxis domain={[60, 100]} tickLine={false} axisLine={false} className="text-xs" />
                   <RTooltip
                     contentStyle={{
-                      background: "hsl(var(--card))",
-                      border: "1px solid hsl(var(--border))",
+                      background: "var(--card)",
+                      border: "1px solid var(--border)",
                       borderRadius: 10,
                       fontSize: 12,
                     }}
@@ -557,7 +557,7 @@ function Page() {
                   <Area
                     type="monotone"
                     dataKey="score"
-                    stroke="hsl(var(--primary))"
+                    stroke="var(--primary)"
                     strokeWidth={2}
                     fill="url(#kpiGrad)"
                   />
@@ -580,8 +580,8 @@ function Page() {
                   <YAxis tickLine={false} axisLine={false} className="text-xs" />
                   <RTooltip
                     contentStyle={{
-                      background: "hsl(var(--card))",
-                      border: "1px solid hsl(var(--border))",
+                      background: "var(--card)",
+                      border: "1px solid var(--border)",
                       borderRadius: 10,
                       fontSize: 12,
                     }}
@@ -591,7 +591,7 @@ function Page() {
                       <Cell
                         key={c.key}
                         fill={
-                          c.score / c.max > 0.9 ? "hsl(var(--primary))" : "hsl(var(--warning))"
+                          c.score / c.max > 0.9 ? "var(--primary)" : "var(--warning)"
                         }
                       />
                     ))}
