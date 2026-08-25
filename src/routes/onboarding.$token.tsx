@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { StatusPill } from "@/components/shared/StatusPill";
 import { OnboardingFormFields } from "@/components/employees/OnboardingFormFields";
 import { ConsentStep } from "@/components/employees/ConsentStep";
+import { DocumentReviewStep, POLICY_DOC_SLOT } from "@/components/employees/DocumentReviewStep";
+import { ConfirmSubmitStep } from "@/components/employees/ConfirmSubmitStep";
 import { consentClauses, consentDocument } from "@/lib/consent-data";
 import {
   defaultOnboardingConfig,
@@ -46,6 +48,8 @@ export const Route = createFileRoute("/onboarding/$token")({
 
 const MAX_INLINE = 1_500_000;
 
+type Step = 0 | 1 | 2 | 3;
+
 function Page() {
   const { token } = Route.useParams();
   const [invite, setInvite] = useState<OnboardingInvite | undefined>();
@@ -56,7 +60,8 @@ function Page() {
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
   const [config, setConfig] = useState<OnboardingFormConfig>(defaultOnboardingConfig);
-  const [step, setStep] = useState<0 | 1>(0);
+  const [step, setStep] = useState<Step>(0);
+  const [reviewedDocs, setReviewedDocs] = useState<string[]>([]);
   const [acknowledged, setAcknowledged] = useState<string[]>([]);
   const [signedName, setSignedName] = useState("");
   const [signatureImage, setSignatureImage] = useState<string | undefined>();
@@ -94,7 +99,14 @@ function Page() {
     setFiles((prev) => [...prev.filter((f) => f.slot !== slot), entry]);
   };
 
-  const goToConsent = () => {
+  const reviewTotal = config.documents.length + 1;
+
+  const go = (next: Step) => {
+    setStep(next);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const goToDocuments = () => {
     const missing = config.groups
       .flatMap((g) => g.fields)
       .filter((f) => f.required && !values[f.key]?.trim());
@@ -102,8 +114,28 @@ function Page() {
       toast.error(`Please fill: ${missing.map((m) => m.label).join(", ")}`);
       return;
     }
-    setStep(1);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    go(1);
+  };
+
+  const goToConsent = () => {
+    if (reviewedDocs.length < reviewTotal) {
+      toast.error("Please open and mark every document as reviewed before signing.");
+      return;
+    }
+    go(2);
+  };
+
+  const goToConfirm = () => {
+    const pending = consentClauses.filter((c) => !acknowledged.includes(c.id));
+    if (pending.length) {
+      toast.error("Please accept all consent statements before continuing.");
+      return;
+    }
+    if (!signedName.trim()) {
+      toast.error("Signing is required — type your full legal name to sign.");
+      return;
+    }
+    go(3);
   };
 
   const submit = () => {
@@ -132,6 +164,7 @@ function Page() {
       fields: values,
       files,
       consent,
+      reviewedDocuments: reviewedDocs,
     };
     upsertSubmission(submission);
     setInviteStatus(token, "Submitted");
@@ -205,7 +238,7 @@ function Page() {
       <Stepper step={step} />
 
       <div className="space-y-6">
-        {step === 0 ? (
+        {step === 0 && (
           <>
             <OnboardingFormFields
               config={config}
@@ -216,12 +249,37 @@ function Page() {
               onRemoveFile={(slot) => setFiles((prev) => prev.filter((f) => f.slot !== slot))}
             />
             <div className="flex justify-end pb-12">
+              <Button size="lg" onClick={goToDocuments}>
+                Continue to document review <ArrowRight className="size-4" />
+              </Button>
+            </div>
+          </>
+        )}
+
+        {step === 1 && (
+          <>
+            <DocumentReviewStep
+              documents={config.documents}
+              files={files}
+              reviewed={reviewedDocs}
+              onToggle={(slot, checked) =>
+                setReviewedDocs((prev) =>
+                  checked ? [...new Set([...prev, slot])] : prev.filter((x) => x !== slot),
+                )
+              }
+            />
+            <div className="flex flex-wrap justify-between gap-3 pb-12">
+              <Button variant="outline" size="lg" onClick={() => go(0)}>
+                <ArrowLeft className="size-4" /> Back to details
+              </Button>
               <Button size="lg" onClick={goToConsent}>
                 Continue to consent <ArrowRight className="size-4" />
               </Button>
             </div>
           </>
-        ) : (
+        )}
+
+        {step === 2 && (
           <>
             <ConsentStep
               fullName={`${values["firstName"] ?? ""} ${values["lastName"] ?? ""}`.trim()}
@@ -237,11 +295,35 @@ function Page() {
               onSignatureImage={setSignatureImage}
             />
             <div className="flex flex-wrap justify-between gap-3 pb-12">
-              <Button variant="outline" size="lg" onClick={() => setStep(0)}>
-                <ArrowLeft className="size-4" /> Back to details
+              <Button variant="outline" size="lg" onClick={() => go(1)}>
+                <ArrowLeft className="size-4" /> Back to documents
               </Button>
-              <Button size="lg" onClick={submit} disabled={submitting}>
-                {submitting && <Loader2 className="size-4 animate-spin" />} Sign & complete onboarding
+              <Button size="lg" onClick={goToConfirm}>
+                Continue to confirm <ArrowRight className="size-4" />
+              </Button>
+            </div>
+          </>
+        )}
+
+        {step === 3 && (
+          <>
+            <ConfirmSubmitStep
+              fullName={`${values["firstName"] ?? ""} ${values["lastName"] ?? ""}`.trim()}
+              email={values["email"] ?? invite.email}
+              documents={config.documents}
+              files={files}
+              reviewedCount={reviewedDocs.length}
+              reviewedTotal={reviewTotal}
+              acknowledged={acknowledged}
+              signedName={signedName}
+              signatureImage={signatureImage}
+            />
+            <div className="flex flex-wrap justify-between gap-3 pb-12">
+              <Button variant="outline" size="lg" onClick={() => go(2)}>
+                <ArrowLeft className="size-4" /> Back to signature
+              </Button>
+              <Button size="lg" onClick={submit} disabled={submitting || !signedName.trim()}>
+                {submitting && <Loader2 className="size-4 animate-spin" />} Confirm & submit onboarding
               </Button>
             </div>
           </>
@@ -252,10 +334,10 @@ function Page() {
   );
 }
 
-function Stepper({ step }: { step: 0 | 1 }) {
-  const steps = ["Your details & documents", "Policy consent & signature"];
+function Stepper({ step }: { step: Step }) {
+  const steps = ["Your details", "Document review", "Consent & signature", "Confirm & submit"];
   return (
-    <div className="mb-6 grid gap-3 sm:grid-cols-2">
+    <div className="mb-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
       {steps.map((label, i) => {
         const active = i === step;
         const done = i < step;
