@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { createFileRoute, Link, useNavigate, useSearch } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, useSearch } from "@tanstack/react-router";
 import { Eye, EyeOff, Loader2, Lock, Mail } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -7,8 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/hooks/useAuth";
 import { lovable } from "@/integrations/lovable/index";
-import { cn } from "@/lib/utils";
-import omniMark from "@/assets/omniwork-mark.png";
+import { supabase } from "@/integrations/supabase/client";
+import omniMarkUrl from "@/assets/omniwork-mark.png.asset.json";
 
 export const Route = createFileRoute("/login")({
   head: () => ({
