@@ -37,15 +37,18 @@ import {
 } from "@/components/ui/select";
 import { departments } from "@/lib/employee-data";
 import {
+  buildSessions,
   formatDay,
   formatDuration,
   formatTime,
+  formatUsage,
   generateShots,
   generateShotsForRange,
   getLiveStatuses,
   type LiveStatus,
   type Shot,
 } from "@/lib/monitoring-data";
+
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/monitoring")({
