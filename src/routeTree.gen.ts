@@ -28,6 +28,17 @@ import { Route as UserAccessRouteImport } from './routes/user-access'
 import { Route as WorklogsRouteImport } from './routes/worklogs'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 import { Route as AuthResetPasswordRouteImport } from './routes/auth.reset-password'
+import { Route as MeIndexRouteImport } from './routes/me.index'
+import { Route as MeAnnouncementsRouteImport } from './routes/me.announcements'
+import { Route as MeAttendanceRouteImport } from './routes/me.attendance'
+import { Route as MeBoardRouteImport } from './routes/me.board'
+import { Route as MeChatRouteImport } from './routes/me.chat'
+import { Route as MeKpiRouteImport } from './routes/me.kpi'
+import { Route as MeLeaveRouteImport } from './routes/me.leave'
+import { Route as MeMeetingsRouteImport } from './routes/me.meetings'
+import { Route as MePayslipsRouteImport } from './routes/me.payslips'
+import { Route as MeProfileRouteImport } from './routes/me.profile'
+import { Route as MeWorklogsRouteImport } from './routes/me.worklogs'
 import { Route as OnboardingTokenRouteImport } from './routes/onboarding.$token'
 
 const IndexRoute = IndexRouteImport.update({
@@ -125,6 +136,61 @@ const AuthResetPasswordRoute = AuthResetPasswordRouteImport.update({
   path: '/auth/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MeIndexRoute = MeIndexRouteImport.update({
+  id: '/me/',
+  path: '/me/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MeAnnouncementsRoute = MeAnnouncementsRouteImport.update({
+  id: '/me/announcements',
+  path: '/me/announcements',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MeAttendanceRoute = MeAttendanceRouteImport.update({
+  id: '/me/attendance',
+  path: '/me/attendance',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MeBoardRoute = MeBoardRouteImport.update({
+  id: '/me/board',
+  path: '/me/board',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MeChatRoute = MeChatRouteImport.update({
+  id: '/me/chat',
+  path: '/me/chat',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MeKpiRoute = MeKpiRouteImport.update({
+  id: '/me/kpi',
+  path: '/me/kpi',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MeLeaveRoute = MeLeaveRouteImport.update({
+  id: '/me/leave',
+  path: '/me/leave',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MeMeetingsRoute = MeMeetingsRouteImport.update({
+  id: '/me/meetings',
+  path: '/me/meetings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MePayslipsRoute = MePayslipsRouteImport.update({
+  id: '/me/payslips',
+  path: '/me/payslips',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MeProfileRoute = MeProfileRouteImport.update({
+  id: '/me/profile',
+  path: '/me/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MeWorklogsRoute = MeWorklogsRouteImport.update({
+  id: '/me/worklogs',
+  path: '/me/worklogs',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const OnboardingTokenRoute = OnboardingTokenRouteImport.update({
   id: '/onboarding/$token',
   path: '/onboarding/$token',
@@ -151,7 +217,18 @@ export interface FileRoutesByFullPath {
   '/worklogs': typeof WorklogsRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
+  '/me/announcements': typeof MeAnnouncementsRoute
+  '/me/attendance': typeof MeAttendanceRoute
+  '/me/board': typeof MeBoardRoute
+  '/me/chat': typeof MeChatRoute
+  '/me/kpi': typeof MeKpiRoute
+  '/me/leave': typeof MeLeaveRoute
+  '/me/meetings': typeof MeMeetingsRoute
+  '/me/payslips': typeof MePayslipsRoute
+  '/me/profile': typeof MeProfileRoute
+  '/me/worklogs': typeof MeWorklogsRoute
   '/onboarding/$token': typeof OnboardingTokenRoute
+  '/me/': typeof MeIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -173,7 +250,18 @@ export interface FileRoutesByTo {
   '/worklogs': typeof WorklogsRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
+  '/me/announcements': typeof MeAnnouncementsRoute
+  '/me/attendance': typeof MeAttendanceRoute
+  '/me/board': typeof MeBoardRoute
+  '/me/chat': typeof MeChatRoute
+  '/me/kpi': typeof MeKpiRoute
+  '/me/leave': typeof MeLeaveRoute
+  '/me/meetings': typeof MeMeetingsRoute
+  '/me/payslips': typeof MePayslipsRoute
+  '/me/profile': typeof MeProfileRoute
+  '/me/worklogs': typeof MeWorklogsRoute
   '/onboarding/$token': typeof OnboardingTokenRoute
+  '/me': typeof MeIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -196,7 +284,18 @@ export interface FileRoutesById {
   '/worklogs': typeof WorklogsRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
+  '/me/announcements': typeof MeAnnouncementsRoute
+  '/me/attendance': typeof MeAttendanceRoute
+  '/me/board': typeof MeBoardRoute
+  '/me/chat': typeof MeChatRoute
+  '/me/kpi': typeof MeKpiRoute
+  '/me/leave': typeof MeLeaveRoute
+  '/me/meetings': typeof MeMeetingsRoute
+  '/me/payslips': typeof MePayslipsRoute
+  '/me/profile': typeof MeProfileRoute
+  '/me/worklogs': typeof MeWorklogsRoute
   '/onboarding/$token': typeof OnboardingTokenRoute
+  '/me/': typeof MeIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -220,7 +319,18 @@ export interface FileRouteTypes {
     | '/worklogs'
     | '/auth/callback'
     | '/auth/reset-password'
+    | '/me/announcements'
+    | '/me/attendance'
+    | '/me/board'
+    | '/me/chat'
+    | '/me/kpi'
+    | '/me/leave'
+    | '/me/meetings'
+    | '/me/payslips'
+    | '/me/profile'
+    | '/me/worklogs'
     | '/onboarding/$token'
+    | '/me/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -242,7 +352,18 @@ export interface FileRouteTypes {
     | '/worklogs'
     | '/auth/callback'
     | '/auth/reset-password'
+    | '/me/announcements'
+    | '/me/attendance'
+    | '/me/board'
+    | '/me/chat'
+    | '/me/kpi'
+    | '/me/leave'
+    | '/me/meetings'
+    | '/me/payslips'
+    | '/me/profile'
+    | '/me/worklogs'
     | '/onboarding/$token'
+    | '/me'
   id:
     | '__root__'
     | '/'
@@ -264,7 +385,18 @@ export interface FileRouteTypes {
     | '/worklogs'
     | '/auth/callback'
     | '/auth/reset-password'
+    | '/me/announcements'
+    | '/me/attendance'
+    | '/me/board'
+    | '/me/chat'
+    | '/me/kpi'
+    | '/me/leave'
+    | '/me/meetings'
+    | '/me/payslips'
+    | '/me/profile'
+    | '/me/worklogs'
     | '/onboarding/$token'
+    | '/me/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -287,7 +419,18 @@ export interface RootRouteChildren {
   WorklogsRoute: typeof WorklogsRoute
   AuthCallbackRoute: typeof AuthCallbackRoute
   AuthResetPasswordRoute: typeof AuthResetPasswordRoute
+  MeAnnouncementsRoute: typeof MeAnnouncementsRoute
+  MeAttendanceRoute: typeof MeAttendanceRoute
+  MeBoardRoute: typeof MeBoardRoute
+  MeChatRoute: typeof MeChatRoute
+  MeKpiRoute: typeof MeKpiRoute
+  MeLeaveRoute: typeof MeLeaveRoute
+  MeMeetingsRoute: typeof MeMeetingsRoute
+  MePayslipsRoute: typeof MePayslipsRoute
+  MeProfileRoute: typeof MeProfileRoute
+  MeWorklogsRoute: typeof MeWorklogsRoute
   OnboardingTokenRoute: typeof OnboardingTokenRoute
+  MeIndexRoute: typeof MeIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -425,6 +568,83 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/me/': {
+      id: '/me/'
+      path: '/me'
+      fullPath: '/me/'
+      preLoaderRoute: typeof MeIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/me/announcements': {
+      id: '/me/announcements'
+      path: '/me/announcements'
+      fullPath: '/me/announcements'
+      preLoaderRoute: typeof MeAnnouncementsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/me/attendance': {
+      id: '/me/attendance'
+      path: '/me/attendance'
+      fullPath: '/me/attendance'
+      preLoaderRoute: typeof MeAttendanceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/me/board': {
+      id: '/me/board'
+      path: '/me/board'
+      fullPath: '/me/board'
+      preLoaderRoute: typeof MeBoardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/me/chat': {
+      id: '/me/chat'
+      path: '/me/chat'
+      fullPath: '/me/chat'
+      preLoaderRoute: typeof MeChatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/me/kpi': {
+      id: '/me/kpi'
+      path: '/me/kpi'
+      fullPath: '/me/kpi'
+      preLoaderRoute: typeof MeKpiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/me/leave': {
+      id: '/me/leave'
+      path: '/me/leave'
+      fullPath: '/me/leave'
+      preLoaderRoute: typeof MeLeaveRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/me/meetings': {
+      id: '/me/meetings'
+      path: '/me/meetings'
+      fullPath: '/me/meetings'
+      preLoaderRoute: typeof MeMeetingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/me/payslips': {
+      id: '/me/payslips'
+      path: '/me/payslips'
+      fullPath: '/me/payslips'
+      preLoaderRoute: typeof MePayslipsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/me/profile': {
+      id: '/me/profile'
+      path: '/me/profile'
+      fullPath: '/me/profile'
+      preLoaderRoute: typeof MeProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/me/worklogs': {
+      id: '/me/worklogs'
+      path: '/me/worklogs'
+      fullPath: '/me/worklogs'
+      preLoaderRoute: typeof MeWorklogsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/onboarding/$token': {
       id: '/onboarding/$token'
       path: '/onboarding/$token'
@@ -455,7 +675,18 @@ const rootRouteChildren: RootRouteChildren = {
   WorklogsRoute: WorklogsRoute,
   AuthCallbackRoute: AuthCallbackRoute,
   AuthResetPasswordRoute: AuthResetPasswordRoute,
+  MeAnnouncementsRoute: MeAnnouncementsRoute,
+  MeAttendanceRoute: MeAttendanceRoute,
+  MeBoardRoute: MeBoardRoute,
+  MeChatRoute: MeChatRoute,
+  MeKpiRoute: MeKpiRoute,
+  MeLeaveRoute: MeLeaveRoute,
+  MeMeetingsRoute: MeMeetingsRoute,
+  MePayslipsRoute: MePayslipsRoute,
+  MeProfileRoute: MeProfileRoute,
+  MeWorklogsRoute: MeWorklogsRoute,
   OnboardingTokenRoute: OnboardingTokenRoute,
+  MeIndexRoute: MeIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
