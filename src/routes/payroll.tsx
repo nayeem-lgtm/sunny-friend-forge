@@ -215,32 +215,78 @@ function Page() {
         />
       </div>
 
-      <div className="mt-4 rounded-xl border border-border bg-card p-5">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <p className="text-sm text-muted-foreground">Payment progress</p>
-            <p className="mt-1 text-lg font-semibold tracking-tight">
-              {formatBDT(totals.paidAmount)} released of {formatBDT(totals.net)}
-            </p>
-          </div>
-          <p className="text-sm text-muted-foreground">
-            Pay period {period.from} — {period.to}
-          </p>
-        </div>
-        <Progress value={totals.pct} className="mt-4 h-2" />
-      </div>
-
       <div className="mt-4 rounded-xl border border-border bg-card">
         <div className="flex flex-wrap items-center gap-3 border-b border-border p-4">
           <div className="flex items-center gap-1 rounded-lg border border-border p-1">
-            <Button variant="ghost" size="icon" className="size-8" onClick={() => shiftMonth(-1)}>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="size-8"
+              onClick={() => shiftMonth(-1)}
+              aria-label="Previous month"
+            >
               <ChevronLeft className="size-4" />
             </Button>
-            <span className="min-w-[130px] text-center text-sm font-medium">{monthLabel(month)}</span>
-            <Button variant="ghost" size="icon" className="size-8" onClick={() => shiftMonth(1)}>
+            <Select
+              value={String(month.getMonth())}
+              onValueChange={(v) => setMonthTo(Number(v), month.getFullYear())}
+            >
+              <SelectTrigger className="h-8 w-[130px] border-0 bg-transparent text-sm font-medium shadow-none">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {monthNames.map((m, i) => (
+                  <SelectItem key={m} value={String(i)}>
+                    {m}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select
+              value={String(month.getFullYear())}
+              onValueChange={(v) => setMonthTo(month.getMonth(), Number(v))}
+            >
+              <SelectTrigger className="h-8 w-[92px] border-0 bg-transparent text-sm font-medium shadow-none">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {years.map((y) => (
+                  <SelectItem key={y} value={String(y)}>
+                    {y}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="size-8"
+              onClick={() => shiftMonth(1)}
+              aria-label="Next month"
+            >
               <ChevronRight className="size-4" />
             </Button>
           </div>
+
+          <div className="flex flex-wrap items-center gap-1.5">
+            {quickMonths.map((q) => (
+              <button
+                key={q.label}
+                type="button"
+                onClick={() => setMonthTo(q.date.getMonth(), q.date.getFullYear())}
+                className={cn(
+                  "rounded-full border px-3 py-1 text-xs transition-colors",
+                  q.date.getMonth() === month.getMonth() &&
+                    q.date.getFullYear() === month.getFullYear()
+                    ? "border-primary/40 bg-primary/10 text-primary"
+                    : "border-border text-muted-foreground hover:text-foreground",
+                )}
+              >
+                {q.label}
+              </button>
+            ))}
+          </div>
+
 
           <div className="relative w-full max-w-xs">
             <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
