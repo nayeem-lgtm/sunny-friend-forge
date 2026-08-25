@@ -10,6 +10,9 @@ import {
   FileText,
   Gauge,
   ListChecks,
+  Mail,
+  Send,
+
   Scale,
   Settings2,
   ShieldCheck,
