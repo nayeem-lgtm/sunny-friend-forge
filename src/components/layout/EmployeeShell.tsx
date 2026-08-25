@@ -78,6 +78,7 @@ export function EmployeeShell({ children }: { children: ReactNode }) {
           )}
           <div className="flex items-center gap-3 rounded-lg px-2 py-2">
             <Avatar className="size-9">
+              {avatarUrl ? <AvatarImage src={avatarUrl} alt={name} /> : null}
               <AvatarFallback>{initials(name)}</AvatarFallback>
             </Avatar>
             <div className="min-w-0">
