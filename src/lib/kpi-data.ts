@@ -512,7 +512,7 @@ export function computeEmployeeKpi(
     const start = toMin(a.breakStart);
     const end = a.breakEnd ? toMin(a.breakEnd) : start + a.breakMinutes;
     let violated = false;
-    if (start > windowStart + 15) violated = true;
+    if (start > windowStart + 30) violated = true;
     if (end > windowEnd) violated = true;
     if (a.breakMinutes > s.breaks.allowedMinutes) {
       excessMinutes += a.breakMinutes - s.breaks.allowedMinutes;
