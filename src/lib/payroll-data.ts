@@ -1,4 +1,10 @@
 import { employees } from "@/lib/employee-data";
+import {
+  absenceSummary,
+  absencesForMonth,
+  emptyAbsence,
+  type AbsenceBreakdown,
+} from "@/lib/absence-rules";
 
 export type PayrollAdjustment = {
   id: string;
