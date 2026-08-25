@@ -122,20 +122,35 @@ function Page() {
   const active = rows.find((r) => r.id === openId) ?? null;
 
   const decide = (id: string, status: "Approved" | "Rejected") => {
+    const note = comment.trim();
     setRows((prev) =>
       prev.map((r) =>
         r.id === id
           ? {
               ...r,
               status,
-              feedback: comment.trim()
-                ? [...r.feedback, { id: `fb-${Date.now()}`, author: "HR Admin", text: comment.trim(), at: new Date().toISOString() }]
-                : r.feedback,
+              feedback: [
+                ...r.feedback,
+                {
+                  id: `fb-${Date.now()}`,
+                  author: "HR Admin",
+                  text: note ? `${status}: ${note}` : `Request ${status.toLowerCase()} by HR Admin.`,
+                  at: new Date().toISOString(),
+                },
+              ],
             }
           : r,
       ),
     );
     setComment("");
+    const row = rows.find((r) => r.id === id);
+    if (status === "Approved") toast.success(`Leave approved for ${row?.employee ?? "employee"}`);
+    else toast.error(`Leave rejected for ${row?.employee ?? "employee"}`);
+  };
+
+  const reopen = (id: string) => {
+    setRows((prev) => prev.map((r) => (r.id === id ? { ...r, status: "Pending" } : r)));
+    toast.info("Request reopened — it is pending again");
   };
 
   const postFeedback = (id: string) => {
@@ -154,7 +169,9 @@ function Page() {
       ),
     );
     setComment("");
+    toast.success("Note sent to the employee");
   };
+
 
   const columns: Column<LeaveRequest>[] = [
     {
