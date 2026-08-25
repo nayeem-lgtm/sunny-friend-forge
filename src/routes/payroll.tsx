@@ -216,7 +216,13 @@ function Page() {
     };
   }, [rows]);
 
-  const period = periodLabel(month);
+  const period =
+    custom?.from
+      ? {
+          from: custom.from.toLocaleDateString(),
+          to: (custom.to ?? custom.from).toLocaleDateString(),
+        }
+      : periodLabel(month);
 
   const update = (id: string, fn: (r: PayrollRow) => PayrollRow) =>
     setRows((prev) => prev.map((r) => (r.id === id ? fn(r) : r)));
