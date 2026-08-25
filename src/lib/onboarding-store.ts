@@ -35,6 +35,7 @@ export type OnboardingSubmission = {
 export type OnboardingInvite = {
   id: string;
   token: string;
+  employeeId?: string;
   email: string;
   firstName: string;
   lastName: string;
@@ -52,6 +53,7 @@ const SUBMISSIONS_KEY = "omniwork.onboarding.submissions";
 const TEST_INVITE: OnboardingInvite = {
   id: "inv-preview-nayeem",
   token: "lqky7z9qqtqm9264",
+  employeeId: "RAY-0001",
   email: "nayeem@rayadvertising.com",
   firstName: "Nayeem",
   lastName: "Ahmad",
