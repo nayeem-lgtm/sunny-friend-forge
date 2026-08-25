@@ -22,12 +22,14 @@ import {
   fullName,
   useEmployeeSession,
 } from "@/lib/employee-session";
+import { usePortalRole } from "@/lib/portal-role";
 
 export function EmployeeShell({ children }: { children: ReactNode }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const { employee, name, select } = useEmployeeSession();
   const { theme, toggle } = useTheme();
   const { signOut } = useAuth();
+  const { isEmployee } = usePortalRole();
   const title = employeePageTitles[pathname] ?? "My Dashboard";
 
   return (
@@ -66,12 +68,14 @@ export function EmployeeShell({ children }: { children: ReactNode }) {
         </nav>
 
         <div className="border-t border-sidebar-border p-3">
-          <Link
-            to="/"
-            className="mb-2 flex items-center gap-2 rounded-lg px-3 py-2 text-xs text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-          >
-            <ArrowLeftRight className="size-4" /> Switch to admin panel
-          </Link>
+          {!isEmployee && (
+            <Link
+              to="/"
+              className="mb-2 flex items-center gap-2 rounded-lg px-3 py-2 text-xs text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+            >
+              <ArrowLeftRight className="size-4" /> Switch to admin panel
+            </Link>
+          )}
           <div className="flex items-center gap-3 rounded-lg px-2 py-2">
             <Avatar className="size-9">
               <AvatarFallback>{initials(name)}</AvatarFallback>
@@ -93,18 +97,24 @@ export function EmployeeShell({ children }: { children: ReactNode }) {
           </nav>
 
           <div className="ml-auto flex items-center gap-2">
-            <Select value={employee.id} onValueChange={select}>
-              <SelectTrigger className="h-9 w-[190px]" aria-label="Signed in as">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent className="max-h-72">
-                {activeEmployees.map((e) => (
-                  <SelectItem key={e.id} value={e.id}>
-                    {fullName(e)}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            {isEmployee ? (
+              <span className="hidden text-sm text-muted-foreground sm:inline">
+                {name} · {employee.department}
+              </span>
+            ) : (
+              <Select value={employee.id} onValueChange={select}>
+                <SelectTrigger className="h-9 w-[190px]" aria-label="Viewing as employee">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="max-h-72">
+                  {activeEmployees.map((e) => (
+                    <SelectItem key={e.id} value={e.id}>
+                      {fullName(e)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
 
             <button
               onClick={toggle}
