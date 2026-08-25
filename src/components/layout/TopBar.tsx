@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 export function TopBar() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const { theme, toggle } = useTheme();
+  const { signOut } = useAuth();
   const title = pageTitles[pathname] ?? "Overview";
 
   return (
