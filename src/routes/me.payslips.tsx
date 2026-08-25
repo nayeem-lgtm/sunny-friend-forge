@@ -73,31 +73,8 @@ function Line({
   );
 }
 
-function downloadPayslip(row: PayrollRow, month: Date) {
-  const lines = [
-    `OmniWork Payslip — ${periodText(month)}`,
-    "",
-    `Employee: ${row.employee} (${row.employeeCode})`,
-    `Designation: ${row.designation}`,
-    `Department: ${row.department}`,
-    "",
-    `Base salary: ${formatBDT(row.baseSalary)}`,
-    `Bonuses: ${formatBDT(sumAdjustments(row.bonuses))}`,
-    `Incentives: ${formatBDT(sumAdjustments(row.incentives))}`,
-    `Deductions: -${formatBDT(sumAdjustments(row.deductions))}`,
-    `Absence days (equivalent): ${row.absence.equivalentAbsentDays}`,
-    `Absence deduction: -${formatBDT(row.absence.equivalentAbsentDays * row.dailyRate)}`,
-    "",
-    `Net pay: ${formatBDT(netPay(row))}`,
-    `Status: ${row.status}`,
-  ].join("\n");
-  const url = URL.createObjectURL(new Blob([lines], { type: "text/plain" }));
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = `payslip-${row.employeeCode}-${monthLabel(month).replace(" ", "-")}.txt`;
-  a.click();
-  URL.revokeObjectURL(url);
-}
+type PayslipRow = PayrollRow;
+
 
 function Page() {
   const { employee } = useEmployeeSession();
