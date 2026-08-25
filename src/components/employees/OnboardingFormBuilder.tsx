@@ -31,6 +31,8 @@ const fieldTypes = [
   { value: "tel", label: "Phone" },
   { value: "textarea", label: "Long text" },
 ];
+const previewSteps = ["Your details", "Consent & signature", "Confirm & submit"];
+
 
 const slugify = (label: string) =>
   label
