@@ -2,6 +2,8 @@ import { Eye, Plus, RotateCcw, Save, Settings2, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
+import { ConfirmSubmitStep } from "@/components/employees/ConfirmSubmitStep";
+import { ConsentStep } from "@/components/employees/ConsentStep";
 import { OnboardingFormFields } from "@/components/employees/OnboardingFormFields";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
