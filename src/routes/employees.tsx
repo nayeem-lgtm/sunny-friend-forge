@@ -122,6 +122,8 @@ function Page() {
       setInvites(seeded);
     }
     setSubmissions(loadSubmissions());
+    setFormConfig(loadFormConfig());
+
   }, []);
 
   const persistInvites = (next: OnboardingInvite[]) => {
