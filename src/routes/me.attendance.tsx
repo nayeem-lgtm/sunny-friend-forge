@@ -110,7 +110,7 @@ function Page() {
         <StatCard icon={TimerOff} label="Idle time" value={formatDuration(idle)} caption="Detected by monitoring" />
       </div>
 
-      <DataTable data={rows} columns={columns} rowKey={(r) => r.id} />
+      <DataTable data={rows} columns={columns} emptyMessage="No attendance records for this month." />
     </EmployeeShell>
   );
 }
