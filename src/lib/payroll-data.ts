@@ -11,9 +11,15 @@ export type PayrollStatus = "Drafted" | "Approved" | "Paid";
 export type PayrollRow = {
   id: string;
   employeeId: string;
+  employeeCode: string;
   employee: string;
   designation: string;
   department: string;
+  accountNumber: string;
+  routingNumber: string;
+  accountType: string;
+  phone: string;
+  email: string;
   baseSalary: number;
   bonuses: PayrollAdjustment[];
   incentives: PayrollAdjustment[];
@@ -90,9 +96,15 @@ export function generatePayroll(month: Date): PayrollRow[] {
       return {
         id: `${key}-${e.id}`,
         employeeId: e.id,
+        employeeCode: e.employeeId,
         employee: `${e.firstName} ${e.lastName}`,
         designation: e.designation,
         department: e.department,
+        accountNumber: e.accountNumber,
+        routingNumber: e.routingNumber,
+        accountType: "Savings",
+        phone: e.phone,
+        email: e.email,
         baseSalary: e.monthlySalary,
         bonuses,
         incentives,

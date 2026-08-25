@@ -8,6 +8,7 @@ import {
   Eye,
   Gift,
   Minus,
+  Pencil,
   Plus,
   Search,
   Send,
@@ -24,7 +25,7 @@ import { StatCard } from "@/components/shared/StatCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Progress } from "@/components/ui/progress";
+
 import {
   Dialog,
   DialogContent,
@@ -85,8 +86,29 @@ const adjMeta: Record<AdjKind, { title: string; tone: string; sign: string }> = 
   deduction: { title: "Add Deduction", tone: "text-destructive", sign: "-" },
 };
 
+const monthNames = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
+
 function Page() {
   const base = new Date(2026, 7, 1);
+  const years = Array.from({ length: 5 }, (_, i) => base.getFullYear() - 3 + i);
+  const quickMonths = [
+    { label: "This month", date: base },
+    { label: "Last month", date: new Date(base.getFullYear(), base.getMonth() - 1, 1) },
+    { label: "2 months ago", date: new Date(base.getFullYear(), base.getMonth() - 2, 1) },
+  ];
   const [month, setMonth] = useState(base);
   const [rows, setRows] = useState<PayrollRow[]>(() => generatePayroll(base));
   const [query, setQuery] = useState("");
@@ -97,10 +119,52 @@ function Page() {
   const [amount, setAmount] = useState("");
   const [note, setNote] = useState("");
 
-  const shiftMonth = (delta: number) => {
-    const next = new Date(month.getFullYear(), month.getMonth() + delta, 1);
+  const setMonthTo = (m: number, y: number) => {
+    const next = new Date(y, m, 1);
     setMonth(next);
     setRows(generatePayroll(next));
+  };
+
+  const shiftMonth = (delta: number) =>
+    setMonthTo(month.getMonth() + delta, month.getFullYear());
+
+  const exportReport = async () => {
+    const XLSX = await import("xlsx");
+    const remark = `Salary ${monthLabel(month)}`;
+    const data = filtered.map((r) => ({
+      Reason: "Monthly Salary Pay",
+      "Sender Account No": "",
+      "Receiving Bank Routing No": r.routingNumber,
+      "Beneficiary Bank Account  No": r.accountNumber,
+      "Account Type": r.accountType,
+      Amount: Number(netPay(r).toFixed(2)),
+      "Receiver ID": r.employeeCode,
+      "Receiver Name": r.employee,
+      Remarks: remark,
+      "Receiver Mobile Number": r.phone,
+      "Receiver Email Address": r.email,
+    }));
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.json_to_sheet(data);
+    ws["!cols"] = [18, 18, 24, 26, 14, 12, 14, 24, 20, 22, 32].map((w) => ({ wch: w }));
+    XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+    const guide = XLSX.utils.aoa_to_sheet([
+      ["Data Field", "Data Type", "Description", "Is Mandatory"],
+      ["Reason", "String", "Type of payment. Example: Salary, Advance, Travel etc", "No"],
+      ["Sender Account No", "Number", "Transaction debit account number", "Yes"],
+      ["Receiving Bank Routing No", "Number", "Beneficiary bank routing number", "No"],
+      ["Beneficiary Bank Account  No", "Number", "Beneficiary bank account number", "No"],
+      ["Account Type", "String", "Beneficiary account type , Example : SB", "No"],
+      ["Amount", "Decimal", "Transaction amount", "Yes"],
+      ["Receiver ID", "Integer", "Set default value 0", "No"],
+      ["Receiver Name", "String", "Beneficiary bank account title", "Yes"],
+      ["Remarks", "String", "Transaction remarks (Maximum 100 letter input)", "Yes"],
+    ]);
+    guide["!cols"] = [28, 12, 60, 14].map((w) => ({ wch: w }));
+    XLSX.utils.book_append_sheet(wb, guide, "Sheet2");
+    const name = `payroll-${monthNames[month.getMonth()]!.toLowerCase()}-${month.getFullYear()}.xlsx`;
+    XLSX.writeFile(wb, name);
+    toast.success(`Bank transfer sheet exported (${data.length} payments)`);
   };
 
   const filtered = useMemo(
@@ -170,7 +234,7 @@ function Page() {
         description="Generate the monthly payroll sheet, adjust compensation and release payments."
         actions={
           <>
-            <Button variant="outline" onClick={() => toast.success("Payroll report exported")}>
+            <Button variant="outline" onClick={exportReport}>
               <Download className="size-4" /> Export report
             </Button>
             <Button
@@ -215,32 +279,78 @@ function Page() {
         />
       </div>
 
-      <div className="mt-4 rounded-xl border border-border bg-card p-5">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <p className="text-sm text-muted-foreground">Payment progress</p>
-            <p className="mt-1 text-lg font-semibold tracking-tight">
-              {formatBDT(totals.paidAmount)} released of {formatBDT(totals.net)}
-            </p>
-          </div>
-          <p className="text-sm text-muted-foreground">
-            Pay period {period.from} — {period.to}
-          </p>
-        </div>
-        <Progress value={totals.pct} className="mt-4 h-2" />
-      </div>
-
       <div className="mt-4 rounded-xl border border-border bg-card">
         <div className="flex flex-wrap items-center gap-3 border-b border-border p-4">
           <div className="flex items-center gap-1 rounded-lg border border-border p-1">
-            <Button variant="ghost" size="icon" className="size-8" onClick={() => shiftMonth(-1)}>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="size-8"
+              onClick={() => shiftMonth(-1)}
+              aria-label="Previous month"
+            >
               <ChevronLeft className="size-4" />
             </Button>
-            <span className="min-w-[130px] text-center text-sm font-medium">{monthLabel(month)}</span>
-            <Button variant="ghost" size="icon" className="size-8" onClick={() => shiftMonth(1)}>
+            <Select
+              value={String(month.getMonth())}
+              onValueChange={(v) => setMonthTo(Number(v), month.getFullYear())}
+            >
+              <SelectTrigger className="h-8 w-[130px] border-0 bg-transparent text-sm font-medium shadow-none">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {monthNames.map((m, i) => (
+                  <SelectItem key={m} value={String(i)}>
+                    {m}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select
+              value={String(month.getFullYear())}
+              onValueChange={(v) => setMonthTo(month.getMonth(), Number(v))}
+            >
+              <SelectTrigger className="h-8 w-[92px] border-0 bg-transparent text-sm font-medium shadow-none">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {years.map((y) => (
+                  <SelectItem key={y} value={String(y)}>
+                    {y}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="size-8"
+              onClick={() => shiftMonth(1)}
+              aria-label="Next month"
+            >
               <ChevronRight className="size-4" />
             </Button>
           </div>
+
+          <div className="flex flex-wrap items-center gap-1.5">
+            {quickMonths.map((q) => (
+              <button
+                key={q.label}
+                type="button"
+                onClick={() => setMonthTo(q.date.getMonth(), q.date.getFullYear())}
+                className={cn(
+                  "rounded-full border px-3 py-1 text-xs transition-colors",
+                  q.date.getMonth() === month.getMonth() &&
+                    q.date.getFullYear() === month.getFullYear()
+                    ? "border-primary/40 bg-primary/10 text-primary"
+                    : "border-border text-muted-foreground hover:text-foreground",
+                )}
+              >
+                {q.label}
+              </button>
+            ))}
+          </div>
+
 
           <div className="relative w-full max-w-xs">
             <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
@@ -323,7 +433,13 @@ function Page() {
                       </div>
                     </div>
                   </td>
-                  <td className="px-4 py-3 tabular-nums">{formatBDT(row.baseSalary)}</td>
+                  <SalaryCell
+                    value={row.baseSalary}
+                    onChange={(v) => {
+                      update(row.id, (r) => ({ ...r, baseSalary: v }));
+                      toast.success(`Base salary updated for ${row.employee}`);
+                    }}
+                  />
                   <AdjustCell
                     value={sumAdjustments(row.bonuses)}
                     kind="bonus"
@@ -535,6 +651,58 @@ function Page() {
         </DialogContent>
       </Dialog>
     </AppShell>
+  );
+}
+
+function SalaryCell({ value, onChange }: { value: number; onChange: (v: number) => void }) {
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState(String(value));
+
+  const commit = () => {
+    const n = Number(draft);
+    setEditing(false);
+    if (!Number.isFinite(n) || n < 0) {
+      toast.error("Enter a valid salary");
+      setDraft(String(value));
+      return;
+    }
+    if (n !== value) onChange(n);
+  };
+
+  return (
+    <td className="px-4 py-3 tabular-nums">
+      {editing ? (
+        <Input
+          autoFocus
+          type="number"
+          min={0}
+          value={draft}
+          onChange={(e) => setDraft(e.target.value)}
+          onBlur={commit}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") commit();
+            if (e.key === "Escape") {
+              setDraft(String(value));
+              setEditing(false);
+            }
+          }}
+          className="h-8 w-[140px]"
+        />
+      ) : (
+        <button
+          type="button"
+          onClick={() => {
+            setDraft(String(value));
+            setEditing(true);
+          }}
+          className="flex items-center gap-1.5 rounded-md px-1.5 py-1 text-left hover:bg-secondary"
+          title="Click to edit base salary"
+        >
+          {formatBDT(value)}
+          <Pencil className="size-3 text-muted-foreground" />
+        </button>
+      )}
+    </td>
   );
 }
 
