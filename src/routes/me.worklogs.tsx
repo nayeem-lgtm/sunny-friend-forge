@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { CheckCircle2, FileText, FileWarning, Send } from "lucide-react";
+import { CheckCircle2, FileText, FileWarning } from "lucide-react";
 import { toast } from "sonner";
 
 import { EmployeeShell } from "@/components/layout/EmployeeShell";
@@ -8,7 +8,7 @@ import { PageHeader } from "@/components/shared/PageHeader";
 import { StatCard } from "@/components/shared/StatCard";
 import { StatusPill } from "@/components/shared/StatusPill";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
+import { RichComposer } from "@/components/board/RichComposer";
 import { startOfToday, useEmployeeSession } from "@/lib/employee-session";
 import { generateWorklogs, toDateKey } from "@/lib/worklog-data";
 import { formatDate } from "@/lib/leave-data";
@@ -58,8 +58,9 @@ function Page() {
   const submitted = history.filter((w) => w.status === "Submitted").length;
   const missing = history.filter((w) => w.status === "Not Submitted").length;
 
-  const submit = () => {
-    if (draft.trim().length < 20) {
+  const submit = (html: string) => {
+    const text = html.replace(/<[^>]*>/g, " ").replace(/&nbsp;/g, " ").trim();
+    if (text.length < 20) {
       toast.error("Add a bit more detail — at least a couple of sentences.");
       return;
     }
@@ -68,7 +69,7 @@ function Page() {
       id: `${employee.id}-${todayKey}`,
       employeeId: employee.id,
       date: todayKey,
-      report: draft.trim(),
+      report: html,
       submittedAt: new Date().toISOString(),
     };
     const next = [...all, entry];
@@ -118,7 +119,10 @@ function Page() {
                 })}
               </span>
             </div>
-            <p className="whitespace-pre-wrap">{submittedToday.report}</p>
+            <div
+              className="prose-sm max-w-none whitespace-pre-wrap [&_a]:text-primary [&_a]:underline [&_ol]:list-decimal [&_ol]:pl-5 [&_ul]:list-disc [&_ul]:pl-5"
+              dangerouslySetInnerHTML={{ __html: submittedToday.report }}
+            />
             <Button
               variant="outline"
               size="sm"
@@ -136,18 +140,15 @@ function Page() {
             </Button>
           </div>
         ) : (
-          <>
-            <Textarea
-              value={draft}
-              onChange={(e) => setDraft(e.target.value)}
-              rows={5}
-              className="mt-3"
-              placeholder="Today I completed…"
+          <div className="mt-3">
+            <RichComposer
+              key={draft ? "draft" : "fresh"}
+              initialHtml={draft}
+              placeholder="Today I completed… (format your report, mention teammates with @)"
+              submitLabel="Submit worklog"
+              onPost={({ html }) => submit(html)}
             />
-            <Button className="mt-3" onClick={submit}>
-              <Send className="mr-2 size-4" /> Submit worklog
-            </Button>
-          </>
+          </div>
         )}
       </section>
 
@@ -165,7 +166,10 @@ function Page() {
                   <span className="text-sm font-medium">{formatDate(w.date)}</span>
                   <StatusPill status="Submitted" />
                 </div>
-                <p className="mt-1.5 text-sm text-muted-foreground">{w.report}</p>
+                <div
+                  className="prose-sm mt-1.5 max-w-none text-sm text-muted-foreground [&_a]:text-primary [&_a]:underline [&_ol]:list-decimal [&_ol]:pl-5 [&_ul]:list-disc [&_ul]:pl-5"
+                  dangerouslySetInnerHTML={{ __html: w.report }}
+                />
               </li>
             ))}
           {history.map((w) => (

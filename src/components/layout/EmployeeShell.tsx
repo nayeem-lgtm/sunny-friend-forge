@@ -6,7 +6,7 @@ import logoAsset from "@/assets/omniwork-mark.png.asset.json";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
 import { useTheme } from "@/hooks/use-theme";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Select,
   SelectContent,
@@ -23,6 +23,7 @@ import {
   useEmployeeSession,
 } from "@/lib/employee-session";
 import { usePortalRole } from "@/lib/portal-role";
+import { useMyAvatar } from "@/lib/my-avatar-store";
 
 export function EmployeeShell({ children }: { children: ReactNode }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
@@ -30,6 +31,7 @@ export function EmployeeShell({ children }: { children: ReactNode }) {
   const { theme, toggle } = useTheme();
   const { signOut } = useAuth();
   const { isEmployee } = usePortalRole();
+  const { avatarUrl } = useMyAvatar(employee.id);
   const title = employeePageTitles[pathname] ?? "My Dashboard";
 
   return (
@@ -78,6 +80,7 @@ export function EmployeeShell({ children }: { children: ReactNode }) {
           )}
           <div className="flex items-center gap-3 rounded-lg px-2 py-2">
             <Avatar className="size-9">
+              {avatarUrl ? <AvatarImage src={avatarUrl} alt={name} /> : null}
               <AvatarFallback>{initials(name)}</AvatarFallback>
             </Avatar>
             <div className="min-w-0">

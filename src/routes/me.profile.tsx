@@ -1,9 +1,24 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Briefcase, CalendarDays, Landmark, Mail, MapPin, Phone, ShieldCheck } from "lucide-react";
+import { useRef } from "react";
+import {
+  Briefcase,
+  CalendarDays,
+  Camera,
+  Copy,
+  Landmark,
+  Mail,
+  MapPin,
+  Phone,
+  ShieldCheck,
+  Trash2,
+} from "lucide-react";
+import { toast } from "sonner";
 
 import { EmployeeShell } from "@/components/layout/EmployeeShell";
 import { PageHeader } from "@/components/shared/PageHeader";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { readFileAsDataUrl, useMyAvatar } from "@/lib/my-avatar-store";
 import { Badge } from "@/components/ui/badge";
 import { fullName, useEmployeeSession } from "@/lib/employee-session";
 import { formatBDT } from "@/lib/payroll-data";
@@ -61,21 +76,93 @@ function Section({
 function Page() {
   const { employee } = useEmployeeSession();
   const name = fullName(employee);
+  const { avatarUrl, save, remove } = useMyAvatar(employee.id);
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  const pick = async (file?: File) => {
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please choose an image file (JPG or PNG).");
+      return;
+    }
+    if (file.size > 3 * 1024 * 1024) {
+      toast.error("Image is too large — keep it under 3 MB.");
+      return;
+    }
+    try {
+      save(await readFileAsDataUrl(file));
+      toast.success("Profile picture updated");
+    } catch {
+      toast.error("Could not read that image.");
+    }
+  };
 
   return (
     <EmployeeShell>
       <PageHeader title="My Profile" description="Your details as recorded by HR." />
 
-      <div className="mb-6 flex flex-wrap items-center gap-4 rounded-xl border border-border bg-gradient-to-br from-primary/10 to-transparent p-6">
-        <Avatar className="size-16">
-          <AvatarFallback className="text-lg">{initials(name)}</AvatarFallback>
-        </Avatar>
-        <div>
+      <div className="mb-6 flex flex-wrap items-center gap-5 rounded-xl border border-border bg-gradient-to-br from-primary/10 to-transparent p-6">
+        <div className="relative">
+          <Avatar className="size-20 ring-2 ring-background">
+            {avatarUrl ? <AvatarImage src={avatarUrl} alt={name} /> : null}
+            <AvatarFallback className="text-lg">{initials(name)}</AvatarFallback>
+          </Avatar>
+          <button
+            type="button"
+            onClick={() => fileRef.current?.click()}
+            title="Change profile picture"
+            className="absolute -bottom-1 -right-1 flex size-8 items-center justify-center rounded-full border border-border bg-card text-primary shadow-sm transition hover:bg-muted"
+          >
+            <Camera className="size-4" />
+          </button>
+          <input
+            ref={fileRef}
+            type="file"
+            accept="image/*"
+            hidden
+            onChange={(e) => {
+              void pick(e.target.files?.[0]);
+              e.target.value = "";
+            }}
+          />
+        </div>
+
+        <div className="min-w-0">
           <h2 className="text-xl font-semibold">{name}</h2>
           <p className="text-sm text-muted-foreground">
             {employee.designation} · {employee.department}
           </p>
+          <button
+            type="button"
+            onClick={() => {
+              void navigator.clipboard?.writeText(employee.email);
+              toast.success("Email copied");
+            }}
+            className="mt-2 inline-flex max-w-full items-center gap-2 rounded-full border border-border bg-card px-3 py-1 text-xs text-muted-foreground transition hover:text-foreground"
+          >
+            <Mail className="size-3.5 shrink-0 text-primary" />
+            <span className="truncate">{employee.email}</span>
+            <Copy className="size-3 shrink-0" />
+          </button>
+          <div className="mt-2 flex gap-2">
+            <Button variant="outline" size="sm" onClick={() => fileRef.current?.click()}>
+              <Camera className="mr-1.5 size-3.5" /> {avatarUrl ? "Change photo" : "Upload photo"}
+            </Button>
+            {avatarUrl ? (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  remove();
+                  toast.success("Profile picture removed");
+                }}
+              >
+                <Trash2 className="mr-1.5 size-3.5" /> Remove
+              </Button>
+            ) : null}
+          </div>
         </div>
+
         <div className="ml-auto flex flex-wrap gap-2">
           <Badge variant="outline">{employee.employeeId}</Badge>
           <Badge variant="outline">{employee.roleType}</Badge>
