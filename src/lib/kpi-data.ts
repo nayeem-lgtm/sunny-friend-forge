@@ -386,6 +386,8 @@ export type EmployeeKpi = {
     scheduledDays: number;
     presentDays: number;
     absentDays: number;
+    equivalentAbsentDays: number;
+    absenceBreakdown: AbsenceBreakdown;
     lateDays: number;
     lateMinutes: number;
     earlyOuts: number;
