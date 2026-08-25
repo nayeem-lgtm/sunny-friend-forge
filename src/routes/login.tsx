@@ -73,6 +73,29 @@ function LoginPage() {
     }
   };
 
+  const handleForgotSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    if (!email.trim()) {
+      setError("Please enter your work email.");
+      return;
+    }
+    setIsSubmitting(true);
+    try {
+      const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/auth/reset-password`,
+      });
+      if (resetError) throw resetError;
+      toast.success("Check your email", {
+        description: "We sent a password reset link to your inbox.",
+      });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not send reset link. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const handleGoogle = async () => {
     setError(null);
     try {
