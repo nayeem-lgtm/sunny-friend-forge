@@ -1,24 +1,24 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { CheckCircle2, FileText, FolderOpen, Loader2, ShieldCheck, X } from "lucide-react";
+import { CheckCircle2, Loader2, ShieldCheck } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { StatusPill } from "@/components/shared/StatusPill";
-import { documentSlots } from "@/lib/employee-data";
+import { OnboardingFormFields } from "@/components/employees/OnboardingFormFields";
 import {
+  defaultOnboardingConfig,
   findInvite,
   findSubmission,
-  onboardingFieldGroups,
+  loadFormConfig,
   setInviteStatus,
   upsertSubmission,
+  type OnboardingFormConfig,
   type OnboardingInvite,
   type OnboardingSubmission,
   type UploadedFile,
 } from "@/lib/onboarding-store";
+
 
 export const Route = createFileRoute("/onboarding/$token")({
   ssr: false,
