@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/hooks/useAuth";
+import { usePortalRole } from "@/lib/portal-role";
+import { cn } from "@/lib/utils";
 import { lovable } from "@/integrations/lovable/index";
 import { supabase } from "@/integrations/supabase/client";
 import omniMarkUrl from "@/assets/omniwork-mark.png.asset.json";
@@ -43,6 +45,7 @@ function LoginPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [mode, setMode] = useState<"signin" | "signup" | "forgot">("signin");
+  const { role, setPortalRole } = usePortalRole();
 
   useEffect(() => {
     if (user && !authLoading) {
@@ -178,6 +181,33 @@ function LoginPage() {
           <div className="mb-8 flex items-center justify-center gap-3 lg:hidden">
             <img src={omniMarkUrl.url} alt="OmniWork mark" className="size-9 object-contain" />
             <span className="text-xl font-semibold tracking-tight text-foreground">OmniWork</span>
+          </div>
+
+          <div className="mb-6">
+            <p className="mb-2 text-center text-xs font-medium uppercase tracking-wide text-muted-foreground">
+              Sign in as
+            </p>
+            <div className="grid grid-cols-2 gap-1 rounded-xl border border-border/60 bg-muted/40 p-1">
+              {([
+                { key: "employee", label: "Employee", hint: "My workspace" },
+                { key: "admin", label: "Admin / HR", hint: "Full platform" },
+              ] as const).map((opt) => (
+                <button
+                  key={opt.key}
+                  type="button"
+                  onClick={() => setPortalRole(opt.key)}
+                  className={cn(
+                    "rounded-lg px-3 py-2 text-sm transition-colors",
+                    role === opt.key
+                      ? "bg-primary text-primary-foreground shadow-sm"
+                      : "text-muted-foreground hover:text-foreground",
+                  )}
+                >
+                  <span className="block font-medium">{opt.label}</span>
+                  <span className="block text-[11px] opacity-80">{opt.hint}</span>
+                </button>
+              ))}
+            </div>
           </div>
 
           <div className="mb-8 space-y-2 text-center">
