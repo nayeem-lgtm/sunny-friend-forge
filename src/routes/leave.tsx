@@ -369,37 +369,41 @@ function Page() {
 
                   <div className="space-y-4 rounded-xl border border-border bg-card p-4">
                     <div>
-                      <p className="mb-2 text-xs uppercase tracking-wide text-muted-foreground">Comment</p>
+                      <p className="mb-2 text-xs uppercase tracking-wide text-muted-foreground">
+                        Note / comment for employee
+                      </p>
                       <Textarea
                         value={comment}
                         onChange={(e) => setComment(e.target.value)}
                         placeholder="Type a note for the employee…"
                         rows={4}
-                        disabled={active.status !== "Pending"}
                       />
                     </div>
                     <div className="flex flex-wrap gap-2">
-                      <Button
-                        variant="ghost"
-                        disabled={active.status !== "Pending" || !comment.trim()}
-                        onClick={() => postFeedback(active.id)}
-                      >
-                        Post feedback
+                      <Button variant="outline" disabled={!comment.trim()} onClick={() => postFeedback(active.id)}>
+                        Send note
                       </Button>
-                      <Button disabled={active.status !== "Pending"} onClick={() => decide(active.id, "Approved")}>
-                        <Check className="size-4" /> Approve
-                      </Button>
-                      <Button
-                        variant="destructive"
-                        disabled={active.status !== "Pending"}
-                        onClick={() => decide(active.id, "Rejected")}
-                      >
-                        <X className="size-4" /> Reject
-                      </Button>
+                      {active.status === "Pending" ? (
+                        <>
+                          <Button onClick={() => decide(active.id, "Approved")}>
+                            <Check className="size-4" /> Approve
+                          </Button>
+                          <Button variant="destructive" onClick={() => decide(active.id, "Rejected")}>
+                            <X className="size-4" /> Reject
+                          </Button>
+                        </>
+                      ) : (
+                        <Button variant="ghost" onClick={() => reopen(active.id)}>
+                          Reopen request
+                        </Button>
+                      )}
                     </div>
                     <p className="text-xs text-muted-foreground">
-                      Feedback and decisions are available only while the request is pending.
+                      {active.status === "Pending"
+                        ? "Any note typed above is attached to your decision."
+                        : `This request is ${active.status.toLowerCase()}. You can still add notes or reopen it.`}
                     </p>
+
 
                     <div>
                       <p className="mb-2 text-xs uppercase tracking-wide text-muted-foreground">Feedback history</p>
