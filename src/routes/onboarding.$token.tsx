@@ -52,10 +52,12 @@ function Page() {
   const [files, setFiles] = useState<UploadedFile[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
+  const [config, setConfig] = useState<OnboardingFormConfig>(defaultOnboardingConfig);
 
   useEffect(() => {
     const inv = findInvite(token);
     const sub = findSubmission(token);
+    setConfig(loadFormConfig());
     setInvite(inv);
     setExisting(sub);
     setValues(
@@ -86,8 +88,9 @@ function Page() {
   };
 
   const submit = () => {
-    const missing = onboardingFieldGroups
+    const missing = config.groups
       .flatMap((g) => g.fields)
+
       .filter((f) => f.required && !values[f.key]?.trim());
     if (missing.length) {
       toast.error(`Please fill: ${missing.map((m) => m.label).join(", ")}`);
