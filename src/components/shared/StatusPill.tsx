@@ -27,6 +27,7 @@ const toneMap: Record<string, Tone> = {
   expired: "neutral",
   "not submitted": "danger",
   rejected: "danger",
+  denied: "danger",
   missing: "danger",
   absent: "danger",
   cancelled: "danger",
