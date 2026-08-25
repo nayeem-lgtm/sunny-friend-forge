@@ -73,7 +73,7 @@ function Line({
   );
 }
 
-type PayslipRow = PayrollRow;
+
 
 
 function Page() {
