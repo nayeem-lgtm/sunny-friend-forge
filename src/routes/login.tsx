@@ -203,7 +203,7 @@ function LoginPage() {
             </div>
           )}
 
-          <form onSubmit={handleEmailSubmit} className="space-y-4">
+          <form onSubmit={mode === "forgot" ? handleForgotSubmit : handleEmailSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email" className="text-sm font-medium text-foreground">
                 Work email
