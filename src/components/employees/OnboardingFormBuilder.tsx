@@ -118,29 +118,98 @@ export function OnboardingFormBuilder({
 
       <TabsContent value="preview" className="mt-4">
         <p className="mb-4 text-sm text-muted-foreground">
-          This is exactly what the employee sees after opening their onboarding link.
+          This is exactly what the employee sees after opening their onboarding link — walk through every
+          step below.
         </p>
         <div className="rounded-xl border border-border bg-background p-4">
           <div className="mb-6 rounded-xl border border-border bg-card p-6">
             <h1 className="text-2xl font-semibold">Welcome, John 👋</h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              Complete the form below and upload your documents to finish onboarding.
+              Complete your details, review the policy, sign and submit.
             </p>
           </div>
-          <OnboardingFormFields
-            config={draft}
-            values={preview}
-            onChange={(k, v) => setPreview((p) => ({ ...p, [k]: v }))}
-            files={[]}
-            disabled
-          />
-          <div className="flex justify-end pt-6">
-            <Button size="lg" disabled>
-              Submit onboarding
+
+          <div className="mb-6 grid gap-3 sm:grid-cols-3">
+            {previewSteps.map((label, i) => (
+              <button
+                key={label}
+                type="button"
+                onClick={() => setPreviewStep(i as 0 | 1 | 2)}
+                className={`flex items-center gap-3 rounded-xl border p-4 text-left text-sm transition-colors ${
+                  previewStep === i
+                    ? "border-primary/50 bg-primary/10 text-foreground"
+                    : "border-border bg-card text-muted-foreground hover:border-primary/30"
+                }`}
+              >
+                <span
+                  className={`grid size-7 shrink-0 place-items-center rounded-full text-xs font-semibold ${
+                    previewStep >= i ? "bg-primary text-primary-foreground" : "bg-secondary"
+                  }`}
+                >
+                  {i + 1}
+                </span>
+                {label}
+              </button>
+            ))}
+          </div>
+
+          {previewStep === 0 && (
+            <OnboardingFormFields
+              config={draft}
+              values={preview}
+              onChange={(k, v) => setPreview((p) => ({ ...p, [k]: v }))}
+              files={[]}
+              disabled
+            />
+          )}
+
+          {previewStep === 1 && (
+            <ConsentStep
+              fullName={`${preview["firstName"] ?? "John"} ${preview["lastName"] ?? "Doe"}`.trim()}
+              acknowledged={previewConsents}
+              onToggle={(id, checked) =>
+                setPreviewConsents((prev) =>
+                  checked ? [...new Set([...prev, id])] : prev.filter((x) => x !== id),
+                )
+              }
+              signedName={previewSignature}
+              onSignedName={setPreviewSignature}
+            />
+          )}
+
+          {previewStep === 2 && (
+            <ConfirmSubmitStep
+              fullName={`${preview["firstName"] ?? "John"} ${preview["lastName"] ?? "Doe"}`.trim()}
+              email={preview["email"] ?? "john.doe@example.com"}
+              documents={draft.documents}
+              files={[]}
+              acknowledged={previewConsents}
+              signedName={previewSignature}
+            />
+          )}
+
+          <div className="flex flex-wrap justify-between gap-2 pt-6">
+            <Button
+              variant="outline"
+              size="lg"
+              disabled={previewStep === 0}
+              onClick={() => setPreviewStep((s) => (s === 0 ? 0 : ((s - 1) as 0 | 1)))}
+            >
+              Back
             </Button>
+            {previewStep < 2 ? (
+              <Button size="lg" onClick={() => setPreviewStep((s) => ((s + 1) as 1 | 2))}>
+                {previewStep === 0 ? "Continue to consent & signature" : "Continue to confirm"}
+              </Button>
+            ) : (
+              <Button size="lg" disabled>
+                Confirm &amp; submit onboarding
+              </Button>
+            )}
           </div>
         </div>
       </TabsContent>
+
 
       <TabsContent value="customize" className="mt-4 space-y-6">
         {draft.groups.map((group) => (
