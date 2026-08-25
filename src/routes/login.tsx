@@ -288,36 +288,72 @@ function LoginPage() {
             </Button>
           </form>
 
-          <div className="my-6 flex items-center gap-3">
-            <div className="h-px flex-1 bg-border/60" />
-            <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-              Or continue with
-            </span>
-            <div className="h-px flex-1 bg-border/60" />
-          </div>
+          {mode !== "forgot" && (
+            <>
+              <div className="my-6 flex items-center gap-3">
+                <div className="h-px flex-1 bg-border/60" />
+                <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                  Or continue with
+                </span>
+                <div className="h-px flex-1 bg-border/60" />
+              </div>
 
-          <Button
-            type="button"
-            variant="outline"
-            onClick={handleGoogle}
-            className="h-11 w-full rounded-xl border-border/60 bg-background/50 font-medium text-foreground hover:bg-accent hover:text-accent-foreground"
-          >
-            <GoogleIcon />
-            Google
-          </Button>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleGoogle}
+                className="h-11 w-full rounded-xl border-border/60 bg-background/50 font-medium text-foreground hover:bg-accent hover:text-accent-foreground"
+              >
+                <GoogleIcon />
+                Google
+              </Button>
+            </>
+          )}
 
           <p className="mt-6 text-center text-sm text-muted-foreground">
-            {mode === "signin" ? "Don't have an account?" : "Already have an account?"}{" "}
-            <button
-              type="button"
-              onClick={() => {
-                setMode((m) => (m === "signin" ? "signup" : "signin"));
-                setError(null);
-              }}
-              className="font-medium text-primary hover:underline"
-            >
-              {mode === "signin" ? "Sign up" : "Sign in"}
-            </button>
+            {mode === "forgot" ? (
+              <>
+                Remember your password?{" "}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMode("signin");
+                    setError(null);
+                  }}
+                  className="font-medium text-primary hover:underline"
+                >
+                  Sign in
+                </button>
+              </>
+            ) : mode === "signin" ? (
+              <>
+                Don't have an account?{" "}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMode("signup");
+                    setError(null);
+                  }}
+                  className="font-medium text-primary hover:underline"
+                >
+                  Sign up
+                </button>
+              </>
+            ) : (
+              <>
+                Already have an account?{" "}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMode("signin");
+                    setError(null);
+                  }}
+                  className="font-medium text-primary hover:underline"
+                >
+                  Sign in
+                </button>
+              </>
+            )}
           </p>
 
           <p className="mt-6 text-center text-xs text-muted-foreground lg:hidden">
