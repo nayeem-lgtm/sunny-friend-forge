@@ -272,12 +272,18 @@ function LoginPage() {
               {isSubmitting ? (
                 <>
                   <Loader2 className="size-4 animate-spin" />
-                  {mode === "signin" ? "Signing in…" : "Creating account…"}
+                  {mode === "signin"
+                    ? "Signing in…"
+                    : mode === "signup"
+                    ? "Creating account…"
+                    : "Sending link…"}
                 </>
               ) : mode === "signin" ? (
                 "Sign in"
-              ) : (
+              ) : mode === "signup" ? (
                 "Create account"
+              ) : (
+                "Send reset link"
               )}
             </Button>
           </form>
