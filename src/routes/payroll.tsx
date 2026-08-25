@@ -653,6 +653,58 @@ function Page() {
   );
 }
 
+function SalaryCell({ value, onChange }: { value: number; onChange: (v: number) => void }) {
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState(String(value));
+
+  const commit = () => {
+    const n = Number(draft);
+    setEditing(false);
+    if (!Number.isFinite(n) || n < 0) {
+      toast.error("Enter a valid salary");
+      setDraft(String(value));
+      return;
+    }
+    if (n !== value) onChange(n);
+  };
+
+  return (
+    <td className="px-4 py-3 tabular-nums">
+      {editing ? (
+        <Input
+          autoFocus
+          type="number"
+          min={0}
+          value={draft}
+          onChange={(e) => setDraft(e.target.value)}
+          onBlur={commit}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") commit();
+            if (e.key === "Escape") {
+              setDraft(String(value));
+              setEditing(false);
+            }
+          }}
+          className="h-8 w-[140px]"
+        />
+      ) : (
+        <button
+          type="button"
+          onClick={() => {
+            setDraft(String(value));
+            setEditing(true);
+          }}
+          className="flex items-center gap-1.5 rounded-md px-1.5 py-1 text-left hover:bg-secondary"
+          title="Click to edit base salary"
+        >
+          {formatBDT(value)}
+          <Pencil className="size-3 text-muted-foreground" />
+        </button>
+      )}
+    </td>
+  );
+}
+
 function AdjustCell({
   value,
   kind,
