@@ -106,26 +106,35 @@ function Page() {
         title="My Payslips"
         description="Your monthly salary breakdown, including absence adjustments."
         actions={
-          <div className="flex items-center gap-1 rounded-lg border border-border p-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="flex items-center gap-1 rounded-lg border border-border p-1">
+              <Button
+                variant="ghost"
+                size="icon"
+                aria-label="Previous month"
+                onClick={() => setMonth(new Date(month.getFullYear(), month.getMonth() - 1, 1))}
+              >
+                <ChevronLeft className="size-4" />
+              </Button>
+              <span className="min-w-[130px] text-center text-sm font-medium">{monthLabel(month)}</span>
+              <Button
+                variant="ghost"
+                size="icon"
+                aria-label="Next month"
+                onClick={() => setMonth(new Date(month.getFullYear(), month.getMonth() + 1, 1))}
+              >
+                <ChevronRight className="size-4" />
+              </Button>
+            </div>
             <Button
-              variant="ghost"
-              size="icon"
-              aria-label="Previous month"
-              onClick={() => setMonth(new Date(month.getFullYear(), month.getMonth() - 1, 1))}
+              disabled={!row}
+              onClick={() => row && downloadPayslipPdf(row, month, { bankName: employee.bankName })}
             >
-              <ChevronLeft className="size-4" />
-            </Button>
-            <span className="min-w-[130px] text-center text-sm font-medium">{monthLabel(month)}</span>
-            <Button
-              variant="ghost"
-              size="icon"
-              aria-label="Next month"
-              onClick={() => setMonth(new Date(month.getFullYear(), month.getMonth() + 1, 1))}
-            >
-              <ChevronRight className="size-4" />
+              <Download className="mr-1.5 size-4" /> Download payslip PDF
             </Button>
           </div>
         }
+
       />
 
       {!row ? (
