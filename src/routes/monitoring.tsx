@@ -269,6 +269,7 @@ function EmployeeShots({ person, onBack }: { person: LiveStatus; onBack: () => v
   const [range, setRange] = useState<DateRange | undefined>();
   const [visible, setVisible] = useState(60);
   const [active, setActive] = useState<Shot | null>(null);
+  const [tab, setTab] = useState<"shots" | "apps" | "urls">("shots");
 
   useEffect(() => setToday(new Date()), []);
   useEffect(() => setVisible(60), [preset, range]);
@@ -287,6 +288,17 @@ function EmployeeShots({ person, onBack }: { person: LiveStatus; onBack: () => v
     }
     return all.filter((s) => s.employee === person.name);
   }, [today, preset, range, person.name]);
+
+  const sessions = useMemo(() => buildSessions(shots), [shots]);
+  const appCount = useMemo(
+    () => new Set(sessions.flatMap((s) => s.apps.map((a) => a.name))).size,
+    [sessions],
+  );
+  const urlCount = useMemo(
+    () => new Set(sessions.flatMap((s) => s.urls.map((u) => u.name))).size,
+    [sessions],
+  );
+
 
   const rangeLabel =
     preset === "today"
