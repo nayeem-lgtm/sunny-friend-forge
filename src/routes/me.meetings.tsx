@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { CalendarPlus, Clock, ExternalLink, Users, Video } from "lucide-react";
+import { CalendarPlus, Clock, ExternalLink, Search, Send, Users, Video } from "lucide-react";
 import { toast } from "sonner";
 
 import { EmployeeShell } from "@/components/layout/EmployeeShell";
@@ -8,13 +8,37 @@ import { PageHeader } from "@/components/shared/PageHeader";
 import { StatCard } from "@/components/shared/StatCard";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { useEmployeeSession } from "@/lib/employee-session";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { activeEmployees, fullName, useEmployeeSession } from "@/lib/employee-session";
 import {
   attendeeNames,
   downloadIcs,
   loadMeetings,
+  makeMeetingLink,
   meetingEnd,
+  meetingPlatforms,
   meetingStart,
+  saveMeetings,
   type Meeting,
 } from "@/lib/meeting-data";
 
@@ -45,6 +69,11 @@ function MeetingCard({ meeting, live }: { meeting: Meeting; live: boolean }) {
     <article className="rounded-xl border border-border bg-card p-5">
       <div className="flex flex-wrap items-center gap-2">
         <Badge variant="outline">{meeting.platform}</Badge>
+        {meeting.status === "Requested" && (
+          <Badge className="border-warning/30 bg-warning/15 text-warning" variant="outline">
+            Requested by you
+          </Badge>
+        )}
         {live && (
           <Badge className="border-success/30 bg-success/15 text-success" variant="outline">
             Live now
@@ -102,13 +131,85 @@ function MeetingCard({ meeting, live }: { meeting: Meeting; live: boolean }) {
   );
 }
 
+function pad(n: number) {
+  return String(n).padStart(2, "0");
+}
+
+function todayStr() {
+  const d = new Date();
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+}
+
+const emptyRequest = () => ({
+  title: "",
+  agenda: "",
+  date: todayStr(),
+  time: "10:00",
+  durationMinutes: 30,
+  platform: "Omni Meet" as Meeting["platform"],
+  attendees: [] as string[],
+});
+
 function Page() {
   const { employee } = useEmployeeSession();
   const [meetings, setMeetings] = useState<Meeting[]>([]);
+  const [open, setOpen] = useState(false);
+  const [draft, setDraft] = useState(emptyRequest);
+  const [peopleSearch, setPeopleSearch] = useState("");
 
   useEffect(() => {
     setMeetings(loadMeetings());
   }, []);
+
+  const colleagues = useMemo(
+    () =>
+      activeEmployees
+        .filter((e) => e.id !== employee.id)
+        .filter((e) =>
+          `${fullName(e)} ${e.department}`.toLowerCase().includes(peopleSearch.toLowerCase()),
+        ),
+    [employee.id, peopleSearch],
+  );
+
+  const submitRequest = () => {
+    if (!draft.title.trim()) {
+      toast.error("Give the meeting a title");
+      return;
+    }
+    if (draft.attendees.length === 0) {
+      toast.error("Select at least one person to meet with");
+      return;
+    }
+    const meeting: Meeting = {
+      id: `mtg-${Date.now()}`,
+      title: draft.title.trim(),
+      agenda: draft.agenda.trim(),
+      date: draft.date,
+      time: draft.time,
+      durationMinutes: Number(draft.durationMinutes) || 30,
+      platform: draft.platform,
+      link: makeMeetingLink(draft.platform),
+      host: fullName(employee),
+      attendees: [employee.id, ...draft.attendees],
+      allEmployees: false,
+      invitesSent: true,
+      calendarSynced: true,
+      createdAt: new Date().toISOString(),
+      requestedBy: employee.id,
+      status: "Requested",
+    };
+    const next = [meeting, ...meetings];
+    setMeetings(next);
+    saveMeetings(next);
+    setOpen(false);
+    setDraft(emptyRequest());
+    setPeopleSearch("");
+    toast.success("Meeting request sent", {
+      description: `Invite and join link shared with ${draft.attendees.length} teammate${
+        draft.attendees.length === 1 ? "" : "s"
+      }.`,
+    });
+  };
 
   const mine = useMemo(
     () =>
@@ -127,7 +228,144 @@ function Page() {
 
   return (
     <EmployeeShell>
-      <PageHeader title="My Meetings" description="Meetings you have been invited to." />
+      <PageHeader
+        title="My Meetings"
+        description="Meetings scheduled for you, plus requests you start with colleagues."
+        actions={
+          <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+              <Button>
+                <Send className="mr-2 size-4" /> Request a meeting
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-2xl">
+              <DialogHeader>
+                <DialogTitle>Request a meeting</DialogTitle>
+                <DialogDescription>
+                  Pick colleagues from the OmniWork directory — a join link is generated and shared
+                  with everyone you invite.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="md:col-span-2">
+                  <Label htmlFor="r-title">Title</Label>
+                  <Input
+                    id="r-title"
+                    value={draft.title}
+                    onChange={(e) => setDraft({ ...draft, title: e.target.value })}
+                    placeholder="Campaign sync with Media team"
+                  />
+                </div>
+                <div className="md:col-span-2">
+                  <Label htmlFor="r-agenda">Agenda</Label>
+                  <Textarea
+                    id="r-agenda"
+                    rows={3}
+                    value={draft.agenda}
+                    onChange={(e) => setDraft({ ...draft, agenda: e.target.value })}
+                    placeholder="What do you want to discuss?"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="r-date">Date</Label>
+                  <Input
+                    id="r-date"
+                    type="date"
+                    value={draft.date}
+                    onChange={(e) => setDraft({ ...draft, date: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="r-time">Time</Label>
+                  <Input
+                    id="r-time"
+                    type="time"
+                    value={draft.time}
+                    onChange={(e) => setDraft({ ...draft, time: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="r-dur">Duration (minutes)</Label>
+                  <Input
+                    id="r-dur"
+                    type="number"
+                    min={15}
+                    step={15}
+                    value={draft.durationMinutes}
+                    onChange={(e) => setDraft({ ...draft, durationMinutes: Number(e.target.value) })}
+                  />
+                </div>
+                <div>
+                  <Label>Platform</Label>
+                  <Select
+                    value={draft.platform}
+                    onValueChange={(v) => setDraft({ ...draft, platform: v as Meeting["platform"] })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {meetingPlatforms.map((p) => (
+                        <SelectItem key={p} value={p}>
+                          {p}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="md:col-span-2 space-y-2 rounded-lg border border-border p-3">
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="text-sm font-medium">
+                      Invite people ({draft.attendees.length} selected)
+                    </p>
+                    <div className="relative w-48">
+                      <Search className="pointer-events-none absolute left-2 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
+                      <Input
+                        className="h-8 pl-7"
+                        placeholder="Search people..."
+                        value={peopleSearch}
+                        onChange={(e) => setPeopleSearch(e.target.value)}
+                      />
+                    </div>
+                  </div>
+                  <ScrollArea className="h-48 rounded-md border border-border p-2">
+                    <div className="space-y-2">
+                      {colleagues.map((e) => (
+                        <label key={e.id} className="flex items-center gap-2 text-sm">
+                          <Checkbox
+                            checked={draft.attendees.includes(e.id)}
+                            onCheckedChange={(v) =>
+                              setDraft({
+                                ...draft,
+                                attendees: v
+                                  ? [...draft.attendees, e.id]
+                                  : draft.attendees.filter((id) => id !== e.id),
+                              })
+                            }
+                          />
+                          <span>{fullName(e)}</span>
+                          <span className="text-xs text-muted-foreground">
+                            {e.department} · {e.designation}
+                          </span>
+                        </label>
+                      ))}
+                      {colleagues.length === 0 && (
+                        <p className="p-2 text-sm text-muted-foreground">No matching people.</p>
+                      )}
+                    </div>
+                  </ScrollArea>
+                </div>
+              </div>
+              <DialogFooter>
+                <Button variant="ghost" onClick={() => setOpen(false)}>
+                  Cancel
+                </Button>
+                <Button onClick={submitRequest}>Send request</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        }
+      />
 
       <div className="mb-6 grid gap-4 sm:grid-cols-3">
         <StatCard icon={Video} label="Upcoming" value={upcoming.length} caption="Invitations ahead" highlight />

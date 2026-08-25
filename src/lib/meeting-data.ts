@@ -15,6 +15,8 @@ export type Meeting = {
   invitesSent: boolean;
   calendarSynced: boolean;
   createdAt: string;
+  requestedBy?: string; // employee id when requested from the employee portal
+  status?: "Scheduled" | "Requested" | "Declined";
 };
 
 const KEY = "omniwork.meetings.v1";
