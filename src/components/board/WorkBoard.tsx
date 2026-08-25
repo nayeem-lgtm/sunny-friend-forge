@@ -440,6 +440,8 @@ export function WorkBoard({
                         due={item.dueDate}
                         fallback={itemProgress(item, board.statusLabels)}
                         done={item.status === "Completed"}
+                        onStartChange={(v) => patchItem(group.id, item.id, { startDate: v })}
+                        onDueChange={(v) => patchItem(group.id, item.id, { dueDate: v })}
                       />
 
                       {columns.map((col) => (
