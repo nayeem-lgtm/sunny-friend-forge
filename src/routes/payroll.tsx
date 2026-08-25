@@ -117,6 +117,7 @@ function Page() {
     { label: "2 months ago", date: new Date(base.getFullYear(), base.getMonth() - 2, 1) },
   ];
   const [month, setMonth] = useState(base);
+  const [custom, setCustom] = useState<DateRange | undefined>();
   const [rows, setRows] = useState<PayrollRow[]>(() => generatePayroll(base));
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState("all");
@@ -128,9 +129,20 @@ function Page() {
 
   const setMonthTo = (m: number, y: number) => {
     const next = new Date(y, m, 1);
+    setCustom(undefined);
     setMonth(next);
     setRows(generatePayroll(next));
   };
+
+  const applyCustom = (r: DateRange | undefined) => {
+    setCustom(r);
+    if (r?.from) {
+      const next = new Date(r.from.getFullYear(), r.from.getMonth(), 1);
+      setMonth(next);
+      setRows(generatePayroll(next));
+    }
+  };
+
 
   const shiftMonth = (delta: number) =>
     setMonthTo(month.getMonth() + delta, month.getFullYear());
