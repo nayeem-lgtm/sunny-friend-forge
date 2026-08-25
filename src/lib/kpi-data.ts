@@ -1,6 +1,13 @@
 import { employees } from "@/lib/employee-data";
 import { generateAttendance, type AttendanceRecord } from "@/lib/attendance-data";
 import { generateWorklogs, type WorklogEntry } from "@/lib/worklog-data";
+import { generateLeaveRequests, type LeaveRequest } from "@/lib/leave-data";
+import {
+  absenceSummary,
+  computeAbsenceBreakdown,
+  emptyAbsence,
+  type AbsenceBreakdown,
+} from "@/lib/absence-rules";
 
 /* ------------------------------------------------------------------ */
 /* Config                                                              */
@@ -379,6 +386,8 @@ export type EmployeeKpi = {
     scheduledDays: number;
     presentDays: number;
     absentDays: number;
+    equivalentAbsentDays: number;
+    absenceBreakdown: AbsenceBreakdown;
     lateDays: number;
     lateMinutes: number;
     earlyOuts: number;
@@ -416,6 +425,7 @@ export type KpiDataset = {
   attendance: AttendanceRecord[];
   worklogs: WorklogEntry[];
   tasks: KpiTask[];
+  leaves: LeaveRequest[];
 };
 
 export function buildDataset(today: Date): KpiDataset {
@@ -423,6 +433,7 @@ export function buildDataset(today: Date): KpiDataset {
     attendance: generateAttendance(today),
     worklogs: generateWorklogs(today),
     tasks: generateTasks(today),
+    leaves: generateLeaveRequests(today),
   };
 }
 
@@ -442,6 +453,9 @@ export function computeEmployeeKpi(
   const att = data.attendance.filter((a) => a.employee === employeeName && inRange(a.date, from, to));
   const logs = data.worklogs.filter((w) => w.employee === employeeName && inRange(w.date, from, to));
   const tasks = data.tasks.filter((t) => t.employee === employeeName && inRange(t.assignedDate, from, to));
+  const leaves = (data.leaves ?? []).filter(
+    (l) => l.employee === employeeName && l.to >= dateKey(from) && l.from <= dateKey(to),
+  );
 
   const schedIn = toMin(s.attendance.scheduleIn);
   const schedOut = toMin(s.attendance.scheduleOut);
@@ -470,7 +484,17 @@ export function computeEmployeeKpi(
       }
     }
   });
-  const attViolations = lateDays + earlyOuts + absentDays;
+
+  /* Company absence-conversion rules (late, short hours, work logs, denied leave) */
+  const absence = att.length
+    ? computeAbsenceBreakdown(att, logs, leaves, {
+        requiredHours: s.workHours.requiredHours,
+        graceMinutes: s.attendance.graceMinutes,
+        scheduleIn: s.attendance.scheduleIn,
+      })
+    : emptyAbsence();
+
+  const attViolations = earlyOuts + absence.equivalentAbsentDays;
   const attCalc = deduct(
     s.weights.attendance,
     attViolations,
@@ -586,7 +610,7 @@ export function computeEmployeeKpi(
       score: attCalc.score,
       violations: attViolations,
       deducted: +(s.weights.attendance - attCalc.score).toFixed(2),
-      detail: `${lateDays} late · ${earlyOuts} early out · ${absentDays} absent`,
+      detail: `${absence.equivalentAbsentDays} absent-equivalent days · ${absenceSummary(absence)}`,
     },
     {
       key: "workHours",
@@ -650,6 +674,8 @@ export function computeEmployeeKpi(
       scheduledDays: att.length,
       presentDays: att.length - absentDays,
       absentDays,
+      equivalentAbsentDays: absence.equivalentAbsentDays,
+      absenceBreakdown: absence,
       lateDays,
       lateMinutes,
       earlyOuts,

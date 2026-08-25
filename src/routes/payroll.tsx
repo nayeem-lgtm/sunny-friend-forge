@@ -715,6 +715,31 @@ function Page() {
                 <Breakdown title="Deductions" tone="destructive" entries={detail.deductions} negative />
               </div>
 
+              <div className="rounded-xl border border-border p-4">
+                <p className="text-sm font-medium">Absence conversion</p>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  {detail.absence.equivalentAbsentDays} equivalent absent day
+                  {detail.absence.equivalentAbsentDays === 1 ? "" : "s"} ·{" "}
+                  {formatBDT(detail.dailyRate)}/day
+                </p>
+                <ul className="mt-3 grid gap-1 text-sm text-muted-foreground sm:grid-cols-2">
+                  <li>Recorded absences: {detail.absence.recordedAbsences}</li>
+                  <li>
+                    Late days: {detail.absence.lateDays} → {detail.absence.fromLate} absent
+                  </li>
+                  <li>Incomplete-hours days: {detail.absence.fromShortHours} absent</li>
+                  <li>
+                    Missing work logs: {detail.absence.missingLogs} → {detail.absence.fromWorkLogs}{" "}
+                    absent
+                  </li>
+                  <li>
+                    Denied-leave no-shows: {detail.absence.deniedLeaveNoShows} →{" "}
+                    {detail.absence.fromDeniedLeave} absent
+                  </li>
+                </ul>
+              </div>
+
+
               <div>
                 <p className="text-sm font-medium">Notes</p>
                 <p className="mt-1 text-sm text-muted-foreground">{detail.notes}</p>
