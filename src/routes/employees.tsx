@@ -16,6 +16,7 @@ import {
 
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
+import { DocumentReviewStep } from "@/components/employees/DocumentReviewStep";
 
 import { AppShell } from "@/components/layout/AppShell";
 import { PageHeader } from "@/components/shared/PageHeader";
@@ -99,6 +100,7 @@ function Page() {
   const [selected, setSelected] = useState<Employee | null>(null);
   const [review, setReview] = useState<OnboardingSubmission | null>(null);
   const [reviewNote, setReviewNote] = useState("");
+  const [hrReviewed, setHrReviewed] = useState<string[]>([]);
   const [lastLink, setLastLink] = useState<string | null>(null);
   const [builderOpen, setBuilderOpen] = useState(false);
   const [formConfig, setFormConfig] = useState<OnboardingFormConfig>(defaultOnboardingConfig);
@@ -200,6 +202,7 @@ function Page() {
     toast.success(status === "Approved" ? "Onboarding approved" : "Submission sent back to employee");
     setReview(null);
     setReviewNote("");
+    setHrReviewed([]);
   };
 
   const inviteFor = (token: string) => invites.find((i) => i.token === token);
@@ -595,37 +598,17 @@ function Page() {
                   ))}
                 </div>
 
-                <div>
-                  <h3 className="mb-2 text-sm font-semibold">Uploaded documents</h3>
-                  {review.files.length === 0 ? (
-                    <p className="text-sm text-muted-foreground">No documents uploaded.</p>
-                  ) : (
-                    <div className="grid gap-2 sm:grid-cols-2">
-                      {review.files.map((f) => (
-                        <div
-                          key={f.slot}
-                          className="flex items-center justify-between gap-2 rounded-lg border border-border p-3"
-                        >
-                          <div className="min-w-0">
-                            <p className="text-xs text-muted-foreground">{f.slot}</p>
-                            <p className="truncate text-sm">{f.name}</p>
-                          </div>
-                          {f.dataUrl ? (
-                            <Button asChild variant="outline" size="sm">
-                              <a href={f.dataUrl} download={f.name}>
-                                <Download className="size-3.5" /> Open
-                              </a>
-                            </Button>
-                          ) : (
-                            <span className="text-xs text-muted-foreground">
-                              {(f.size / 1_000_000).toFixed(1)} MB
-                            </span>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
+                <DocumentReviewStep
+                  documents={formConfig.documents}
+                  files={review.files}
+                  reviewed={hrReviewed}
+                  hrMode
+                  onToggle={(slot, checked) =>
+                    setHrReviewed((prev) =>
+                      checked ? [...new Set([...prev, slot])] : prev.filter((x) => x !== slot),
+                    )
+                  }
+                />
 
                 {review.consent && (
                   <div className="rounded-lg border border-primary/25 bg-primary/5 p-4">
