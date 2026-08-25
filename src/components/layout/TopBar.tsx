@@ -1,7 +1,8 @@
 import { useRouterState } from "@tanstack/react-router";
-import { Bell, Moon, Search, Sun } from "lucide-react";
+import { Bell, LogOut, Moon, Search, Sun } from "lucide-react";
 
 import { pageTitles } from "@/lib/nav";
+import { useAuth } from "@/hooks/useAuth";
 import { useTheme } from "@/hooks/use-theme";
 import { Input } from "@/components/ui/input";
 
