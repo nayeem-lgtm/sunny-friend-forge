@@ -43,6 +43,9 @@ import {
   type LeaveType,
 } from "@/lib/leave-data";
 import { loadMyLeave, saveMyLeave } from "@/lib/my-requests-store";
+import { LeaveConversation } from "@/components/leave/LeaveConversation";
+import { useLeaveThread, type LeaveComment } from "@/lib/leave-thread-store";
+import { MessagesSquare } from "lucide-react";
 
 export const Route = createFileRoute("/me/leave")({
   head: () => ({
@@ -82,6 +85,10 @@ function Page() {
   const [to, setTo] = useState(todayKey);
   const [reason, setReason] = useState("");
   const [docs, setDocs] = useState<string[]>([]);
+  const [openId, setOpenId] = useState<string | null>(null);
+  const [withdrawId, setWithdrawId] = useState<string | null>(null);
+  const [withdrawReason, setWithdrawReason] = useState("");
+  const { overrides, commentsFor, post, override } = useLeaveThread();
 
   useEffect(() => {
     setLocal(loadMyLeave().filter((l) => l.employeeId === employee.id));
@@ -93,9 +100,52 @@ function Page() {
   );
 
   const rows = useMemo(
-    () => [...local, ...generated].sort((a, b) => b.appliedAt.localeCompare(a.appliedAt)),
-    [local, generated],
+    () =>
+      [...local, ...generated]
+        .map((r) => {
+          const o = overrides[r.id];
+          return o?.status ? { ...r, status: o.status as LeaveRequest["status"] } : r;
+        })
+        .sort((a, b) => b.appliedAt.localeCompare(a.appliedAt)),
+    [local, generated, overrides],
   );
+
+  const active = rows.find((r) => r.id === openId) ?? null;
+
+  const threadFor = (r: LeaveRequest): LeaveComment[] =>
+    [
+      ...r.feedback.map((f) => ({
+        id: f.id,
+        requestId: r.id,
+        author: f.author,
+        role: "admin" as const,
+        text: f.text,
+        at: f.at,
+      })),
+      ...commentsFor(r.id),
+    ].sort((a, b) => a.at.localeCompare(b.at));
+
+  const confirmWithdraw = () => {
+    if (!withdrawId) return;
+    if (withdrawReason.trim().length < 5) {
+      toast.error("Please tell HR why you are withdrawing this request.");
+      return;
+    }
+    override(withdrawId, {
+      status: "Withdrawn",
+      withdrawReason: withdrawReason.trim(),
+      withdrawnAt: new Date().toISOString(),
+    });
+    post({
+      requestId: withdrawId,
+      author: name,
+      role: "employee",
+      text: `Withdrew this leave request. Reason: ${withdrawReason.trim()}`,
+    });
+    setWithdrawId(null);
+    setWithdrawReason("");
+    toast.success("Request withdrawn — HR has been notified.");
+  };
 
   const used = usedDays(rows, employee.id, today.getFullYear());
   const pending = rows.filter((r) => r.status === "Pending").length;
@@ -141,15 +191,6 @@ function Page() {
     setReason("");
     setDocs([]);
     toast.success("Leave request submitted — HR will review it shortly.");
-  };
-
-  const cancel = (id: string) => {
-    const all = loadMyLeave().map((l) =>
-      l.id === id ? { ...l, status: "Cancelled" as const } : l,
-    );
-    saveMyLeave(all);
-    setLocal(all.filter((l) => l.employeeId === employee.id));
-    toast.success("Request cancelled");
   };
 
   return (
@@ -339,18 +380,38 @@ function Page() {
                 <span className="text-xs text-muted-foreground">
                   {r.days} day{r.days === 1 ? "" : "s"} · applied {formatDateTime(r.appliedAt)}
                 </span>
-                {r.status === "Pending" && r.id.startsWith("my-lv-") && (
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    className="ml-auto text-destructive"
-                    onClick={() => cancel(r.id)}
-                  >
-                    Cancel request
+                <div className="ml-auto flex items-center gap-1">
+                  <Button size="sm" variant="ghost" onClick={() => setOpenId(r.id)}>
+                    <MessagesSquare className="mr-1.5 size-3.5" />
+                    Comments
+                    {threadFor(r).length > 0 && (
+                      <span className="ml-1.5 rounded-full bg-primary/15 px-1.5 text-[11px] font-semibold text-primary">
+                        {threadFor(r).length}
+                      </span>
+                    )}
                   </Button>
-                )}
+                  {r.status === "Pending" && (
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="text-destructive"
+                      onClick={() => {
+                        setWithdrawId(r.id);
+                        setWithdrawReason("");
+                      }}
+                    >
+                      Withdraw
+                    </Button>
+                  )}
+                </div>
               </div>
               <p className="mt-2 text-sm text-muted-foreground">{r.reason}</p>
+              {overrides[r.id]?.withdrawReason && (
+                <p className="mt-2 rounded-lg border border-destructive/25 bg-destructive/10 px-3 py-2 text-xs text-muted-foreground">
+                  <span className="font-semibold text-foreground">Withdrawn:</span>{" "}
+                  {overrides[r.id]?.withdrawReason}
+                </p>
+              )}
               {r.feedback.length > 0 && (
                 <div className="mt-3 space-y-2">
                   {r.feedback.map((f) => (
@@ -365,6 +426,61 @@ function Page() {
           ))}
         </ul>
       </section>
+
+      <Dialog open={!!active} onOpenChange={(o) => !o && setOpenId(null)}>
+        <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
+          {active && (
+            <>
+              <DialogHeader>
+                <DialogTitle>
+                  {formatDate(active.from)} → {formatDate(active.to)} · {active.type}
+                </DialogTitle>
+                <DialogDescription>
+                  Talk to HR about this request. Everything here is visible to both of you.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="flex flex-wrap items-center gap-2">
+                <StatusPill status={active.status} />
+                <span className="text-xs text-muted-foreground">
+                  {active.days} day{active.days === 1 ? "" : "s"} · applied {formatDateTime(active.appliedAt)}
+                </span>
+              </div>
+              <LeaveConversation
+                messages={threadFor(active)}
+                viewerRole="employee"
+                viewerName={name}
+                onSend={(text) => post({ requestId: active.id, author: name, role: "employee", text })}
+                placeholder="Add a comment or extra information for HR…"
+              />
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={!!withdrawId} onOpenChange={(o) => !o && setWithdrawId(null)}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Withdraw leave request</DialogTitle>
+            <DialogDescription>
+              The request will be marked as withdrawn and your reason will be shared with HR.
+            </DialogDescription>
+          </DialogHeader>
+          <Textarea
+            rows={4}
+            value={withdrawReason}
+            onChange={(e) => setWithdrawReason(e.target.value)}
+            placeholder="Why are you withdrawing this request?"
+          />
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setWithdrawId(null)}>
+              Keep request
+            </Button>
+            <Button variant="destructive" onClick={confirmWithdraw}>
+              Withdraw request
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </EmployeeShell>
   );
 }

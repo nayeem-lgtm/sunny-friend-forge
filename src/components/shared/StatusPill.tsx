@@ -31,6 +31,7 @@ const toneMap: Record<string, Tone> = {
   missing: "danger",
   absent: "danger",
   cancelled: "danger",
+  withdrawn: "neutral",
   stuck: "danger",
   high: "danger",
   medium: "warning",
