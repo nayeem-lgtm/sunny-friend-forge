@@ -28,7 +28,7 @@ import {
 } from "@/components/ui/dialog";
 import { LeaveComments } from "@/components/leave/LeaveComments";
 import { loadMyLeave } from "@/lib/my-requests-store";
-import { useLeaveThread, type LeaveComment } from "@/lib/leave-thread-store";
+import { useLeaveThread, type LeaveAttachment, type LeaveComment } from "@/lib/leave-thread-store";
 import { departments } from "@/lib/employee-data";
 import { cn } from "@/lib/utils";
 import {
