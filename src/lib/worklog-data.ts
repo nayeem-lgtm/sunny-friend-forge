@@ -106,19 +106,23 @@ export function generateWorklogs(today: Date): WorklogEntry[] {
   }
 
   // Demo edited worklogs so the revision history UI can be reviewed in the admin panel.
-  rows.push(...demoEditedWorklogs(today));
+  // Replace any generated row for the same person/day so there are no duplicates.
+  for (const demo of demoEditedWorklogs(today)) {
+    const i = rows.findIndex((r) => r.date === demo.date && r.employee === demo.employee);
+    if (i >= 0) rows[i] = demo;
+    else rows.push(demo);
+  }
 
   return rows;
 }
 
 /** Sample submitted-then-edited worklogs with full revision history (date, time, year). */
 function demoEditedWorklogs(today: Date): WorklogEntry[] {
-  // Use the last 3 weekdays, most recent first.
+  // Today plus the two previous days, so the demos show up in Today / Yesterday / Last 7 Days.
   const weekdays: Date[] = [];
   const cursor = new Date(today);
   while (weekdays.length < 3) {
-    const dow = cursor.getDay();
-    if (dow !== 5 && dow !== 6) weekdays.push(new Date(cursor));
+    weekdays.push(new Date(cursor));
     cursor.setDate(cursor.getDate() - 1);
   }
 
