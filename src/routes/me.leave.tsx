@@ -449,7 +449,9 @@ function Page() {
                 messages={threadFor(active)}
                 viewerRole="employee"
                 viewerName={name}
-                onSend={(text: string) => post({ requestId: active.id, author: name, role: "employee", text })}
+                onSend={(text: string, files: LeaveAttachment[]) =>
+                  post({ requestId: active.id, author: name, role: "employee", text, attachments: files })
+                }
                 placeholder="Add a comment or extra information for HR…"
               />
             </>

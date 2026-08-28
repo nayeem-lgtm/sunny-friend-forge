@@ -158,8 +158,8 @@ function Page() {
     toast.info("Request reopened — it is pending again");
   };
 
-  const sendMessage = (id: string, text: string) => {
-    post({ requestId: id, author: "HR Admin", role: "admin", text });
+  const sendMessage = (id: string, text: string, attachments: LeaveAttachment[] = []) => {
+    post({ requestId: id, author: "HR Admin", role: "admin", text, attachments });
   };
 
   const threadFor = (r: LeaveRequest): LeaveComment[] => [
@@ -461,7 +461,7 @@ function Page() {
                       messages={threadFor(active)}
                       viewerRole="admin"
                       viewerName="HR Admin"
-                      onSend={(text: string) => sendMessage(active.id, text)}
+                      onSend={(text: string, files: LeaveAttachment[]) => sendMessage(active.id, text, files)}
                       placeholder="Add a comment…"
                     />
                   </div>
