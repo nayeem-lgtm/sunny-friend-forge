@@ -5,6 +5,7 @@ import {
   ClipboardList,
   FileWarning,
   FileText,
+  History,
   UserSearch,
   Users,
 } from "lucide-react";
@@ -12,7 +13,9 @@ import { useEffect, useMemo, useState } from "react";
 import type { DateRange } from "react-day-picker";
 
 import { AppShell } from "@/components/layout/AppShell";
-import { departments } from "@/lib/employee-data";
+import { departments, employees as directory } from "@/lib/employee-data";
+import { Badge } from "@/components/ui/badge";
+import { loadMyWorklogs } from "@/lib/my-requests-store";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { StatCard } from "@/components/shared/StatCard";
 import { StatusPill } from "@/components/shared/StatusPill";
@@ -69,6 +72,51 @@ export const Route = createFileRoute("/worklogs")({
 const fmt = (d: Date) =>
   d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 
+const fmtStamp = (iso: string) =>
+  new Date(iso).toLocaleString(undefined, {
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  });
+
+const richClasses =
+  "prose-sm max-w-none whitespace-pre-wrap [&_a]:text-primary [&_a]:underline [&_ol]:list-decimal [&_ol]:pl-5 [&_ul]:list-disc [&_ul]:pl-5";
+
+const stripHtml = (html: string) =>
+  html.replace(/<[^>]*>/g, " ").replace(/&nbsp;/g, " ").replace(/\s+/g, " ").trim();
+
+/** Overlay reports filed (and edited) from the employee portal onto the records. */
+function mergePortalLogs(base: WorklogEntry[]): WorklogEntry[] {
+  const portal = loadMyWorklogs();
+  if (portal.length === 0) return base;
+  const rows = [...base];
+  for (const log of portal) {
+    const person = directory.find((e) => e.id === log.employeeId);
+    if (!person) continue;
+    const name = `${person.firstName} ${person.lastName}`;
+    const stamp = new Date(log.updatedAt ?? log.submittedAt);
+    const entry: WorklogEntry = {
+      id: log.id,
+      date: log.date,
+      employee: name,
+      department: person.department,
+      report: log.report,
+      submittedAt: `${String(stamp.getHours()).padStart(2, "0")}:${String(
+        stamp.getMinutes(),
+      ).padStart(2, "0")}`,
+      status: "Submitted",
+      rich: true,
+      ...(log.updatedAt ? { updatedAt: log.updatedAt } : {}),
+      ...(log.revisions ? { revisions: log.revisions } : {}),
+    };
+    const i = rows.findIndex((r) => r.date === log.date && r.employee === name);
+    if (i >= 0) rows[i] = entry;
+    else rows.push(entry);
+  }
+  return rows;
+}
+
 function Page() {
   const [today, setToday] = useState<Date | null>(null);
   const [preset, setPreset] = useState<RangePreset>("today");
@@ -76,6 +124,7 @@ function Page() {
   const [employee, setEmployee] = useState<string>("all");
   const [pickerOpen, setPickerOpen] = useState(false);
   const [detail, setDetail] = useState<WorklogEntry | null>(null);
+  const [historyOpen, setHistoryOpen] = useState(false);
 
   useEffect(() => {
     const d = new Date();
@@ -83,7 +132,7 @@ function Page() {
     setToday(d);
   }, []);
 
-  const all = useMemo(() => (today ? generateWorklogs(today) : []), [today]);
+  const all = useMemo(() => (today ? mergePortalLogs(generateWorklogs(today)) : []), [today]);
 
   const range = useMemo(() => {
     if (!today) return null;
@@ -137,13 +186,13 @@ function Page() {
       key: "report",
       header: "EOD Report",
       searchable: true,
-      accessor: (r) => r.report,
+      accessor: (r) => stripHtml(r.report),
       cell: (r) => (
         <span
           className="line-clamp-1 max-w-[16rem] text-muted-foreground"
-          title={r.status === "Submitted" ? r.report : undefined}
+          title={r.status === "Submitted" ? stripHtml(r.report) : undefined}
         >
-          {r.status === "Submitted" ? r.report : "—"}
+          {r.status === "Submitted" ? stripHtml(r.report) : "—"}
         </span>
       ),
     },
@@ -151,7 +200,16 @@ function Page() {
       key: "submittedAt",
       header: "Submitted At",
       accessor: (r) => r.submittedAt ?? "",
-      cell: (r) => r.submittedAt ?? "—",
+      cell: (r) => (
+        <div className="flex items-center gap-2">
+          <span>{r.submittedAt ?? "—"}</span>
+          {r.updatedAt && (
+            <Badge variant="outline" className="text-[10px]">
+              Edited {fmtStamp(r.updatedAt)}
+            </Badge>
+          )}
+        </div>
+      ),
     },
     {
       key: "status",
@@ -285,7 +343,10 @@ function Page() {
         <DataTable
           data={rows}
           columns={columns}
-          onRowClick={(r) => setDetail(r)}
+          onRowClick={(r) => {
+            setHistoryOpen(false);
+            setDetail(r);
+          }}
           filters={[
             { key: "department", label: "Departments", options: departments },
             { key: "status", label: "Status", options: ["Submitted", "Not Submitted"] },
@@ -312,13 +373,61 @@ function Page() {
             <div className="space-y-4">
               {detail.status === "Submitted" ? (
                 <div className="max-h-[50vh] overflow-auto rounded-lg border border-border bg-secondary/40 p-4">
-                  <p className="whitespace-pre-wrap text-sm leading-relaxed text-foreground">
-                    {detail.report}
-                  </p>
+                  {detail.rich ? (
+                    <div
+                      className={`${richClasses} text-sm leading-relaxed text-foreground`}
+                      dangerouslySetInnerHTML={{ __html: detail.report }}
+                    />
+                  ) : (
+                    <p className="whitespace-pre-wrap text-sm leading-relaxed text-foreground">
+                      {detail.report}
+                    </p>
+                  )}
                 </div>
               ) : (
                 <div className="rounded-lg border border-border bg-secondary/40 p-8 text-center text-sm text-muted-foreground">
                   No EOD report was submitted for this day.
+                </div>
+              )}
+
+              {detail.updatedAt && (
+                <div className="rounded-lg border border-border bg-muted/30 p-3">
+                  <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                    <History className="size-3.5" />
+                    <span>Last updated by the employee {fmtStamp(detail.updatedAt)}</span>
+                    <Badge variant="outline">
+                      {(detail.revisions?.length ?? 0)} edit
+                      {(detail.revisions?.length ?? 0) === 1 ? "" : "s"}
+                    </Badge>
+                    {(detail.revisions?.length ?? 0) > 0 && (
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="ml-auto h-6 px-2 text-xs"
+                        onClick={() => setHistoryOpen((v) => !v)}
+                      >
+                        {historyOpen ? "Hide" : "View"} update history
+                      </Button>
+                    )}
+                  </div>
+                  {historyOpen && (
+                    <ol className="mt-3 space-y-3 border-l border-border pl-3">
+                      {(detail.revisions ?? [])
+                        .slice()
+                        .reverse()
+                        .map((rev, i) => (
+                          <li key={`${rev.at}-${i}`}>
+                            <p className="text-xs font-medium text-muted-foreground">
+                              Version before edit on {fmtStamp(rev.at)}
+                            </p>
+                            <div
+                              className={`${richClasses} mt-1 text-sm text-muted-foreground`}
+                              dangerouslySetInnerHTML={{ __html: rev.report }}
+                            />
+                          </li>
+                        ))}
+                    </ol>
+                  )}
                 </div>
               )}
 

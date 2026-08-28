@@ -10,6 +10,10 @@ export type WorklogEntry = {
   report: string; // free-form EOD paragraph
   submittedAt: string | null; // HH:mm
   status: WorklogStatus;
+  /** Set when the report was filed from the employee portal (report is HTML). */
+  rich?: boolean;
+  updatedAt?: string; // ISO — last edit by the employee
+  revisions?: { at: string; report: string }[]; // previous versions, oldest first
 };
 
 const people: [string, string][] = employees
