@@ -44,7 +44,7 @@ import {
 } from "@/lib/leave-data";
 import { loadMyLeave, saveMyLeave } from "@/lib/my-requests-store";
 import { LeaveComments } from "@/components/leave/LeaveComments";
-import { EmployeeCombobox } from "@/components/shared/EmployeeCombobox";
+import { EmployeeMultiCombobox } from "@/components/shared/EmployeeMultiCombobox";
 import { employees } from "@/lib/employee-data";
 import { useLeaveThread, type LeaveAttachment, type LeaveComment } from "@/lib/leave-thread-store";
 import { MessagesSquare } from "lucide-react";
@@ -88,7 +88,7 @@ function Page() {
   const [reason, setReason] = useState("");
   const [docs, setDocs] = useState<string[]>([]);
   const [handover, setHandover] = useState<"yes" | "no">("no");
-  const [handoverTo, setHandoverTo] = useState("all");
+  const [handoverTo, setHandoverTo] = useState<string[]>([]);
   const colleagues = useMemo(
     () =>
       employees
@@ -175,8 +175,8 @@ function Page() {
       toast.error("Please add a short reason for your request.");
       return;
     }
-    if (handover === "yes" && handoverTo === "all") {
-      toast.error("Please choose the colleague who will take over your work.");
+    if (handover === "yes" && handoverTo.length === 0) {
+      toast.error("Please choose at least one colleague who will take over your work.");
       return;
     }
     const days = daysBetween(from, to);
@@ -200,7 +200,7 @@ function Page() {
       documents: docs,
       feedback: [],
       handoverRequired: handover === "yes",
-      handoverTo: handover === "yes" ? handoverTo : "",
+      handoverTo: handover === "yes" ? handoverTo.join(", ") : "",
     };
     const next = [request, ...loadMyLeave()];
     saveMyLeave(next);
@@ -209,7 +209,7 @@ function Page() {
     setReason("");
     setDocs([]);
     setHandover("no");
-    setHandoverTo("all");
+    setHandoverTo([]);
     toast.success("Leave request submitted — HR will review it shortly.");
   };
 
@@ -312,12 +312,14 @@ function Page() {
                   {handover === "yes" && (
                     <div className="mt-3">
                       <Label>Handover to</Label>
-                      <EmployeeCombobox
-                        className="mt-1.5 w-full"
+                      <p className="mb-1.5 mt-1 text-xs text-muted-foreground">
+                        Search and select one or more colleagues who will cover your work.
+                      </p>
+                      <EmployeeMultiCombobox
                         value={handoverTo}
                         onChange={setHandoverTo}
                         names={colleagues}
-                        allLabel="Select a colleague"
+                        placeholder="Select colleagues"
                       />
                     </div>
                   )}
