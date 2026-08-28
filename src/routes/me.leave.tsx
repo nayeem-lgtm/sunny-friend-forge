@@ -43,7 +43,7 @@ import {
   type LeaveType,
 } from "@/lib/leave-data";
 import { loadMyLeave, saveMyLeave } from "@/lib/my-requests-store";
-import { LeaveConversation } from "@/components/leave/LeaveConversation";
+import { LeaveComments } from "@/components/leave/LeaveComments";
 import { useLeaveThread, type LeaveComment } from "@/lib/leave-thread-store";
 import { MessagesSquare } from "lucide-react";
 
