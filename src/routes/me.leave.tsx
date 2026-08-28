@@ -44,7 +44,7 @@ import {
 } from "@/lib/leave-data";
 import { loadMyLeave, saveMyLeave } from "@/lib/my-requests-store";
 import { LeaveComments } from "@/components/leave/LeaveComments";
-import { useLeaveThread, type LeaveComment } from "@/lib/leave-thread-store";
+import { useLeaveThread, type LeaveAttachment, type LeaveComment } from "@/lib/leave-thread-store";
 import { MessagesSquare } from "lucide-react";
 
 export const Route = createFileRoute("/me/leave")({
@@ -449,7 +449,9 @@ function Page() {
                 messages={threadFor(active)}
                 viewerRole="employee"
                 viewerName={name}
-                onSend={(text: string) => post({ requestId: active.id, author: name, role: "employee", text })}
+                onSend={(text: string, files: LeaveAttachment[]) =>
+                  post({ requestId: active.id, author: name, role: "employee", text, attachments: files })
+                }
                 placeholder="Add a comment or extra information for HR…"
               />
             </>
