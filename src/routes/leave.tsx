@@ -26,7 +26,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { LeaveConversation } from "@/components/leave/LeaveConversation";
+import { LeaveComments } from "@/components/leave/LeaveComments";
 import { loadMyLeave } from "@/lib/my-requests-store";
 import { useLeaveThread, type LeaveComment } from "@/lib/leave-thread-store";
 import { departments } from "@/lib/employee-data";
@@ -457,12 +457,12 @@ function Page() {
                       </div>
                     )}
 
-                    <LeaveConversation
+                    <LeaveComments
                       messages={threadFor(active)}
                       viewerRole="admin"
                       viewerName="HR Admin"
-                      onSend={(text) => sendMessage(active.id, text)}
-                      placeholder="Message the employee…"
+                      onSend={(text: string) => sendMessage(active.id, text)}
+                      placeholder="Add a comment…"
                     />
                   </div>
 

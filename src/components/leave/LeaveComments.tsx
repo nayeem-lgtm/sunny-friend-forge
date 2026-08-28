@@ -15,7 +15,7 @@ function initials(name: string) {
     .join("");
 }
 
-export function LeaveConversation({
+export function LeaveComments({
   messages,
   viewerRole,
   viewerName,
@@ -48,16 +48,16 @@ export function LeaveConversation({
     <div className={cn("flex flex-col overflow-hidden rounded-xl border border-border bg-card", className)}>
       <div className="flex items-center gap-2 border-b border-border bg-secondary/40 px-4 py-3">
         <MessagesSquare className="size-4 text-primary" />
-        <p className="text-sm font-semibold text-foreground">Conversation</p>
+        <p className="text-sm font-semibold text-foreground">Comments</p>
         <span className="ml-auto text-xs text-muted-foreground">
-          {messages.length} message{messages.length === 1 ? "" : "s"}
+          {messages.length} comment{messages.length === 1 ? "" : "s"}
         </span>
       </div>
 
       <div className="max-h-72 min-h-32 space-y-3 overflow-y-auto p-4">
         {messages.length === 0 && (
           <p className="py-6 text-center text-sm text-muted-foreground">
-            No messages yet — start the conversation below.
+            No comments yet — add a comment below.
           </p>
         )}
         {messages.map((m) => {
@@ -106,10 +106,10 @@ export function LeaveConversation({
               }
             }}
             rows={2}
-            placeholder={placeholder ?? `Write a message as ${viewerName}…`}
+            placeholder={placeholder ?? `Add a comment as ${viewerName}…`}
             className="min-h-11 resize-none"
           />
-          <Button size="icon" className="size-10 shrink-0" disabled={!text.trim()} onClick={send} aria-label="Send message">
+          <Button size="icon" className="size-10 shrink-0" disabled={!text.trim()} onClick={send} aria-label="Add comment">
             <SendHorizonal className="size-4" />
           </Button>
         </div>

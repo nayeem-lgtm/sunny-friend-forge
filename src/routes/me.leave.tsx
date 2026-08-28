@@ -43,7 +43,7 @@ import {
   type LeaveType,
 } from "@/lib/leave-data";
 import { loadMyLeave, saveMyLeave } from "@/lib/my-requests-store";
-import { LeaveConversation } from "@/components/leave/LeaveConversation";
+import { LeaveComments } from "@/components/leave/LeaveComments";
 import { useLeaveThread, type LeaveComment } from "@/lib/leave-thread-store";
 import { MessagesSquare } from "lucide-react";
 
@@ -445,11 +445,11 @@ function Page() {
                   {active.days} day{active.days === 1 ? "" : "s"} · applied {formatDateTime(active.appliedAt)}
                 </span>
               </div>
-              <LeaveConversation
+              <LeaveComments
                 messages={threadFor(active)}
                 viewerRole="employee"
                 viewerName={name}
-                onSend={(text) => post({ requestId: active.id, author: name, role: "employee", text })}
+                onSend={(text: string) => post({ requestId: active.id, author: name, role: "employee", text })}
                 placeholder="Add a comment or extra information for HR…"
               />
             </>
