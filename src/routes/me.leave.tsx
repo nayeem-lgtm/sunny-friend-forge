@@ -89,6 +89,14 @@ function Page() {
   const [docs, setDocs] = useState<string[]>([]);
   const [handover, setHandover] = useState<"yes" | "no">("no");
   const [handoverTo, setHandoverTo] = useState("all");
+  const colleagues = useMemo(
+    () =>
+      employees
+        .filter((e) => e.id !== employee.id)
+        .map((e) => `${e.firstName} ${e.lastName}`)
+        .sort((a, b) => a.localeCompare(b)),
+    [employee.id],
+  );
   const [openId, setOpenId] = useState<string | null>(null);
   const [withdrawId, setWithdrawId] = useState<string | null>(null);
   const [withdrawReason, setWithdrawReason] = useState("");
