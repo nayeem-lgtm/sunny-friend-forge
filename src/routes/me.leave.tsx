@@ -85,6 +85,8 @@ function Page() {
   const [to, setTo] = useState(todayKey);
   const [reason, setReason] = useState("");
   const [docs, setDocs] = useState<string[]>([]);
+  const [handover, setHandover] = useState<"yes" | "no">("no");
+  const [handoverTo, setHandoverTo] = useState("all");
   const [openId, setOpenId] = useState<string | null>(null);
   const [withdrawId, setWithdrawId] = useState<string | null>(null);
   const [withdrawReason, setWithdrawReason] = useState("");
