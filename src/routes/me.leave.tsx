@@ -165,6 +165,10 @@ function Page() {
       toast.error("Please add a short reason for your request.");
       return;
     }
+    if (handover === "yes" && handoverTo === "all") {
+      toast.error("Please choose the colleague who will take over your work.");
+      return;
+    }
     const days = daysBetween(from, to);
     if (days > MONTHLY_CAP) {
       toast.error(`You can request at most ${MONTHLY_CAP} days of leave per month.`);
