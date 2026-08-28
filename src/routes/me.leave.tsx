@@ -312,12 +312,14 @@ function Page() {
                   {handover === "yes" && (
                     <div className="mt-3">
                       <Label>Handover to</Label>
-                      <EmployeeCombobox
-                        className="mt-1.5 w-full"
+                      <p className="mb-1.5 mt-1 text-xs text-muted-foreground">
+                        Search and select one or more colleagues who will cover your work.
+                      </p>
+                      <EmployeeMultiCombobox
                         value={handoverTo}
                         onChange={setHandoverTo}
                         names={colleagues}
-                        allLabel="Select a colleague"
+                        placeholder="Select colleagues"
                       />
                     </div>
                   )}
