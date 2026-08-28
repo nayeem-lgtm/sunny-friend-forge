@@ -200,7 +200,7 @@ function Page() {
       documents: docs,
       feedback: [],
       handoverRequired: handover === "yes",
-      handoverTo: handover === "yes" ? handoverTo : "",
+      handoverTo: handover === "yes" ? handoverTo.join(", ") : "",
     };
     const next = [request, ...loadMyLeave()];
     saveMyLeave(next);
