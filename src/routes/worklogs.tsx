@@ -12,7 +12,9 @@ import { useEffect, useMemo, useState } from "react";
 import type { DateRange } from "react-day-picker";
 
 import { AppShell } from "@/components/layout/AppShell";
-import { departments } from "@/lib/employee-data";
+import { departments, employees as directory } from "@/lib/employee-data";
+import { Badge } from "@/components/ui/badge";
+import { loadMyWorklogs } from "@/lib/my-requests-store";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { StatCard } from "@/components/shared/StatCard";
 import { StatusPill } from "@/components/shared/StatusPill";
