@@ -461,6 +461,12 @@ function Page() {
                 </div>
               </div>
               <p className="mt-2 text-sm text-muted-foreground">{r.reason}</p>
+              {r.handoverRequired && (
+                <p className="mt-2 text-xs text-muted-foreground">
+                  <span className="font-semibold text-foreground">Handover:</span>{" "}
+                  {r.handoverTo || "not specified"}
+                </p>
+              )}
               {overrides[r.id]?.withdrawReason && (
                 <p className="mt-2 rounded-lg border border-destructive/25 bg-destructive/10 px-3 py-2 text-xs text-muted-foreground">
                   <span className="font-semibold text-foreground">Withdrawn:</span>{" "}
