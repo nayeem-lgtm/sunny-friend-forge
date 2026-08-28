@@ -342,7 +342,10 @@ function Page() {
         <DataTable
           data={rows}
           columns={columns}
-          onRowClick={(r) => setDetail(r)}
+          onRowClick={(r) => {
+            setHistoryOpen(false);
+            setDetail(r);
+          }}
           filters={[
             { key: "department", label: "Departments", options: departments },
             { key: "status", label: "Status", options: ["Submitted", "Not Submitted"] },
