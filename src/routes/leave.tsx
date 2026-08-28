@@ -426,49 +426,30 @@ function Page() {
                     </Field>
                   </div>
 
-                  <div className="space-y-4 rounded-xl border border-border bg-card p-4">
-                    <div>
-                      <p className="mb-2 text-xs uppercase tracking-wide text-muted-foreground">
-                        Note / comment for employee
-                      </p>
-                      <Textarea
-                        value={comment}
-                        onChange={(e) => setComment(e.target.value)}
-                        placeholder="Type a note for the employee…"
-                        rows={4}
-                      />
-                    </div>
-                    <div className="flex flex-wrap gap-2">
-                      <Button variant="outline" disabled={!comment.trim()} onClick={() => postFeedback(active.id)}>
-                        Send note
-                      </Button>
-                    </div>
-                    <p className="text-xs text-muted-foreground">
-                      {active.status === "Pending"
-                        ? "Any note typed above is attached to your decision."
-                        : `This request is ${active.status.toLowerCase()}. You can still add notes or reopen it.`}
-                    </p>
+                  <div className="space-y-4">
+                    {active.status === "Pending" && (
+                      <div className="rounded-xl border border-border bg-card p-4">
+                        <p className="mb-2 text-xs uppercase tracking-wide text-muted-foreground">
+                          Decision note (optional)
+                        </p>
+                        <Textarea
+                          value={comment}
+                          onChange={(e) => setComment(e.target.value)}
+                          placeholder="This note is attached to your approve/deny decision…"
+                          rows={3}
+                        />
+                      </div>
+                    )}
 
-
-                    <div>
-                      <p className="mb-2 text-xs uppercase tracking-wide text-muted-foreground">Feedback history</p>
-                      {active.feedback.length ? (
-                        <ul className="space-y-3">
-                          {active.feedback.map((f) => (
-                            <li key={f.id} className="rounded-lg border border-border bg-secondary/40 p-3">
-                              <div className="flex items-center justify-between text-xs text-muted-foreground">
-                                <span className="font-medium text-foreground">{f.author}</span>
-                                <span>{formatDateTime(f.at)}</span>
-                              </div>
-                              <p className="mt-1 text-sm text-foreground">{f.text}</p>
-                            </li>
-                          ))}
-                        </ul>
-                      ) : (
-                        <p className="text-sm text-muted-foreground">No feedback posted yet.</p>
-                      )}
-                    </div>
+                    <LeaveConversation
+                      messages={threadFor(active)}
+                      viewerRole="admin"
+                      viewerName="HR Admin"
+                      onSend={(text) => sendMessage(active.id, text)}
+                      placeholder="Message the employee…"
+                    />
                   </div>
+
                 </div>
               </div>
             </>
