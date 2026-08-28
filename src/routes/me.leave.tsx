@@ -208,6 +208,8 @@ function Page() {
     setOpen(false);
     setReason("");
     setDocs([]);
+    setHandover("no");
+    setHandoverTo("all");
     toast.success("Leave request submitted — HR will review it shortly.");
   };
 
