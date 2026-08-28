@@ -88,7 +88,7 @@ function Page() {
   const [reason, setReason] = useState("");
   const [docs, setDocs] = useState<string[]>([]);
   const [handover, setHandover] = useState<"yes" | "no">("no");
-  const [handoverTo, setHandoverTo] = useState("all");
+  const [handoverTo, setHandoverTo] = useState<string[]>([]);
   const colleagues = useMemo(
     () =>
       employees
