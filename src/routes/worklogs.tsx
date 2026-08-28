@@ -185,13 +185,13 @@ function Page() {
       key: "report",
       header: "EOD Report",
       searchable: true,
-      accessor: (r) => r.report,
+      accessor: (r) => stripHtml(r.report),
       cell: (r) => (
         <span
           className="line-clamp-1 max-w-[16rem] text-muted-foreground"
-          title={r.status === "Submitted" ? r.report : undefined}
+          title={r.status === "Submitted" ? stripHtml(r.report) : undefined}
         >
-          {r.status === "Submitted" ? r.report : "—"}
+          {r.status === "Submitted" ? stripHtml(r.report) : "—"}
         </span>
       ),
     },
@@ -199,7 +199,16 @@ function Page() {
       key: "submittedAt",
       header: "Submitted At",
       accessor: (r) => r.submittedAt ?? "",
-      cell: (r) => r.submittedAt ?? "—",
+      cell: (r) => (
+        <div className="flex items-center gap-2">
+          <span>{r.submittedAt ?? "—"}</span>
+          {r.updatedAt && (
+            <Badge variant="outline" className="text-[10px]">
+              Edited {fmtStamp(r.updatedAt)}
+            </Badge>
+          )}
+        </div>
+      ),
     },
     {
       key: "status",
