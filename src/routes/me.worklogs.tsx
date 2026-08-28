@@ -330,22 +330,57 @@ function Page() {
       <section className="rounded-xl border border-border bg-card">
         <div className="border-b border-border p-4">
           <h2 className="text-sm font-semibold">Earlier records</h2>
+          <p className="mt-0.5 text-xs text-muted-foreground">
+            You can revise any earlier day — the original version and your name are kept in the
+            audit trail.
+          </p>
         </div>
         <ul className="divide-y divide-border">
-          {history.map((w) => (
-            <li key={w.id} className="p-4">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="text-sm font-medium">{formatDate(w.date)}</span>
-                <StatusPill status={w.status} />
-                {w.submittedAt && (
-                  <span className="text-xs text-muted-foreground">at {w.submittedAt}</span>
+          {history
+            .filter((w) => !mine.some((m) => m.date === w.date))
+            .map((w) => (
+              <li key={w.id} className="p-4">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="text-sm font-medium">{formatDate(w.date)}</span>
+                  <StatusPill status={w.status} />
+                  {w.submittedAt && (
+                    <span className="text-xs text-muted-foreground">at {w.submittedAt}</span>
+                  )}
+                  {editingId !== w.id && (
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="ml-auto"
+                      onClick={() => setEditingId(w.id)}
+                    >
+                      <Pencil className="mr-1.5 size-4" /> Edit
+                    </Button>
+                  )}
+                </div>
+                {editingId === w.id ? (
+                  <div className="mt-3">
+                    <RichComposer
+                      initialHtml={w.status === "Submitted" ? `<p>${w.report}</p>` : ""}
+                      placeholder="Update this report…"
+                      submitLabel="Save update"
+                      onPost={({ html }) => saveHistoricalEdit(w, html)}
+                    />
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="mt-2"
+                      onClick={() => setEditingId(null)}
+                    >
+                      <X className="mr-1.5 size-4" /> Cancel
+                    </Button>
+                  </div>
+                ) : (
+                  <p className="mt-1.5 text-sm text-muted-foreground">
+                    {w.report || "No report submitted for this day."}
+                  </p>
                 )}
-              </div>
-              <p className="mt-1.5 text-sm text-muted-foreground">
-                {w.report || "No report submitted for this day."}
-              </p>
-            </li>
-          ))}
+              </li>
+            ))}
         </ul>
       </section>
     </EmployeeShell>
