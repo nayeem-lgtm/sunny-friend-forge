@@ -179,6 +179,34 @@ function Page() {
     toast.success("Worklog updated", { description: "The edit was recorded in the audit trail." });
   };
 
+  /** Revise a day that only exists in the older records — keeps the original as revision 1. */
+  const saveHistoricalEdit = (
+    entry: { id: string; date: string; report: string; submittedAt: string | null; status: string },
+    html: string,
+  ) => {
+    if (!validate(html)) return;
+    const at = new Date().toISOString();
+    const original = entry.status === "Submitted" ? `<p>${entry.report}</p>` : "<p>No report submitted for this day.</p>";
+    const submittedIso = entry.submittedAt
+      ? new Date(`${entry.date}T${entry.submittedAt}:00`).toISOString()
+      : at;
+    const created: MyWorklog = {
+      id: `${employee.id}-${entry.date}`,
+      employeeId: employee.id,
+      date: entry.date,
+      report: html,
+      submittedAt: submittedIso,
+      updatedAt: at,
+      updatedBy: name,
+      revisions: [{ at, report: original, by: name }],
+    };
+    persist([...loadMyWorklogs().filter((w) => w.id !== created.id), created]);
+    setEditingId(null);
+    toast.success("Worklog updated", { description: "The edit was recorded in the audit trail." });
+  };
+
+
+
   return (
     <EmployeeShell>
       <PageHeader
