@@ -190,7 +190,7 @@ function Page() {
       documents: docs,
       feedback: [],
       handoverRequired: handover === "yes",
-      handoverTo: handover === "yes" ? handoverTo : undefined,
+      handoverTo: handover === "yes" ? handoverTo : "",
     };
     const next = [request, ...loadMyLeave()];
     saveMyLeave(next);
