@@ -1,7 +1,7 @@
 import { employees } from "@/lib/employee-data";
 
 export type LeaveType = "PTO" | "Unpaid";
-export type LeaveStatus = "Pending" | "Approved" | "Denied" | "Cancelled";
+export type LeaveStatus = "Pending" | "Approved" | "Denied" | "Cancelled" | "Withdrawn";
 
 export type LeaveFeedback = {
   id: string;
@@ -28,7 +28,7 @@ export type LeaveRequest = {
 };
 
 export const leaveTypes: LeaveType[] = ["PTO", "Unpaid"];
-export const leaveStatuses: LeaveStatus[] = ["Pending", "Approved", "Denied", "Cancelled"];
+export const leaveStatuses: LeaveStatus[] = ["Pending", "Approved", "Denied", "Cancelled", "Withdrawn"];
 
 export const leaveTypeTone: Record<LeaveType, string> = {
   PTO: "bg-primary/15 text-primary border-primary/30",
