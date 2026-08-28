@@ -189,6 +189,8 @@ function Page() {
       reason: reason.trim(),
       documents: docs,
       feedback: [],
+      handoverRequired: handover === "yes",
+      handoverTo: handover === "yes" ? handoverTo : undefined,
     };
     const next = [request, ...loadMyLeave()];
     saveMyLeave(next);
