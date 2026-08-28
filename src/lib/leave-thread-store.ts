@@ -2,6 +2,15 @@ import { useCallback, useEffect, useState } from "react";
 
 export type LeaveCommentRole = "employee" | "admin";
 
+export type LeaveAttachment = {
+  id: string;
+  name: string;
+  size: number;
+  type: string;
+  /** data URL (images get an inline preview) */
+  url: string;
+};
+
 export type LeaveComment = {
   id: string;
   requestId: string;
@@ -9,6 +18,7 @@ export type LeaveComment = {
   role: LeaveCommentRole;
   text: string;
   at: string; // ISO
+  attachments?: LeaveAttachment[];
 };
 
 export type LeaveOverride = {
