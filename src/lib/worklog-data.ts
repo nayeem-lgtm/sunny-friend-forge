@@ -104,7 +104,77 @@ export function generateWorklogs(today: Date): WorklogEntry[] {
       });
     });
   }
+
+  // Demo edited worklogs so the revision history UI can be reviewed in the admin panel.
+  rows.push(...demoEditedWorklogs(today));
+
   return rows;
+}
+
+/** Sample submitted-then-edited worklogs with full revision history (date, time, year). */
+function demoEditedWorklogs(today: Date): WorklogEntry[] {
+  // Use the last 3 weekdays, most recent first.
+  const weekdays: Date[] = [];
+  const cursor = new Date(today);
+  while (weekdays.length < 3) {
+    const dow = cursor.getDay();
+    if (dow !== 5 && dow !== 6) weekdays.push(new Date(cursor));
+    cursor.setDate(cursor.getDate() - 1);
+  }
+
+  const iso = (d: Date, h: number, m: number, s: number) => {
+    const t = new Date(d);
+    t.setHours(h, m, s, 0);
+    return t.toISOString();
+  };
+
+  const demos: [number, string, string[]][] = [
+    [
+      0,
+      "Updated the client onboarding checklist, resolved two support tickets, and documented the handover notes.",
+      [
+        "Updated the client onboarding checklist.",
+        "Updated the client onboarding checklist and resolved two support tickets.",
+      ],
+    ],
+    [
+      1,
+      "Completed the weekly sales report, aligned with the QA team on release blockers, and prepared tomorrow's sprint plan.",
+      ["Completed the weekly sales report."],
+    ],
+    [
+      2,
+      "Deployed the staging build, ran smoke tests, fixed a payment gateway timeout issue, and wrote the release summary for stakeholders.",
+      [
+        "Deployed the staging build.",
+        "Deployed the staging build and ran smoke tests.",
+        "Deployed the staging build, ran smoke tests, and fixed a payment gateway timeout issue.",
+      ],
+    ],
+  ];
+
+  return demos.map(([pIdx, finalReport, previous], i) => {
+    const day = weekdays[i]!;
+    const [employee, department] = people[pIdx % people.length]!;
+    const dk = toDateKey(day);
+    const revisions = previous.map((report, r) => ({
+      at: iso(day, 18 + r, 5 + r * 22, 10 + r * 15),
+      report,
+      by: employee,
+    }));
+    return {
+      id: `${dk}-demo-edit-${i}`,
+      date: dk,
+      employee,
+      department,
+      report: finalReport,
+      submittedAt: "17:30",
+      status: "Submitted" as WorklogStatus,
+      updatedAt: iso(day, 18 + previous.length, 12, 30),
+      updatedBy: employee,
+      revisions,
+    };
+  });
 }
 
 export type RangePreset = "today" | "yesterday" | "7d" | "month" | "lastMonth" | "custom";
