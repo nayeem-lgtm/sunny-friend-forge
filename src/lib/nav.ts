@@ -9,6 +9,7 @@ import {
   Settings,
   Users2,
   MessagesSquare,
+  CalendarDays,
   type LucideIcon,
 } from "lucide-react";
 
@@ -42,6 +43,7 @@ export const navItems: NavItem[] = [
     ],
   },
   { title: "Leave", icon: CalendarCheck, url: "/leave" },
+  { title: "Holiday Calendar", icon: CalendarDays, url: "/holidays" },
   { title: "Payroll", icon: Wallet, url: "/payroll" },
   { title: "Workboard", icon: FolderKanban, url: "/projects" },
   { title: "Monitoring", icon: Activity, url: "/monitoring" },
@@ -71,6 +73,7 @@ export const pageTitles: Record<string, string> = {
   "/meetings": "Meetings",
   "/chat": "Omni Chat By Ray",
   "/leave": "Leave",
+  "/holidays": "Holiday Calendar",
   "/payroll": "Payroll",
   "/projects": "Workboard",
   "/monitoring": "Monitoring",
