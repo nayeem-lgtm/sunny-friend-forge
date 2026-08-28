@@ -336,6 +336,22 @@ function Page() {
                   </div>
                 </div>
 
+                {overrides[active.id]?.withdrawReason && (
+                  <div className="rounded-xl border border-destructive/30 bg-destructive/10 p-4">
+                    <p className="text-sm font-semibold text-foreground">
+                      Withdrawn by employee
+                      {overrides[active.id]?.withdrawnAt
+                        ? ` · ${formatDateTime(overrides[active.id]!.withdrawnAt!)}`
+                        : ""}
+                    </p>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      Reason: {overrides[active.id]?.withdrawReason}
+                    </p>
+                  </div>
+                )}
+
+
+
                 {active.status === "Pending" ? (
                   <div className="flex flex-col gap-4 rounded-xl border border-warning/30 bg-warning/10 p-4 sm:flex-row sm:items-center sm:justify-between">
                     <div>
