@@ -276,6 +276,41 @@ function Page() {
                   />
                 </div>
 
+                <div className="rounded-lg border border-border bg-secondary/30 p-3">
+                  <Label>Handover required</Label>
+                  <div className="mt-2 flex gap-2">
+                    {(["yes", "no"] as const).map((v) => (
+                      <Button
+                        key={v}
+                        type="button"
+                        size="sm"
+                        variant={handover === v ? "default" : "outline"}
+                        onClick={() => setHandover(v)}
+                      >
+                        {v === "yes" ? "Yes" : "No"}
+                      </Button>
+                    ))}
+                  </div>
+                  <p className="mt-2 text-xs text-muted-foreground">
+                    <span className="font-semibold text-foreground">Handover</span> means transferring
+                    responsibility for your ongoing work, tasks, projects, clients or other job-related
+                    responsibilities to another team member during your absence, so that work can
+                    continue without interruption.
+                  </p>
+                  {handover === "yes" && (
+                    <div className="mt-3">
+                      <Label>Handover to</Label>
+                      <EmployeeCombobox
+                        className="mt-1.5 w-full"
+                        value={handoverTo}
+                        onChange={setHandoverTo}
+                        names={colleagues}
+                        allLabel="Select a colleague"
+                      />
+                    </div>
+                  )}
+                </div>
+
                 <div>
                   <Label>Supporting documents</Label>
                   <label
