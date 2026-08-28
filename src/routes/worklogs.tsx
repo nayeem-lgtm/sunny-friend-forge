@@ -71,6 +71,51 @@ export const Route = createFileRoute("/worklogs")({
 const fmt = (d: Date) =>
   d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 
+const fmtStamp = (iso: string) =>
+  new Date(iso).toLocaleString(undefined, {
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  });
+
+const richClasses =
+  "prose-sm max-w-none whitespace-pre-wrap [&_a]:text-primary [&_a]:underline [&_ol]:list-decimal [&_ol]:pl-5 [&_ul]:list-disc [&_ul]:pl-5";
+
+const stripHtml = (html: string) =>
+  html.replace(/<[^>]*>/g, " ").replace(/&nbsp;/g, " ").replace(/\s+/g, " ").trim();
+
+/** Overlay reports filed (and edited) from the employee portal onto the records. */
+function mergePortalLogs(base: WorklogEntry[]): WorklogEntry[] {
+  const portal = loadMyWorklogs();
+  if (portal.length === 0) return base;
+  const rows = [...base];
+  for (const log of portal) {
+    const person = directory.find((e) => e.id === log.employeeId);
+    if (!person) continue;
+    const name = `${person.firstName} ${person.lastName}`;
+    const stamp = new Date(log.updatedAt ?? log.submittedAt);
+    const entry: WorklogEntry = {
+      id: log.id,
+      date: log.date,
+      employee: name,
+      department: person.department,
+      report: log.report,
+      submittedAt: `${String(stamp.getHours()).padStart(2, "0")}:${String(
+        stamp.getMinutes(),
+      ).padStart(2, "0")}`,
+      status: "Submitted",
+      rich: true,
+      ...(log.updatedAt ? { updatedAt: log.updatedAt } : {}),
+      ...(log.revisions ? { revisions: log.revisions } : {}),
+    };
+    const i = rows.findIndex((r) => r.date === log.date && r.employee === name);
+    if (i >= 0) rows[i] = entry;
+    else rows.push(entry);
+  }
+  return rows;
+}
+
 function Page() {
   const [today, setToday] = useState<Date | null>(null);
   const [preset, setPreset] = useState<RangePreset>("today");
@@ -78,6 +123,7 @@ function Page() {
   const [employee, setEmployee] = useState<string>("all");
   const [pickerOpen, setPickerOpen] = useState(false);
   const [detail, setDetail] = useState<WorklogEntry | null>(null);
+  const [historyOpen, setHistoryOpen] = useState(false);
 
   useEffect(() => {
     const d = new Date();
@@ -85,7 +131,7 @@ function Page() {
     setToday(d);
   }, []);
 
-  const all = useMemo(() => (today ? generateWorklogs(today) : []), [today]);
+  const all = useMemo(() => (today ? mergePortalLogs(generateWorklogs(today)) : []), [today]);
 
   const range = useMemo(() => {
     if (!today) return null;
