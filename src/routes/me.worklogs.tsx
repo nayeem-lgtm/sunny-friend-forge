@@ -41,12 +41,13 @@ const richClasses =
   "prose-sm max-w-none whitespace-pre-wrap [&_a]:text-primary [&_a]:underline [&_ol]:list-decimal [&_ol]:pl-5 [&_ul]:list-disc [&_ul]:pl-5";
 
 function fmtStamp(iso: string) {
-  const d = new Date(iso);
-  return d.toLocaleString(undefined, {
+  return new Date(iso).toLocaleString(undefined, {
+    year: "numeric",
     month: "short",
     day: "numeric",
     hour: "numeric",
     minute: "2-digit",
+    second: "2-digit",
   });
 }
 
@@ -61,7 +62,9 @@ function AuditTrail({ log }: { log: MyWorklog }) {
         {log.updatedAt && (
           <>
             <span aria-hidden>·</span>
-            <span>Updated {fmtStamp(log.updatedAt)}</span>
+            <span>
+              Updated by {log.updatedBy ?? "you"} on {fmtStamp(log.updatedAt)}
+            </span>
             <Badge variant="outline">
               {revisions.length} edit{revisions.length === 1 ? "" : "s"}
             </Badge>
@@ -86,7 +89,7 @@ function AuditTrail({ log }: { log: MyWorklog }) {
             .map((rev, i) => (
               <li key={`${rev.at}-${i}`}>
                 <p className="text-xs font-medium text-muted-foreground">
-                  Version before edit on {fmtStamp(rev.at)}
+                  Version before edit by {rev.by ?? log.updatedBy ?? "you"} on {fmtStamp(rev.at)}
                 </p>
                 <div
                   className={`${richClasses} mt-1 text-sm text-muted-foreground`}
@@ -166,7 +169,8 @@ function Page() {
             ...w,
             report: html,
             updatedAt: at,
-            revisions: [...(w.revisions ?? []), { at, report: w.report }],
+            updatedBy: name,
+            revisions: [...(w.revisions ?? []), { at, report: w.report, by: name }],
           }
         : w,
     );
@@ -174,6 +178,34 @@ function Page() {
     setEditingId(null);
     toast.success("Worklog updated", { description: "The edit was recorded in the audit trail." });
   };
+
+  /** Revise a day that only exists in the older records — keeps the original as revision 1. */
+  const saveHistoricalEdit = (
+    entry: { id: string; date: string; report: string; submittedAt: string | null; status: string },
+    html: string,
+  ) => {
+    if (!validate(html)) return;
+    const at = new Date().toISOString();
+    const original = entry.status === "Submitted" ? `<p>${entry.report}</p>` : "<p>No report submitted for this day.</p>";
+    const submittedIso = entry.submittedAt
+      ? new Date(`${entry.date}T${entry.submittedAt}:00`).toISOString()
+      : at;
+    const created: MyWorklog = {
+      id: `${employee.id}-${entry.date}`,
+      employeeId: employee.id,
+      date: entry.date,
+      report: html,
+      submittedAt: submittedIso,
+      updatedAt: at,
+      updatedBy: name,
+      revisions: [{ at, report: original, by: name }],
+    };
+    persist([...loadMyWorklogs().filter((w) => w.id !== created.id), created]);
+    setEditingId(null);
+    toast.success("Worklog updated", { description: "The edit was recorded in the audit trail." });
+  };
+
+
 
   return (
     <EmployeeShell>
@@ -326,22 +358,57 @@ function Page() {
       <section className="rounded-xl border border-border bg-card">
         <div className="border-b border-border p-4">
           <h2 className="text-sm font-semibold">Earlier records</h2>
+          <p className="mt-0.5 text-xs text-muted-foreground">
+            You can revise any earlier day — the original version and your name are kept in the
+            audit trail.
+          </p>
         </div>
         <ul className="divide-y divide-border">
-          {history.map((w) => (
-            <li key={w.id} className="p-4">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="text-sm font-medium">{formatDate(w.date)}</span>
-                <StatusPill status={w.status} />
-                {w.submittedAt && (
-                  <span className="text-xs text-muted-foreground">at {w.submittedAt}</span>
+          {history
+            .filter((w) => !mine.some((m) => m.date === w.date))
+            .map((w) => (
+              <li key={w.id} className="p-4">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="text-sm font-medium">{formatDate(w.date)}</span>
+                  <StatusPill status={w.status} />
+                  {w.submittedAt && (
+                    <span className="text-xs text-muted-foreground">at {w.submittedAt}</span>
+                  )}
+                  {editingId !== w.id && (
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="ml-auto"
+                      onClick={() => setEditingId(w.id)}
+                    >
+                      <Pencil className="mr-1.5 size-4" /> Edit
+                    </Button>
+                  )}
+                </div>
+                {editingId === w.id ? (
+                  <div className="mt-3">
+                    <RichComposer
+                      initialHtml={w.status === "Submitted" ? `<p>${w.report}</p>` : ""}
+                      placeholder="Update this report…"
+                      submitLabel="Save update"
+                      onPost={({ html }) => saveHistoricalEdit(w, html)}
+                    />
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="mt-2"
+                      onClick={() => setEditingId(null)}
+                    >
+                      <X className="mr-1.5 size-4" /> Cancel
+                    </Button>
+                  </div>
+                ) : (
+                  <p className="mt-1.5 text-sm text-muted-foreground">
+                    {w.report || "No report submitted for this day."}
+                  </p>
                 )}
-              </div>
-              <p className="mt-1.5 text-sm text-muted-foreground">
-                {w.report || "No report submitted for this day."}
-              </p>
-            </li>
-          ))}
+              </li>
+            ))}
         </ul>
       </section>
     </EmployeeShell>
