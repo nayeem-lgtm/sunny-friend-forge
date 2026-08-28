@@ -72,13 +72,6 @@ export const Route = createFileRoute("/worklogs")({
 const fmt = (d: Date) =>
   d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 
-const fmtStamp = (iso: string) =>
-  new Date(iso).toLocaleString(undefined, {
-    month: "short",
-    day: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-  });
 
 const fmtExact = (iso: string) =>
   new Date(iso).toLocaleString(undefined, {
