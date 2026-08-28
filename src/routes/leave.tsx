@@ -457,12 +457,12 @@ function Page() {
                       </div>
                     )}
 
-                    <LeaveConversation
+                    <LeaveComments
                       messages={threadFor(active)}
                       viewerRole="admin"
                       viewerName="HR Admin"
-                      onSend={(text) => sendMessage(active.id, text)}
-                      placeholder="Message the employee…"
+                      onSend={(text: string) => sendMessage(active.id, text)}
+                      placeholder="Add a comment…"
                     />
                   </div>
 
