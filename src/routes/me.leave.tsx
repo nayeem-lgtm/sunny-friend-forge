@@ -44,6 +44,8 @@ import {
 } from "@/lib/leave-data";
 import { loadMyLeave, saveMyLeave } from "@/lib/my-requests-store";
 import { LeaveComments } from "@/components/leave/LeaveComments";
+import { EmployeeCombobox } from "@/components/shared/EmployeeCombobox";
+import { employees } from "@/lib/employee-data";
 import { useLeaveThread, type LeaveAttachment, type LeaveComment } from "@/lib/leave-thread-store";
 import { MessagesSquare } from "lucide-react";
 
@@ -85,6 +87,16 @@ function Page() {
   const [to, setTo] = useState(todayKey);
   const [reason, setReason] = useState("");
   const [docs, setDocs] = useState<string[]>([]);
+  const [handover, setHandover] = useState<"yes" | "no">("no");
+  const [handoverTo, setHandoverTo] = useState("all");
+  const colleagues = useMemo(
+    () =>
+      employees
+        .filter((e) => e.id !== employee.id)
+        .map((e) => `${e.firstName} ${e.lastName}`)
+        .sort((a, b) => a.localeCompare(b)),
+    [employee.id],
+  );
   const [openId, setOpenId] = useState<string | null>(null);
   const [withdrawId, setWithdrawId] = useState<string | null>(null);
   const [withdrawReason, setWithdrawReason] = useState("");
@@ -163,6 +175,10 @@ function Page() {
       toast.error("Please add a short reason for your request.");
       return;
     }
+    if (handover === "yes" && handoverTo === "all") {
+      toast.error("Please choose the colleague who will take over your work.");
+      return;
+    }
     const days = daysBetween(from, to);
     if (days > MONTHLY_CAP) {
       toast.error(`You can request at most ${MONTHLY_CAP} days of leave per month.`);
@@ -183,6 +199,8 @@ function Page() {
       reason: reason.trim(),
       documents: docs,
       feedback: [],
+      handoverRequired: handover === "yes",
+      handoverTo: handover === "yes" ? handoverTo : "",
     };
     const next = [request, ...loadMyLeave()];
     saveMyLeave(next);
@@ -190,6 +208,8 @@ function Page() {
     setOpen(false);
     setReason("");
     setDocs([]);
+    setHandover("no");
+    setHandoverTo("all");
     toast.success("Leave request submitted — HR will review it shortly.");
   };
 
@@ -266,6 +286,41 @@ function Page() {
                     onChange={(e) => setReason(e.target.value)}
                     placeholder="Tell your manager why you need this leave and how work is covered."
                   />
+                </div>
+
+                <div className="rounded-lg border border-border bg-secondary/30 p-3">
+                  <Label>Handover required</Label>
+                  <div className="mt-2 flex gap-2">
+                    {(["yes", "no"] as const).map((v) => (
+                      <Button
+                        key={v}
+                        type="button"
+                        size="sm"
+                        variant={handover === v ? "default" : "outline"}
+                        onClick={() => setHandover(v)}
+                      >
+                        {v === "yes" ? "Yes" : "No"}
+                      </Button>
+                    ))}
+                  </div>
+                  <p className="mt-2 text-xs text-muted-foreground">
+                    <span className="font-semibold text-foreground">Handover</span> means transferring
+                    responsibility for your ongoing work, tasks, projects, clients or other job-related
+                    responsibilities to another team member during your absence, so that work can
+                    continue without interruption.
+                  </p>
+                  {handover === "yes" && (
+                    <div className="mt-3">
+                      <Label>Handover to</Label>
+                      <EmployeeCombobox
+                        className="mt-1.5 w-full"
+                        value={handoverTo}
+                        onChange={setHandoverTo}
+                        names={colleagues}
+                        allLabel="Select a colleague"
+                      />
+                    </div>
+                  )}
                 </div>
 
                 <div>
@@ -406,6 +461,12 @@ function Page() {
                 </div>
               </div>
               <p className="mt-2 text-sm text-muted-foreground">{r.reason}</p>
+              {r.handoverRequired && (
+                <p className="mt-2 text-xs text-muted-foreground">
+                  <span className="font-semibold text-foreground">Handover:</span>{" "}
+                  {r.handoverTo || "not specified"}
+                </p>
+              )}
               {overrides[r.id]?.withdrawReason && (
                 <p className="mt-2 rounded-lg border border-destructive/25 bg-destructive/10 px-3 py-2 text-xs text-muted-foreground">
                   <span className="font-semibold text-foreground">Withdrawn:</span>{" "}

@@ -25,6 +25,8 @@ export type LeaveRequest = {
   reason: string;
   documents: string[];
   feedback: LeaveFeedback[];
+  handoverRequired?: boolean;
+  handoverTo?: string;
 };
 
 export const leaveTypes: LeaveType[] = ["PTO", "Unpaid"];
