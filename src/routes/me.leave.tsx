@@ -44,6 +44,8 @@ import {
 } from "@/lib/leave-data";
 import { loadMyLeave, saveMyLeave } from "@/lib/my-requests-store";
 import { LeaveComments } from "@/components/leave/LeaveComments";
+import { EmployeeCombobox } from "@/components/shared/EmployeeCombobox";
+import { employees } from "@/lib/employee-data";
 import { useLeaveThread, type LeaveAttachment, type LeaveComment } from "@/lib/leave-thread-store";
 import { MessagesSquare } from "lucide-react";
 
