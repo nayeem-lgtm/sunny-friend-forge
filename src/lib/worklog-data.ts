@@ -13,7 +13,8 @@ export type WorklogEntry = {
   /** Set when the report was filed from the employee portal (report is HTML). */
   rich?: boolean;
   updatedAt?: string; // ISO — last edit by the employee
-  revisions?: { at: string; report: string }[]; // previous versions, oldest first
+  updatedBy?: string; // who made the last edit
+  revisions?: { at: string; report: string; by?: string }[]; // previous versions, oldest first
 };
 
 const people: [string, string][] = employees

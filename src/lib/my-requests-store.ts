@@ -10,7 +10,8 @@ export type MyWorklog = {
   report: string;
   submittedAt: string; // ISO — first submission
   updatedAt?: string; // ISO — last edit
-  revisions?: { at: string; report: string }[]; // previous versions, oldest first
+  updatedBy?: string; // name of the person who made the last edit
+  revisions?: { at: string; report: string; by?: string }[]; // previous versions, oldest first
 };
 
 function read<T>(key: string): T[] {

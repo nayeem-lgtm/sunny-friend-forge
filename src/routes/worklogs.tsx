@@ -80,6 +80,16 @@ const fmtStamp = (iso: string) =>
     minute: "2-digit",
   });
 
+const fmtExact = (iso: string) =>
+  new Date(iso).toLocaleString(undefined, {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    second: "2-digit",
+  });
+
 const richClasses =
   "prose-sm max-w-none whitespace-pre-wrap [&_a]:text-primary [&_a]:underline [&_ol]:list-decimal [&_ol]:pl-5 [&_ul]:list-disc [&_ul]:pl-5";
 
@@ -108,6 +118,7 @@ function mergePortalLogs(base: WorklogEntry[]): WorklogEntry[] {
       status: "Submitted",
       rich: true,
       ...(log.updatedAt ? { updatedAt: log.updatedAt } : {}),
+      ...(log.updatedBy ? { updatedBy: log.updatedBy } : {}),
       ...(log.revisions ? { revisions: log.revisions } : {}),
     };
     const i = rows.findIndex((r) => r.date === log.date && r.employee === name);
@@ -205,7 +216,7 @@ function Page() {
           <span>{r.submittedAt ?? "—"}</span>
           {r.updatedAt && (
             <Badge variant="outline" className="text-[10px]">
-              Edited {fmtStamp(r.updatedAt)}
+              Edited by {r.updatedBy ?? r.employee} · {fmtExact(r.updatedAt)}
             </Badge>
           )}
         </div>
@@ -394,7 +405,10 @@ function Page() {
                 <div className="rounded-lg border border-border bg-muted/30 p-3">
                   <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
                     <History className="size-3.5" />
-                    <span>Last updated by the employee {fmtStamp(detail.updatedAt)}</span>
+                    <span>
+                      Last updated by {detail.updatedBy ?? detail.employee} on{" "}
+                      {fmtExact(detail.updatedAt)}
+                    </span>
                     <Badge variant="outline">
                       {(detail.revisions?.length ?? 0)} edit
                       {(detail.revisions?.length ?? 0) === 1 ? "" : "s"}
@@ -418,7 +432,8 @@ function Page() {
                         .map((rev, i) => (
                           <li key={`${rev.at}-${i}`}>
                             <p className="text-xs font-medium text-muted-foreground">
-                              Version before edit on {fmtStamp(rev.at)}
+                              Version before edit by {rev.by ?? detail.updatedBy ?? detail.employee} on{" "}
+                              {fmtExact(rev.at)}
                             </p>
                             <div
                               className={`${richClasses} mt-1 text-sm text-muted-foreground`}
