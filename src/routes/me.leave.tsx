@@ -193,15 +193,6 @@ function Page() {
     toast.success("Leave request submitted — HR will review it shortly.");
   };
 
-  const cancel = (id: string) => {
-    const all = loadMyLeave().map((l) =>
-      l.id === id ? { ...l, status: "Cancelled" as const } : l,
-    );
-    saveMyLeave(all);
-    setLocal(all.filter((l) => l.employeeId === employee.id));
-    toast.success("Request cancelled");
-  };
-
   return (
     <EmployeeShell>
       <PageHeader
