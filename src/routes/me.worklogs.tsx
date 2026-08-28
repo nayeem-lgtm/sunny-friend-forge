@@ -41,12 +41,13 @@ const richClasses =
   "prose-sm max-w-none whitespace-pre-wrap [&_a]:text-primary [&_a]:underline [&_ol]:list-decimal [&_ol]:pl-5 [&_ul]:list-disc [&_ul]:pl-5";
 
 function fmtStamp(iso: string) {
-  const d = new Date(iso);
-  return d.toLocaleString(undefined, {
+  return new Date(iso).toLocaleString(undefined, {
+    year: "numeric",
     month: "short",
     day: "numeric",
     hour: "numeric",
     minute: "2-digit",
+    second: "2-digit",
   });
 }
 
@@ -61,7 +62,9 @@ function AuditTrail({ log }: { log: MyWorklog }) {
         {log.updatedAt && (
           <>
             <span aria-hidden>·</span>
-            <span>Updated {fmtStamp(log.updatedAt)}</span>
+            <span>
+              Updated by {log.updatedBy ?? "you"} on {fmtStamp(log.updatedAt)}
+            </span>
             <Badge variant="outline">
               {revisions.length} edit{revisions.length === 1 ? "" : "s"}
             </Badge>
@@ -86,7 +89,7 @@ function AuditTrail({ log }: { log: MyWorklog }) {
             .map((rev, i) => (
               <li key={`${rev.at}-${i}`}>
                 <p className="text-xs font-medium text-muted-foreground">
-                  Version before edit on {fmtStamp(rev.at)}
+                  Version before edit by {rev.by ?? log.updatedBy ?? "you"} on {fmtStamp(rev.at)}
                 </p>
                 <div
                   className={`${richClasses} mt-1 text-sm text-muted-foreground`}
@@ -166,7 +169,8 @@ function Page() {
             ...w,
             report: html,
             updatedAt: at,
-            revisions: [...(w.revisions ?? []), { at, report: w.report }],
+            updatedBy: name,
+            revisions: [...(w.revisions ?? []), { at, report: w.report, by: name }],
           }
         : w,
     );
