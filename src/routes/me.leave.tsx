@@ -209,7 +209,7 @@ function Page() {
     setReason("");
     setDocs([]);
     setHandover("no");
-    setHandoverTo("all");
+    setHandoverTo([]);
     toast.success("Leave request submitted — HR will review it shortly.");
   };
 
