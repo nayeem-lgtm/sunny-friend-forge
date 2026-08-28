@@ -424,6 +424,13 @@ function Page() {
                     <Field label="Reason for leave">
                       <p className="text-sm leading-relaxed text-foreground">{active.reason}</p>
                     </Field>
+                    <Field label="Handover">
+                      <p className="text-sm text-foreground">
+                        {active.handoverRequired
+                          ? `Required — handed over to ${active.handoverTo || "not specified"}`
+                          : "Not required"}
+                      </p>
+                    </Field>
                     <Field label="Supporting documents">
                       {active.documents.length ? (
                         <ul className="space-y-1">
