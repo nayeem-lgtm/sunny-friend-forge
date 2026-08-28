@@ -372,13 +372,61 @@ function Page() {
             <div className="space-y-4">
               {detail.status === "Submitted" ? (
                 <div className="max-h-[50vh] overflow-auto rounded-lg border border-border bg-secondary/40 p-4">
-                  <p className="whitespace-pre-wrap text-sm leading-relaxed text-foreground">
-                    {detail.report}
-                  </p>
+                  {detail.rich ? (
+                    <div
+                      className={`${richClasses} text-sm leading-relaxed text-foreground`}
+                      dangerouslySetInnerHTML={{ __html: detail.report }}
+                    />
+                  ) : (
+                    <p className="whitespace-pre-wrap text-sm leading-relaxed text-foreground">
+                      {detail.report}
+                    </p>
+                  )}
                 </div>
               ) : (
                 <div className="rounded-lg border border-border bg-secondary/40 p-8 text-center text-sm text-muted-foreground">
                   No EOD report was submitted for this day.
+                </div>
+              )}
+
+              {detail.updatedAt && (
+                <div className="rounded-lg border border-border bg-muted/30 p-3">
+                  <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                    <History className="size-3.5" />
+                    <span>Last updated by the employee {fmtStamp(detail.updatedAt)}</span>
+                    <Badge variant="outline">
+                      {(detail.revisions?.length ?? 0)} edit
+                      {(detail.revisions?.length ?? 0) === 1 ? "" : "s"}
+                    </Badge>
+                    {(detail.revisions?.length ?? 0) > 0 && (
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="ml-auto h-6 px-2 text-xs"
+                        onClick={() => setHistoryOpen((v) => !v)}
+                      >
+                        {historyOpen ? "Hide" : "View"} update history
+                      </Button>
+                    )}
+                  </div>
+                  {historyOpen && (
+                    <ol className="mt-3 space-y-3 border-l border-border pl-3">
+                      {(detail.revisions ?? [])
+                        .slice()
+                        .reverse()
+                        .map((rev, i) => (
+                          <li key={`${rev.at}-${i}`}>
+                            <p className="text-xs font-medium text-muted-foreground">
+                              Version before edit on {fmtStamp(rev.at)}
+                            </p>
+                            <div
+                              className={`${richClasses} mt-1 text-sm text-muted-foreground`}
+                              dangerouslySetInnerHTML={{ __html: rev.report }}
+                            />
+                          </li>
+                        ))}
+                    </ol>
+                  )}
                 </div>
               )}
 
