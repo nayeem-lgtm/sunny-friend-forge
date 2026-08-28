@@ -5,6 +5,7 @@ import {
   ClipboardList,
   FileWarning,
   FileText,
+  History,
   UserSearch,
   Users,
 } from "lucide-react";
