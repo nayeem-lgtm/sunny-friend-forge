@@ -175,8 +175,8 @@ function Page() {
       toast.error("Please add a short reason for your request.");
       return;
     }
-    if (handover === "yes" && handoverTo === "all") {
-      toast.error("Please choose the colleague who will take over your work.");
+    if (handover === "yes" && handoverTo.length === 0) {
+      toast.error("Please choose at least one colleague who will take over your work.");
       return;
     }
     const days = daysBetween(from, to);
