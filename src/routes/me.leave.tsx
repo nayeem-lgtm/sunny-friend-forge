@@ -38,7 +38,7 @@ import {
   generateLeaveRequests,
   leaveTypeTone,
   leaveTypes,
-  usedDays,
+  
   type LeaveRequest,
   type LeaveType,
 } from "@/lib/leave-data";
