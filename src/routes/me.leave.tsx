@@ -159,7 +159,6 @@ function Page() {
     toast.success("Request withdrawn — HR has been notified.");
   };
 
-  const used = usedDays(rows, employee.id, today.getFullYear());
   const pending = rows.filter((r) => r.status === "Pending").length;
   const monthPrefix = todayKey.slice(0, 7);
   const takenThisMonth = rows
