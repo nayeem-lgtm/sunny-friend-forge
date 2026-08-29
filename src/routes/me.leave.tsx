@@ -166,6 +166,20 @@ function Page() {
     .filter((r) => r.status === "Approved" && r.from.startsWith(monthPrefix))
     .reduce((s, r) => s + r.days, 0);
 
+  const year = today.getFullYear();
+  const inYear = rows.filter((r) => r.from.startsWith(String(year)));
+  const ptoTaken = inYear
+    .filter((r) => r.type === "PTO" && r.status === "Approved")
+    .reduce((s, r) => s + r.days, 0);
+  const ptoPending = inYear
+    .filter((r) => r.type === "PTO" && r.status === "Pending")
+    .reduce((s, r) => s + r.days, 0);
+  const ptoLeft = Math.max(0, ANNUAL_ALLOWANCE - ptoTaken);
+  const unpaidTaken = inYear
+    .filter((r) => r.type === "Unpaid" && r.status === "Approved")
+    .reduce((s, r) => s + r.days, 0);
+  const ptoPct = Math.min(100, (ptoTaken / ANNUAL_ALLOWANCE) * 100);
+
   const apply = () => {
     if (to < from) {
       toast.error("The end date cannot be before the start date.");
