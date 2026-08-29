@@ -407,15 +407,53 @@ function Page() {
         }
       />
 
+      <section className="mb-6 rounded-xl border border-primary/25 bg-gradient-to-br from-primary/10 via-card to-card p-5">
+        <div className="flex flex-wrap items-center gap-2">
+          <CalendarCheck className="size-4 text-primary" />
+          <h2 className="text-sm font-semibold">My PTO balance · {year}</h2>
+          <span className="ml-auto text-xs text-muted-foreground">
+            Entitlement resets every calendar year
+          </span>
+        </div>
+        <div className="mt-4 grid gap-4 sm:grid-cols-3">
+          <div>
+            <p className="text-xs text-muted-foreground">Total PTO eligible</p>
+            <p className="mt-1 text-3xl font-semibold tracking-tight">{ANNUAL_ALLOWANCE}<span className="ml-1 text-sm font-normal text-muted-foreground">days</span></p>
+          </div>
+          <div>
+            <p className="text-xs text-muted-foreground">PTO taken</p>
+            <p className="mt-1 text-3xl font-semibold tracking-tight">{ptoTaken}<span className="ml-1 text-sm font-normal text-muted-foreground">days</span></p>
+          </div>
+          <div>
+            <p className="text-xs text-muted-foreground">PTO left</p>
+            <p className="mt-1 text-3xl font-semibold tracking-tight text-primary">{ptoLeft}<span className="ml-1 text-sm font-normal text-muted-foreground">days</span></p>
+          </div>
+        </div>
+        <div className="mt-4 h-2.5 w-full overflow-hidden rounded-full bg-secondary">
+          <div className="h-full rounded-full bg-primary transition-all" style={{ width: `${ptoPct}%` }} />
+        </div>
+        <p className="mt-2 text-xs text-muted-foreground">
+          {ptoTaken} of {ANNUAL_ALLOWANCE} PTO days used ({Math.round(ptoPct)}%)
+          {ptoPending > 0 && ` · ${ptoPending} day${ptoPending === 1 ? "" : "s"} awaiting approval`}
+          {unpaidTaken > 0 && ` · ${unpaidTaken} unpaid day${unpaidTaken === 1 ? "" : "s"} taken (not counted against PTO)`}
+        </p>
+      </section>
+
       <div className="mb-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard
           icon={CalendarCheck}
-          label="Days remaining"
-          value={Math.max(0, ANNUAL_ALLOWANCE - used)}
-          caption={`${used} of ${ANNUAL_ALLOWANCE} used in ${today.getFullYear()}`}
+          label="PTO days left"
+          value={ptoLeft}
+          caption={`${ptoTaken} of ${ANNUAL_ALLOWANCE} PTO days used in ${year}`}
           highlight
         />
-        <StatCard icon={Clock3} label="Pending approval" value={pending} caption="Awaiting HR decision" />
+        <StatCard
+          icon={Clock3}
+          label="Pending approval"
+          value={pending}
+          caption={ptoPending ? `${ptoPending} PTO day(s) awaiting HR` : "Awaiting HR decision"}
+        />
+
         <StatCard
           icon={CalendarCheck}
           label="Taken this month"
