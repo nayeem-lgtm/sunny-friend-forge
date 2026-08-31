@@ -10,6 +10,7 @@ import {
   Users2,
   MessagesSquare,
   CalendarDays,
+  GraduationCap,
   type LucideIcon,
 } from "lucide-react";
 
@@ -49,6 +50,7 @@ export const navItems: NavItem[] = [
   { title: "Monitoring", icon: Activity, url: "/monitoring" },
   { title: "Announcements", icon: Megaphone, url: "/announcements" },
   { title: "Employee KPI", icon: Activity, url: "/kpi-reports" },
+  { title: "Training & Orientation", icon: GraduationCap, url: "/training" },
   {
     title: "Settings",
     icon: Settings,
@@ -79,5 +81,6 @@ export const pageTitles: Record<string, string> = {
   "/monitoring": "Monitoring",
   "/announcements": "Announcements",
   "/user-access": "User Access",
+  "/training": "Training & Orientation",
 };
 
