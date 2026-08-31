@@ -105,7 +105,7 @@ export const categoryTone: Record<TrainingCategory, string> = {
   Tools: "bg-violet-500/15 text-violet-600 ring-violet-500/30 dark:text-violet-400",
 };
 
-const PROGRAMS_KEY = "omniwork.training.programs.v15";
+const PROGRAMS_KEY = "omniwork.training.programs.v16";
 const PROGRESS_KEY = "omniwork.training.progress.v1";
 const EVENT = "omniwork:training";
 
@@ -394,6 +394,103 @@ function defaultPrograms(): TrainingProgram[] {
           ],
           questions: [],
         },
+
+        {
+          id: "step-office-hours",
+          title: "Attendance, Office Hours & Sign-In Rules",
+          duration: "8 min",
+          summary:
+            "Office hours, break schedule, the sign-in flow and why accurate attendance matters.",
+          points: [],
+          cards: [
+            {
+              type: "prose",
+              title: "Daily Schedule",
+              paragraphs: [
+                "Office Hours: 6:00 AM – 3:00 PM PT (Pacific Time).",
+                "Lunch/Dinner Break: 10:00 AM – 11:00 AM PT.",
+                "Total Working Hours: 8 hours + 1-hour break.",
+              ],
+            },
+            {
+              type: "flow",
+              title: "Sign-In & Sign-Out Flow",
+              intro:
+                "Please make it a habit: complete every step in real time.",
+              stages: [
+                {
+                  label: "Office Sign-In",
+                  sublabel: "When you start work",
+                  icon: "arrow-right",
+                },
+                {
+                  label: "Break In",
+                  sublabel: "When your scheduled break begins",
+                  icon: "clock",
+                },
+                {
+                  label: "Break Out",
+                  sublabel: "When you return from your break",
+                  icon: "clock",
+                },
+                {
+                  label: "Office Sign-Out",
+                  sublabel: "When you finish work",
+                  icon: "arrow-right",
+                },
+              ],
+            },
+            {
+              type: "prose",
+              title: "Important Attendance Rules",
+              paragraphs: [
+                "All employees are required to accurately record their attendance through OmniWork.",
+                "You must use OmniWork to record Office Sign-In, Break In, Break Out and Office Sign-Out.",
+                "Attendance records must be entered in real time. Employees should not sign in or sign out later to correct a missed entry.",
+                "Attendance adjustments are not permitted. Therefore, employees are strongly advised to follow the sign-in, break, and sign-out process strictly and accurately every working day.",
+                "Accurate OmniWork records are an important part of our attendance management and payroll process. Employees are responsible for ensuring their daily attendance is properly recorded.",
+              ],
+            },
+            {
+              type: "info",
+              title: "Late attendance affects your KPI",
+              body: "Late attendance is reflected negatively in your KPI. 3 late logs will count as 1 day absent.",
+              icon: "clock",
+              badge: "Reminder",
+            },
+            { type: "action", label: "Session finished", icon: "arrow-right" },
+          ],
+          questions: [
+            {
+              id: "q-office-hours-1",
+              prompt: "What is the correct order of attendance actions?",
+              options: [
+                "Sign In → Break Out → Break In → Sign Out",
+                "Sign In → Break In → Break Out → Sign Out",
+                "Break In → Sign In → Sign Out → Break Out",
+                "Sign Out → Break In → Break Out → Sign In",
+              ],
+              answer: 1,
+              explanation:
+                "The correct flow is Sign In, Break In, Break Out, Sign Out.",
+            },
+            {
+              id: "q-office-hours-2",
+              prompt: "What happens if you accumulate 3 late attendance logs?",
+              options: [
+                "It counts as 1 day absent",
+                "Nothing",
+                "You get a bonus deduction",
+                "It is automatically corrected",
+              ],
+              answer: 0,
+              explanation:
+                "3 late logs are counted as 1 absent day and affect both KPI and payroll.",
+            },
+          ],
+        },
+
+
 
         {
           id: "step-welcome",
