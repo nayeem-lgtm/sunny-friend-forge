@@ -937,20 +937,14 @@ function FounderCard({
           </div>
         </div>
 
-        <div className="relative flex min-h-[420px] justify-center lg:min-h-full">
-          <div className="relative h-full w-full max-w-sm overflow-hidden rounded-2xl bg-primary/5">
+        <div className="relative flex min-h-[420px] items-center justify-center lg:min-h-full">
+          <div className="relative flex h-full max-h-[520px] w-full items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-b from-primary/5 to-transparent p-4">
             <img
               src={founderAsset.url}
               alt="Ripon Kumar, Founder and CEO of Ray Advertising & Policy Bear"
-              className="h-full w-full object-cover object-center"
+              className="max-h-full max-w-full object-contain object-center"
               loading="lazy"
             />
-            <div className="absolute inset-x-4 bottom-4 rounded-xl border border-border/60 bg-background/80 px-4 py-3 backdrop-blur-md">
-              <p className="text-lg font-semibold leading-tight text-card-foreground">
-                {card.name}
-              </p>
-              <p className="text-xs leading-5 text-muted-foreground">{card.role}</p>
-            </div>
           </div>
         </div>
       </div>
