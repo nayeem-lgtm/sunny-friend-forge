@@ -142,7 +142,7 @@ function Page() {
           <div>
             <h1 className="text-2xl font-semibold tracking-tight">Training & Orientation</h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              Work through each module step by step, then answer the questions to complete it.
+              Work through each module step by step, then click Session finished to complete it.
             </p>
           </div>
           {active && (
@@ -194,8 +194,6 @@ function Page() {
                       <div className="flex items-center gap-3 text-xs text-muted-foreground">
                         <BookOpen className="size-3.5" />
                         {program.steps.length} steps
-                        <span>•</span>
-                        pass mark {program.passMark}%
                       </div>
                       <div>
                         <div className="mb-1 flex items-center justify-between text-xs">
@@ -473,7 +471,7 @@ function ProgramRunner({
                 <CardTitle className="text-base">Question & answer session</CardTitle>
               </div>
               <CardDescription>
-                Answer every question — {program.passMark}% or higher completes this step.
+                Answer every question to complete this step.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -538,7 +536,7 @@ function ProgramRunner({
                       passed ? "text-emerald-600 dark:text-emerald-400" : "text-destructive",
                     )}
                   >
-                    Score {score}% — {passed ? "step completed" : `needs ${program.passMark}%`}
+                    Score {score}% — {passed ? "step completed" : "review the guide and try again"}
                   </span>
                 )}
                 <div className="ml-auto flex gap-2">
@@ -870,26 +868,17 @@ function ActionCard({
   disabled: boolean;
   onClick: () => void;
 }) {
-  const Icon = iconMap[card.icon ?? ""] ?? ArrowRightCircle;
   return (
     <button
       onClick={onClick}
       disabled={disabled}
       className={cn(
-        "flex items-center justify-between gap-4 rounded-2xl border border-primary/30 bg-primary/10 px-6 py-4 text-left transition-colors",
+        "mt-2 flex items-center justify-center gap-2 self-end rounded-full border border-primary/30 bg-primary/10 px-4 py-2 text-left text-sm font-medium text-card-foreground transition-colors",
         disabled ? "cursor-default opacity-70" : "hover:bg-primary/15"
       )}
     >
-      <div className="flex items-center gap-3">
-        <CheckCircle2 className="size-5 text-primary" />
-        <div>
-          <p className="text-sm font-semibold text-card-foreground">{card.label}</p>
-          <p className="text-xs text-muted-foreground">
-            {disabled ? "Already finished" : "Click to mark this step complete"}
-          </p>
-        </div>
-      </div>
-      <Icon className="size-5 text-primary" />
+      <CheckCircle2 className="size-4 text-primary" />
+      {card.label}
     </button>
   );
 }
