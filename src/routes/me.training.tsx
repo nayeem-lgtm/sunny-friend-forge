@@ -240,9 +240,14 @@ function ProgramRunner({
   };
 
   const goto = (i: number) => {
+    if (i > maxUnlocked) {
+      toast.error("Finish the current step first");
+      return;
+    }
     setIndex(i);
     setAnswers({});
     setChecked(false);
+    setSessionDone(completedSteps.includes(program.steps[i]?.id ?? ""));
   };
 
   return (
