@@ -62,6 +62,7 @@ import {
 } from "@/lib/training-store";
 import { cn } from "@/lib/utils";
 import founderAsset from "@/assets/founder-ripon-kumar.png.asset.json";
+import offerVaultBadge from "@/assets/offervault-winner-badge.png.asset.json";
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   zap: Zap,
@@ -596,6 +597,8 @@ function BentoGuide({
             return <TableCard key={i} card={card} />;
           case "checklist":
             return <ChecklistCard key={i} card={card} />;
+          case "image":
+            return <ImageCard key={i} card={card} />;
           case "action":
             return (
               <ActionCard
@@ -1033,6 +1036,32 @@ function FounderCard({
             />
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function ImageCard({ card }: { card: Extract<TrainingCard, { type: "image" }> }) {
+  const src = card.src || offerVaultBadge.url;
+  return (
+    <div className="relative overflow-hidden rounded-2xl border border-border bg-card p-6">
+      <div className="pointer-events-none absolute -right-20 -top-20 size-64 rounded-full bg-primary/10 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-20 -left-20 size-64 rounded-full bg-primary/5 blur-3xl" />
+      <div className="relative flex flex-col items-center gap-4 text-center">
+        <div className="relative w-full max-w-md overflow-hidden rounded-2xl bg-white p-4">
+          <img
+            src={src}
+            alt={card.alt}
+            className={cn(
+              "mx-auto max-h-80 w-full",
+              card.objectFit === "cover" ? "object-cover" : "object-contain",
+            )}
+            loading="lazy"
+          />
+        </div>
+        {card.caption && (
+          <p className="text-sm font-medium text-muted-foreground">{card.caption}</p>
+        )}
       </div>
     </div>
   );

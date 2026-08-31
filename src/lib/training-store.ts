@@ -62,6 +62,13 @@ export type TrainingCard =
       intro?: string;
       items: { label: string; description?: string }[];
     }
+  | {
+      type: "image";
+      src: string;
+      alt: string;
+      caption?: string;
+      objectFit?: "contain" | "cover";
+    }
   | { type: "action"; label: string; icon?: string };
 
 export type TrainingStep = {
@@ -925,6 +932,76 @@ function defaultPrograms(): TrainingProgram[] {
               answer: 1,
             },
           ],
+        },
+        {
+          id: "step-ray-advertising-achievement",
+          title: "Ray Advertising — A Champion's Place",
+          duration: "8 min",
+          summary:
+            "You're joining a two-time Best Pay-Per-Call Network winner. Learn what makes us champions and how you become one.",
+          points: [],
+          cards: [
+            {
+              type: "hero",
+              title: "You're in a Place of Champions",
+              body: "Ray Advertising has been selected as the Best Pay-Per-Call Network by OfferVault two years in a row — 2025 and 2026. We want you to be a champion like us.",
+              icon: "award",
+            },
+            {
+              type: "image",
+              src: "/__l5e/assets-v1/8be01cef-b24d-4a23-a646-41ab650b3279/offervault-winner-badge.png",
+              alt: "Ray Advertising OfferVault Best Pay-Per-Call Network Winner Badge 2025 & 2026",
+              caption: "Best Pay-Per-Call Network — 2025 & 2026",
+            },
+            {
+              type: "prose",
+              title: "Our Achievement",
+              paragraphs: [
+                "TWO YEARS. TWO RECOGNITIONS. ONE STANDARD.",
+                "🏆 Best Pay-Per-Call Network — 2025",
+                "🏆 Best Pay-Per-Call Network — 2026",
+                "Being recognized once is an achievement. Being recognized two years in a row is a standard. We don't want to simply maintain that standard — we want to raise it. And that's where you come in.",
+              ],
+            },
+            {
+              type: "checklist",
+              title: "Our Mindset",
+              intro: "WE BELIEVE CHAMPIONS ARE BUILT, NOT BORN. At Ray Advertising, success comes from:",
+              items: [
+                { label: "Ownership", description: "Take responsibility for your work." },
+                { label: "Discipline", description: "Do the right things consistently." },
+                { label: "Performance", description: "Focus on measurable results." },
+                { label: "Integrity", description: "Do business the right way, even when nobody is watching." },
+                { label: "Growth", description: "Learn, improve, and become better every day." },
+              ],
+            },
+            {
+              type: "info",
+              title: "We don't expect you to be perfect. We expect you to improve.",
+              body: "You are joining a company that has already proven what it can achieve. But our biggest achievements are not behind us — they're ahead of us. Our goal is not to have a few champions on the team; our goal is to build a team full of champions.",
+              icon: "trending-up",
+              badge: "Winning Team",
+            },
+            {
+              type: "image",
+              src: "/__l5e/assets-v1/8be01cef-b24d-4a23-a646-41ab650b3279/offervault-winner-badge.png",
+              alt: "Ray Advertising OfferVault Best Pay-Per-Call Network Winner Badge 2025 & 2026",
+              caption: "Two-time winner — a standard worth raising",
+            },
+            {
+              type: "prose",
+              title: "Your Journey Starts Here",
+              paragraphs: [
+                "RAY ADVERTISING — YOU'RE PART OF THE TEAM NOW.",
+                "We have the recognition. We have the experience. We have the ambition. Now we need you.",
+                "Learn the business. Master your role. Take ownership. Help your team. Deliver results. Keep raising the standard.",
+                "We became champions together. Now, it's your turn to become one.",
+                "WELCOME TO RAY ADVERTISING. Let's build what's next.",
+              ],
+            },
+            { type: "action", label: "I am ready to become a champion", icon: "award" },
+          ],
+          questions: [],
         },
       ],
     },
