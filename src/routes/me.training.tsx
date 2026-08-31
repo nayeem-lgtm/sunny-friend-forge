@@ -592,6 +592,8 @@ function BentoGuide({
             return <FounderCard key={i} card={card} />;
           case "info":
             return <InfoCard key={i} card={card} />;
+          case "table":
+            return <TableCard key={i} card={card} />;
           case "action":
             return (
               <ActionCard
