@@ -24,6 +24,7 @@ import { Route as MonitoringRouteImport } from './routes/monitoring'
 import { Route as PayrollRouteImport } from './routes/payroll'
 import { Route as ProjectsRouteImport } from './routes/projects'
 import { Route as SchedulesRouteImport } from './routes/schedules'
+import { Route as TrainingRouteImport } from './routes/training'
 import { Route as UserAccessRouteImport } from './routes/user-access'
 import { Route as WorklogsRouteImport } from './routes/worklogs'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
@@ -39,6 +40,7 @@ import { Route as MeLeaveRouteImport } from './routes/me.leave'
 import { Route as MeMeetingsRouteImport } from './routes/me.meetings'
 import { Route as MePayslipsRouteImport } from './routes/me.payslips'
 import { Route as MeProfileRouteImport } from './routes/me.profile'
+import { Route as MeTrainingRouteImport } from './routes/me.training'
 import { Route as MeWorklogsRouteImport } from './routes/me.worklogs'
 import { Route as OnboardingTokenRouteImport } from './routes/onboarding.$token'
 
@@ -117,6 +119,11 @@ const SchedulesRoute = SchedulesRouteImport.update({
   path: '/schedules',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TrainingRoute = TrainingRouteImport.update({
+  id: '/training',
+  path: '/training',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const UserAccessRoute = UserAccessRouteImport.update({
   id: '/user-access',
   path: '/user-access',
@@ -192,6 +199,11 @@ const MeProfileRoute = MeProfileRouteImport.update({
   path: '/me/profile',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MeTrainingRoute = MeTrainingRouteImport.update({
+  id: '/me/training',
+  path: '/me/training',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MeWorklogsRoute = MeWorklogsRouteImport.update({
   id: '/me/worklogs',
   path: '/me/worklogs',
@@ -219,6 +231,7 @@ export interface FileRoutesByFullPath {
   '/payroll': typeof PayrollRoute
   '/projects': typeof ProjectsRoute
   '/schedules': typeof SchedulesRoute
+  '/training': typeof TrainingRoute
   '/user-access': typeof UserAccessRoute
   '/worklogs': typeof WorklogsRoute
   '/auth/callback': typeof AuthCallbackRoute
@@ -233,6 +246,7 @@ export interface FileRoutesByFullPath {
   '/me/meetings': typeof MeMeetingsRoute
   '/me/payslips': typeof MePayslipsRoute
   '/me/profile': typeof MeProfileRoute
+  '/me/training': typeof MeTrainingRoute
   '/me/worklogs': typeof MeWorklogsRoute
   '/onboarding/$token': typeof OnboardingTokenRoute
   '/me/': typeof MeIndexRoute
@@ -253,6 +267,7 @@ export interface FileRoutesByTo {
   '/payroll': typeof PayrollRoute
   '/projects': typeof ProjectsRoute
   '/schedules': typeof SchedulesRoute
+  '/training': typeof TrainingRoute
   '/user-access': typeof UserAccessRoute
   '/worklogs': typeof WorklogsRoute
   '/auth/callback': typeof AuthCallbackRoute
@@ -267,6 +282,7 @@ export interface FileRoutesByTo {
   '/me/meetings': typeof MeMeetingsRoute
   '/me/payslips': typeof MePayslipsRoute
   '/me/profile': typeof MeProfileRoute
+  '/me/training': typeof MeTrainingRoute
   '/me/worklogs': typeof MeWorklogsRoute
   '/onboarding/$token': typeof OnboardingTokenRoute
   '/me': typeof MeIndexRoute
@@ -288,6 +304,7 @@ export interface FileRoutesById {
   '/payroll': typeof PayrollRoute
   '/projects': typeof ProjectsRoute
   '/schedules': typeof SchedulesRoute
+  '/training': typeof TrainingRoute
   '/user-access': typeof UserAccessRoute
   '/worklogs': typeof WorklogsRoute
   '/auth/callback': typeof AuthCallbackRoute
@@ -302,6 +319,7 @@ export interface FileRoutesById {
   '/me/meetings': typeof MeMeetingsRoute
   '/me/payslips': typeof MePayslipsRoute
   '/me/profile': typeof MeProfileRoute
+  '/me/training': typeof MeTrainingRoute
   '/me/worklogs': typeof MeWorklogsRoute
   '/onboarding/$token': typeof OnboardingTokenRoute
   '/me/': typeof MeIndexRoute
@@ -324,6 +342,7 @@ export interface FileRouteTypes {
     | '/payroll'
     | '/projects'
     | '/schedules'
+    | '/training'
     | '/user-access'
     | '/worklogs'
     | '/auth/callback'
@@ -338,6 +357,7 @@ export interface FileRouteTypes {
     | '/me/meetings'
     | '/me/payslips'
     | '/me/profile'
+    | '/me/training'
     | '/me/worklogs'
     | '/onboarding/$token'
     | '/me/'
@@ -358,6 +378,7 @@ export interface FileRouteTypes {
     | '/payroll'
     | '/projects'
     | '/schedules'
+    | '/training'
     | '/user-access'
     | '/worklogs'
     | '/auth/callback'
@@ -372,6 +393,7 @@ export interface FileRouteTypes {
     | '/me/meetings'
     | '/me/payslips'
     | '/me/profile'
+    | '/me/training'
     | '/me/worklogs'
     | '/onboarding/$token'
     | '/me'
@@ -392,6 +414,7 @@ export interface FileRouteTypes {
     | '/payroll'
     | '/projects'
     | '/schedules'
+    | '/training'
     | '/user-access'
     | '/worklogs'
     | '/auth/callback'
@@ -406,6 +429,7 @@ export interface FileRouteTypes {
     | '/me/meetings'
     | '/me/payslips'
     | '/me/profile'
+    | '/me/training'
     | '/me/worklogs'
     | '/onboarding/$token'
     | '/me/'
@@ -427,6 +451,7 @@ export interface RootRouteChildren {
   PayrollRoute: typeof PayrollRoute
   ProjectsRoute: typeof ProjectsRoute
   SchedulesRoute: typeof SchedulesRoute
+  TrainingRoute: typeof TrainingRoute
   UserAccessRoute: typeof UserAccessRoute
   WorklogsRoute: typeof WorklogsRoute
   AuthCallbackRoute: typeof AuthCallbackRoute
@@ -441,6 +466,7 @@ export interface RootRouteChildren {
   MeMeetingsRoute: typeof MeMeetingsRoute
   MePayslipsRoute: typeof MePayslipsRoute
   MeProfileRoute: typeof MeProfileRoute
+  MeTrainingRoute: typeof MeTrainingRoute
   MeWorklogsRoute: typeof MeWorklogsRoute
   OnboardingTokenRoute: typeof OnboardingTokenRoute
   MeIndexRoute: typeof MeIndexRoute
@@ -553,6 +579,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SchedulesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/training': {
+      id: '/training'
+      path: '/training'
+      fullPath: '/training'
+      preLoaderRoute: typeof TrainingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/user-access': {
       id: '/user-access'
       path: '/user-access'
@@ -658,6 +691,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MeProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/me/training': {
+      id: '/me/training'
+      path: '/me/training'
+      fullPath: '/me/training'
+      preLoaderRoute: typeof MeTrainingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/me/worklogs': {
       id: '/me/worklogs'
       path: '/me/worklogs'
@@ -691,6 +731,7 @@ const rootRouteChildren: RootRouteChildren = {
   PayrollRoute: PayrollRoute,
   ProjectsRoute: ProjectsRoute,
   SchedulesRoute: SchedulesRoute,
+  TrainingRoute: TrainingRoute,
   UserAccessRoute: UserAccessRoute,
   WorklogsRoute: WorklogsRoute,
   AuthCallbackRoute: AuthCallbackRoute,
@@ -705,6 +746,7 @@ const rootRouteChildren: RootRouteChildren = {
   MeMeetingsRoute: MeMeetingsRoute,
   MePayslipsRoute: MePayslipsRoute,
   MeProfileRoute: MeProfileRoute,
+  MeTrainingRoute: MeTrainingRoute,
   MeWorklogsRoute: MeWorklogsRoute,
   OnboardingTokenRoute: OnboardingTokenRoute,
   MeIndexRoute: MeIndexRoute,

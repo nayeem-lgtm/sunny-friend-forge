@@ -119,9 +119,9 @@ function Page() {
       />
 
       <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard title="Programs" value={String(programs.length)} icon={GraduationCap} />
-        <StatCard title="Guide steps" value={String(totalSteps)} icon={BookOpen} />
-        <StatCard title="Quiz questions" value={String(totalQuestions)} icon={ListChecks} />
+        <StatCard label="Programs" value={String(programs.length)} icon={GraduationCap} />
+        <StatCard label="Guide steps" value={String(totalSteps)} icon={BookOpen} />
+        <StatCard label="Quiz questions" value={String(totalQuestions)} icon={ListChecks} />
         <StatCard
           title="Fully trained"
           value={`${completedCount}/${rows.length}`}
@@ -384,7 +384,7 @@ function NewProgramDialog({
           </Button>
           <Button
             onClick={() => {
-              if (!title.trim()) return toast.error("Add a title");
+              if (!title.trim()) { toast.error("Add a title"); return; }
               onCreate({
                 title: title.trim(),
                 category,
@@ -453,7 +453,7 @@ function NewStepDialog({
           </Button>
           <Button
             onClick={() => {
-              if (!programId || !title.trim()) return toast.error("Add a step title");
+              if (!programId || !title.trim()) { toast.error("Add a step title"); return; }
               onCreate(programId, {
                 title: title.trim(),
                 duration: duration.trim() || "10 min",
@@ -542,8 +542,10 @@ function NewQuestionDialog({
           <Button
             onClick={() => {
               const opts = options.map((o) => o.trim()).filter(Boolean);
-              if (!target || !prompt.trim() || opts.length < 2)
-                return toast.error("Add a question and at least two options");
+              if (!target || !prompt.trim() || opts.length < 2) {
+                toast.error("Add a question and at least two options");
+                return;
+              }
               onCreate(target, {
                 prompt: prompt.trim(),
                 options: opts,
