@@ -666,6 +666,26 @@ function defaultPrograms(): TrainingProgram[] {
                     "Minimize background noise and interruptions. Avoid multitasking with non-work activities and set boundaries with household members.",
                 },
                 {
+                  label: "Maintain proper power backup",
+                  description:
+                    "Keep your devices charged and have a reliable power backup (UPS or charged battery) so work is not interrupted by outages.",
+                },
+                {
+                  label: "Maintain proper internet connection and backup",
+                  description:
+                    "Use a stable, high-speed connection. Always keep a backup internet option ready, such as mobile data or a secondary network.",
+                },
+                {
+                  label: "Use proper lighting during meetings",
+                  description:
+                    "Make sure your face is clearly visible. Sit facing a light source or in a well-lit room so colleagues can see and connect with you.",
+                },
+                {
+                  label: "Wear proper attire during meetings",
+                  description:
+                    "Dress professionally for all video calls just as you would in the office. Your appearance reflects the RAY standard.",
+                },
+                {
                   label: "Protect company data and systems",
                   description:
                     "Use secure internet connections, follow IT security policies (VPNs, strong passwords, device locks) and avoid accessing company systems on shared or public devices.",
