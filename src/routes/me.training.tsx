@@ -9,8 +9,32 @@ import {
   GraduationCap,
   Lock,
   RotateCcw,
+  Shield,
   Sparkles,
   XCircle,
+  Zap,
+  Globe,
+  Users,
+  Briefcase,
+  ShoppingBag,
+  TrendingUp,
+  Target,
+  Phone,
+  Award,
+  Building2,
+  Layers,
+  ArrowRightCircle,
+  BookOpenText,
+  Clock,
+  Calendar,
+  FileText,
+  Mail,
+  MessageCircle,
+  Star,
+  Heart,
+  Search,
+  Filter,
+  MoreHorizontal,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -28,9 +52,38 @@ import {
   scoreQuiz,
   useTrainingProgress,
   useTrainingPrograms,
+  type TrainingCard,
   type TrainingProgram,
+  type TrainingStep,
 } from "@/lib/training-store";
 import { cn } from "@/lib/utils";
+
+const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
+  zap: Zap,
+  globe: Globe,
+  shield: Shield,
+  users: Users,
+  briefcase: Briefcase,
+  "shopping-bag": ShoppingBag,
+  "trending-up": TrendingUp,
+  target: Target,
+  phone: Phone,
+  award: Award,
+  building: Building2,
+  layers: Layers,
+  "arrow-right": ArrowRightCircle,
+  "book-open": BookOpenText,
+  clock: Clock,
+  calendar: Calendar,
+  "file-text": FileText,
+  mail: Mail,
+  "message-circle": MessageCircle,
+  star: Star,
+  heart: Heart,
+  search: Search,
+  filter: Filter,
+  "more-horizontal": MoreHorizontal,
+};
 
 export const Route = createFileRoute("/me/training")({
   head: () => ({
@@ -314,19 +367,42 @@ function ProgramRunner({
             />
           </div>
           <CardContent className="pt-6">
-            <ul className="grid gap-3">
-              {step.points.map((p, i) => (
-                <li
-                  key={i}
-                  className="flex gap-3 rounded-xl border border-border/70 bg-muted/30 p-4 text-sm transition-colors hover:border-primary/30 hover:bg-primary/5"
-                >
-                  <span className="flex size-6 shrink-0 items-center justify-center rounded-lg bg-primary/12 text-[11px] font-semibold text-primary">
-                    {i + 1}
-                  </span>
-                  <span className="leading-relaxed text-foreground/85">{p}</span>
-                </li>
-              ))}
-            </ul>
+            {step.cards ? (
+              <BentoGuide
+                cards={step.cards}
+                done={done}
+                sessionDone={sessionDone}
+                onSessionDone={() => {
+                  setSessionDone(true);
+                  if (step.questions.length === 0) {
+                    onRecord(
+                      employeeId,
+                      program.id,
+                      step.id,
+                      {},
+                      100,
+                      program.steps.map((x) => x.id),
+                      program.passMark,
+                    );
+                    toast.success("Step completed");
+                  }
+                }}
+              />
+            ) : (
+              <ul className="grid gap-3">
+                {step.points.map((p, i) => (
+                  <li
+                    key={i}
+                    className="flex gap-3 rounded-xl border border-border/70 bg-muted/30 p-4 text-sm transition-colors hover:border-primary/30 hover:bg-primary/5"
+                  >
+                    <span className="flex size-6 shrink-0 items-center justify-center rounded-lg bg-primary/12 text-[11px] font-semibold text-primary">
+                      {i + 1}
+                    </span>
+                    <span className="leading-relaxed text-foreground/85">{p}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
             <div className="mt-6 flex flex-wrap items-center gap-3 border-t border-border pt-5">
               {done ? (
                 <span className="flex items-center gap-2 rounded-lg bg-emerald-500/10 px-3 py-2 text-sm font-medium text-emerald-600 dark:text-emerald-400">
@@ -342,6 +418,10 @@ function ProgramRunner({
                     <CheckCircle2 className="size-4" /> Session finished — answer the questions below
                   </span>
                 )
+              ) : step.cards ? (
+                <span className="text-xs text-muted-foreground">
+                  Review the cards above, then click the action tile to finish this session.
+                </span>
               ) : (
                 <>
                   <Button
@@ -469,5 +549,193 @@ function ProgramRunner({
         )}
       </div>
     </div>
+  );
+}
+
+function BentoGuide({
+  cards,
+  done,
+  sessionDone,
+  onSessionDone,
+}: {
+  cards: TrainingCard[];
+  done: boolean;
+  sessionDone: boolean;
+  onSessionDone: () => void;
+}) {
+  return (
+    <div className="grid grid-cols-12 gap-4 auto-rows-[160px]">
+      {cards.map((card, i) => {
+        switch (card.type) {
+          case "hero":
+            return <HeroCard key={i} card={card} />;
+          case "stat":
+            return <StatCard key={i} card={card} />;
+          case "divisions":
+            return <DivisionsCard key={i} card={card} />;
+          case "info":
+            return <InfoCard key={i} card={card} />;
+          case "action":
+            return (
+              <ActionCard
+                key={i}
+                card={card}
+                disabled={done || sessionDone}
+                onClick={onSessionDone}
+              />
+            );
+          default:
+            return null;
+        }
+      })}
+    </div>
+  );
+}
+
+function HeroCard({ card }: { card: Extract<TrainingCard, { type: "hero" }> }) {
+  const Icon = iconMap[card.icon ?? ""] ?? Zap;
+  return (
+    <div className="group relative col-span-12 row-span-2 overflow-hidden rounded-3xl border border-border/50 bg-card p-6 md:col-span-8">
+      <div className="absolute -right-10 -top-10 size-64 rounded-full bg-primary/10 blur-3xl transition-all duration-700 group-hover:bg-primary/15" />
+      <div className="relative flex h-full flex-col justify-between">
+        <div className="flex items-start justify-between">
+          <div className="flex size-12 items-center justify-center rounded-2xl bg-primary/15 text-primary">
+            <Icon className="size-6" />
+          </div>
+          <div className="rounded-full border border-border/60 bg-background/60 px-3 py-1 text-xs font-medium text-muted-foreground backdrop-blur-sm">
+            Company identity
+          </div>
+        </div>
+        <div className="max-w-xl">
+          <h3 className="text-2xl font-semibold tracking-tight text-card-foreground md:text-3xl">
+            {card.title}
+          </h3>
+          <p className="mt-2 text-sm leading-relaxed text-muted-foreground md:text-base">
+            {card.body}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function StatCard({ card }: { card: Extract<TrainingCard, { type: "stat" }> }) {
+  return (
+    <div className="group relative col-span-12 row-span-2 overflow-hidden rounded-3xl border border-border/50 bg-gradient-to-br from-primary/20 to-primary/5 p-6 md:col-span-4">
+      <div className="absolute -bottom-8 -right-8 size-40 rounded-full bg-primary/20 blur-2xl transition-all duration-700 group-hover:scale-110" />
+      <div className="relative flex h-full flex-col justify-between">
+        <TrendingUp className="size-8 text-primary" />
+        <div>
+          <p className="text-4xl font-semibold tracking-tight text-card-foreground md:text-5xl">
+            {card.value}
+          </p>
+          <p className="mt-1 text-sm font-medium text-card-foreground">{card.label}</p>
+          {card.sublabel && (
+            <p className="mt-1 text-xs text-muted-foreground">{card.sublabel}</p>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DivisionsCard({
+  card,
+}: {
+  card: Extract<TrainingCard, { type: "divisions" }>;
+}) {
+  return (
+    <div className="col-span-12 row-span-1 overflow-hidden rounded-3xl border border-border/50 bg-card p-5">
+      <div className="flex h-full flex-col justify-center gap-4">
+        {card.title && (
+          <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            {card.title}
+          </p>
+        )}
+        <div className="grid gap-3 sm:grid-cols-3">
+          {card.items.map((item, idx) => (
+            <div
+              key={idx}
+              className="flex items-center gap-3 rounded-2xl border border-border/60 bg-background/60 p-3 transition-colors hover:border-primary/30 hover:bg-primary/5"
+            >
+              <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-sm font-bold text-primary">
+                {item.number}
+              </span>
+              <div>
+                <p className="text-sm font-semibold text-card-foreground">{item.label}</p>
+                {item.description && (
+                  <p className="text-xs text-muted-foreground">{item.description}</p>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function InfoCard({ card }: { card: Extract<TrainingCard, { type: "info" }> }) {
+  const Icon = iconMap[card.icon ?? ""] ?? Globe;
+  return (
+    <div className="group relative col-span-12 row-span-1 overflow-hidden rounded-3xl border border-border/50 bg-card p-5 md:col-span-7">
+      <div className="absolute -right-8 -top-8 size-32 rounded-full bg-primary/10 blur-2xl transition-all duration-700 group-hover:bg-primary/15" />
+      <div className="relative flex h-full items-center gap-4">
+        <div className="flex size-12 items-center justify-center rounded-2xl bg-primary/15 text-primary">
+          <Icon className="size-6" />
+        </div>
+        <div className="flex-1">
+          <div className="flex items-center gap-2">
+            <h4 className="text-base font-semibold text-card-foreground">{card.title}</h4>
+            {card.badge && (
+              <span className="rounded-full bg-primary/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary">
+                {card.badge}
+              </span>
+            )}
+          </div>
+          <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{card.body}</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ActionCard({
+  card,
+  disabled,
+  onClick,
+}: {
+  card: Extract<TrainingCard, { type: "action" }>;
+  disabled: boolean;
+  onClick: () => void;
+}) {
+  const Icon = iconMap[card.icon ?? ""] ?? ArrowRightCircle;
+  return (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      className={cn(
+        "group relative col-span-12 row-span-1 flex items-center justify-between overflow-hidden rounded-3xl border border-primary/30 bg-primary/10 p-5 transition-all md:col-span-5",
+        disabled
+          ? "cursor-default opacity-80"
+          : "hover:border-primary/50 hover:bg-primary/15 active:scale-[0.99]"
+      )}
+    >
+      <div className="absolute -right-6 -top-6 size-32 rounded-full bg-primary/20 blur-2xl transition-all duration-700 group-hover:scale-110" />
+      <div className="relative flex items-center gap-3">
+        <div className="flex size-12 items-center justify-center rounded-2xl bg-primary/20 text-primary">
+          <CheckCircle2 className="size-6" />
+        </div>
+        <div className="text-left">
+          <p className="text-base font-semibold text-card-foreground">{card.label}</p>
+          <p className="text-xs text-muted-foreground">
+            {disabled ? "Already finished" : "Click to mark this step complete"}
+          </p>
+        </div>
+      </div>
+      <div className="relative flex size-10 items-center justify-center rounded-full bg-primary/20 text-primary transition-transform group-hover:translate-x-1">
+        <Icon className="size-5" />
+      </div>
+    </button>
   );
 }

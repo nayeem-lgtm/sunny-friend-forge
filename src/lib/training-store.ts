@@ -9,6 +9,17 @@ export type QuizQuestion = {
   explanation?: string;
 };
 
+export type TrainingCard =
+  | { type: "hero"; title: string; body: string; icon?: string }
+  | { type: "stat"; value: string; label: string; sublabel?: string }
+  | {
+      type: "divisions";
+      title?: string;
+      items: { number: string; label: string; description?: string }[];
+    }
+  | { type: "info"; title: string; body: string; icon?: string; badge?: string }
+  | { type: "action"; label: string; icon?: string };
+
 export type TrainingStep = {
   id: string;
   title: string;
@@ -16,6 +27,8 @@ export type TrainingStep = {
   summary: string;
   /** bullet points shown as the guide body */
   points: string[];
+  /** optional visual bento cards — when present they replace the bullet list */
+  cards?: TrainingCard[];
   questions: QuizQuestion[];
 };
 
@@ -61,7 +74,7 @@ export const categoryTone: Record<TrainingCategory, string> = {
   Tools: "bg-violet-500/15 text-violet-600 ring-violet-500/30 dark:text-violet-400",
 };
 
-const PROGRAMS_KEY = "omniwork.training.programs.v4";
+const PROGRAMS_KEY = "omniwork.training.programs.v5";
 const PROGRESS_KEY = "omniwork.training.progress.v1";
 const EVENT = "omniwork:training";
 
@@ -93,6 +106,37 @@ function defaultPrograms(): TrainingProgram[] {
             "We serve over 5,000 U.S. companies through Pay-Per-Call and lead generation solutions across insurance, home services, finance and other verticals.",
             "Through our subsidiary Policy Bear, we support American families with affordable health, auto and life insurance solutions.",
             "Business divisions: 1) Marketing Company, 2) Insurance Agency, 3) E-Commerce.",
+          ],
+          cards: [
+            {
+              type: "hero",
+              title: "Performance Marketing at Global Scale",
+              body: "Ray Advertising is a USA-based powerhouse dedicated to data-driven marketing results and innovative brand scaling strategy.",
+              icon: "zap",
+            },
+            {
+              type: "stat",
+              value: "5,000+",
+              label: "U.S. Based Clients",
+              sublabel: "Trusted across 50 states for performance reliability",
+            },
+            {
+              type: "divisions",
+              title: "Three Strategic Business Divisions",
+              items: [
+                { number: "01", label: "Marketing Company", description: "Performance media & lead generation" },
+                { number: "02", label: "Insurance Agency", description: "Protection & policy solutions" },
+                { number: "03", label: "E-Commerce", description: "Direct-to-consumer digital retail" },
+              ],
+            },
+            {
+              type: "info",
+              title: "Policy Bear",
+              body: "Our specialized subsidiary anchors our insurance efforts, supporting American families with affordable health, auto and life coverage.",
+              icon: "shield",
+              badge: "Official Brand",
+            },
+            { type: "action", label: "Session finished", icon: "arrow-right" },
           ],
           questions: [],
         },
