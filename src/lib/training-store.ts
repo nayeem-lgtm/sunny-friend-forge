@@ -40,6 +40,14 @@ export type TrainingCard =
         points: string[];
       }[];
     }
+  | {
+      type: "founder";
+      eyebrow?: string;
+      title: string;
+      paragraphs: string[];
+      name: string;
+      role: string;
+    }
   | { type: "info"; title: string; body: string; icon?: string; badge?: string }
   | { type: "action"; label: string; icon?: string };
 
@@ -97,7 +105,7 @@ export const categoryTone: Record<TrainingCategory, string> = {
   Tools: "bg-violet-500/15 text-violet-600 ring-violet-500/30 dark:text-violet-400",
 };
 
-const PROGRAMS_KEY = "omniwork.training.programs.v14";
+const PROGRAMS_KEY = "omniwork.training.programs.v15";
 const PROGRESS_KEY = "omniwork.training.progress.v1";
 const EVENT = "omniwork:training";
 
@@ -358,6 +366,34 @@ function defaultPrograms(): TrainingProgram[] {
         },
 
 
+
+        {
+          id: "step-founder",
+          title: "Our Great Founder & CEO",
+          duration: "5 min",
+          summary:
+            "A personal welcome from Ripon Kumar, Founder and CEO of Ray Advertising & Policy Bear.",
+          points: [],
+          cards: [
+            {
+              type: "founder",
+              eyebrow: "www.riponkumar.com",
+              title: "OUR GREAT FOUNDER & CEO",
+              name: "Ripon Kumar",
+              role: "Founder And CEO, Ray Advertising & Policy Bear",
+              paragraphs: [
+                "Hello, and a very warm welcome. I am Ripon Kumar.",
+                "At the core of both Ray Advertising and Policy bear lies a shared, entrepreneurial DNA\u2014a drive to architect what's next, not just administer what exists. We operate where the digital landscape constantly shifts, and complacency is the only true failure.",
+                "My expectation is simple yet profound: adopt a founder's mindset. Own your role with the vision of a builder. Critically evaluate processes not to criticize, but to improve. Propose solutions that are not just effective, but scalable and forward-thinking. Your intellectual curiosity and initiative are what will transform good ideas into exceptional outcomes.",
+                "This is our collective opportunity to do more than adapt; it is to actively shape the trajectory of our industries. Your unique energy and perspective are vital to this mission.",
+                "I am excited to embark on this journey with you. Let's combine our strengths, challenge conventions, and build the future of our portfolio - together.",
+                "Your story here starts now.",
+              ],
+            },
+            { type: "action", label: "Session finished", icon: "arrow-right" },
+          ],
+          questions: [],
+        },
 
         {
           id: "step-welcome",
