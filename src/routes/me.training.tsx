@@ -420,7 +420,7 @@ function ProgramRunner({
                 </Button>
                 <Button
                   variant="outline"
-                  disabled={index === program.steps.length - 1}
+                  disabled={index === program.steps.length - 1 || index + 1 > maxUnlocked}
                   onClick={() => goto(index + 1)}
                 >
                   Next <ArrowRight className="size-4" />
@@ -429,6 +429,7 @@ function ProgramRunner({
             </div>
           </CardContent>
         </Card>
+        )}
       </div>
     </div>
   );
