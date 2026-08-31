@@ -61,7 +61,7 @@ export const categoryTone: Record<TrainingCategory, string> = {
   Tools: "bg-violet-500/15 text-violet-600 ring-violet-500/30 dark:text-violet-400",
 };
 
-const PROGRAMS_KEY = "omniwork.training.programs.v3";
+const PROGRAMS_KEY = "omniwork.training.programs.v4";
 const PROGRESS_KEY = "omniwork.training.progress.v1";
 const EVENT = "omniwork:training";
 
@@ -94,36 +94,7 @@ function defaultPrograms(): TrainingProgram[] {
             "Through our subsidiary Policy Bear, we support American families with affordable health, auto and life insurance solutions.",
             "Business divisions: 1) Marketing Company, 2) Insurance Agency, 3) E-Commerce.",
           ],
-          questions: [
-            {
-              id: "q-overview-1",
-              prompt: "Which three business divisions make up Ray Advertising?",
-              options: [
-                "Marketing Company, Insurance Agency, E-Commerce",
-                "Media, IT, Accounting",
-                "Retail, Logistics, Banking",
-                "Sales, Support, Engineering",
-              ],
-              answer: 0,
-            },
-            {
-              id: "q-overview-2",
-              prompt: "What is Policy Bear?",
-              options: [
-                "A client of Ray Advertising",
-                "Our subsidiary providing affordable health, auto and life insurance",
-                "An internal reporting tool",
-                "A U.S. regulator",
-              ],
-              answer: 1,
-            },
-            {
-              id: "q-overview-3",
-              prompt: "Roughly how many U.S. companies do we serve?",
-              options: ["Over 500", "Over 1,000", "Over 5,000", "Over 50,000"],
-              answer: 2,
-            },
-          ],
+          questions: [],
         },
         {
           id: "step-mission-vision",
