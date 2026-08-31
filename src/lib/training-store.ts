@@ -29,6 +29,17 @@ export type TrainingCard =
         icon?: string;
       }[];
     }
+  | {
+      type: "verticals";
+      title?: string;
+      intro?: string;
+      items: {
+        number: string;
+        label: string;
+        icon?: string;
+        points: string[];
+      }[];
+    }
   | { type: "info"; title: string; body: string; icon?: string; badge?: string }
   | { type: "action"; label: string; icon?: string };
 
@@ -86,7 +97,7 @@ export const categoryTone: Record<TrainingCategory, string> = {
   Tools: "bg-violet-500/15 text-violet-600 ring-violet-500/30 dark:text-violet-400",
 };
 
-const PROGRAMS_KEY = "omniwork.training.programs.v13";
+const PROGRAMS_KEY = "omniwork.training.programs.v14";
 const PROGRESS_KEY = "omniwork.training.progress.v1";
 const EVENT = "omniwork:training";
 
@@ -271,6 +282,82 @@ function defaultPrograms(): TrainingProgram[] {
           ],
           questions: [],
         },
+
+        {
+          id: "step-verticals",
+          title: "Verticals & Niches We Work In",
+          duration: "10 min",
+          summary:
+            "The high-intent, performance-driven verticals Ray Advertising operates across.",
+          points: [],
+          cards: [
+            {
+              type: "verticals",
+              title: "Verticals & Niches We Work In",
+              intro:
+                "Ray Advertising operates across a diverse range of high-intent, performance-driven verticals, enabling us to connect businesses with customers who are actively ready to convert.",
+              items: [
+                {
+                  number: "1",
+                  label: "Insurance",
+                  icon: "shield",
+                  points: [
+                    "Health Insurance",
+                    "Auto Insurance",
+                    "Life Insurance",
+                    "Home Insurance",
+                    "etc.",
+                  ],
+                },
+                {
+                  number: "2",
+                  label: "Home Services",
+                  icon: "home",
+                  points: ["Plumbing", "Roofing", "HVAC", "Gutter Services", "etc."],
+                },
+                {
+                  number: "3",
+                  label: "Financial Services",
+                  icon: "landmark",
+                  points: [
+                    "Credit & Debt Relief",
+                    "Tax & IRS Solutions",
+                    "Mortgage Services",
+                    "Real Estate",
+                    "etc.",
+                  ],
+                },
+                {
+                  number: "4",
+                  label: "Nutra & Wellness",
+                  icon: "heart",
+                  points: [
+                    "Weight Loss Product",
+                    "Supplements",
+                    "Wellness Products",
+                    "etc.",
+                  ],
+                },
+                {
+                  number: "5",
+                  label: "Additional & Emerging Verticals",
+                  icon: "file-plus",
+                  points: [
+                    "Gaming",
+                    "Performance Verticals",
+                    "Legal Services",
+                    "Car Accident Attorneys",
+                    "etc.",
+                  ],
+                },
+              ],
+            },
+            { type: "action", label: "Session finished", icon: "arrow-right" },
+          ],
+          questions: [],
+        },
+
+
 
         {
           id: "step-welcome",

@@ -23,6 +23,10 @@ import {
   Award,
   Building2,
   Layers,
+  Home,
+  Landmark,
+  HeartPulse,
+  FilePlus2,
   ArrowRightCircle,
   BookOpenText,
   Clock,
@@ -71,6 +75,10 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   award: Award,
   building: Building2,
   layers: Layers,
+  home: Home,
+  landmark: Landmark,
+  heart: HeartPulse,
+  "file-plus": FilePlus2,
   "arrow-right": ArrowRightCircle,
   "book-open": BookOpenText,
   clock: Clock,
@@ -577,6 +585,8 @@ function BentoGuide({
             return <DivisionsCard key={i} card={card} />;
           case "flow":
             return <FlowCard key={i} card={card} />;
+          case "verticals":
+            return <VerticalsCard key={i} card={card} />;
           case "info":
             return <InfoCard key={i} card={card} />;
           case "action":
@@ -828,3 +838,61 @@ function ActionCard({
   );
 }
 
+
+function VerticalsCard({
+  card,
+}: {
+  card: Extract<TrainingCard, { type: "verticals" }>;
+}) {
+  return (
+    <div className="relative overflow-hidden rounded-2xl border border-border bg-card p-8">
+      <div className="pointer-events-none absolute -right-24 -top-24 size-72 rounded-full bg-primary/10 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-24 -left-24 size-72 rounded-full bg-primary/5 blur-3xl" />
+      <div className="relative">
+        {card.title && (
+          <h3 className="text-center text-2xl font-semibold tracking-tight text-card-foreground sm:text-3xl">
+            {card.title}
+          </h3>
+        )}
+        {card.intro && (
+          <p className="mx-auto mt-3 max-w-3xl text-center text-[15px] leading-7 text-muted-foreground">
+            {card.intro}
+          </p>
+        )}
+
+        <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+          {card.items.map((item) => {
+            const Icon = iconMap[item.icon ?? ""] ?? Layers;
+            return (
+              <div
+                key={item.number}
+                className="group relative flex flex-col overflow-hidden rounded-2xl border border-primary/25 bg-primary/[0.06] p-5 pb-14 transition-all hover:-translate-y-1 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10"
+              >
+                <span className="pointer-events-none absolute -bottom-2 right-2 select-none text-[76px] font-bold leading-none text-primary/10">
+                  {item.number}
+                </span>
+                <p className="relative text-base font-semibold text-card-foreground">
+                  {item.label}
+                </p>
+                <ul className="relative mt-3 space-y-1.5">
+                  {item.points.map((p) => (
+                    <li
+                      key={p}
+                      className="flex items-start gap-2 text-sm leading-6 text-muted-foreground"
+                    >
+                      <span className="mt-[9px] size-1.5 shrink-0 rounded-full bg-primary/60" />
+                      <span>{p}</span>
+                    </li>
+                  ))}
+                </ul>
+                <div className="absolute bottom-4 left-5 flex size-10 items-center justify-center rounded-xl bg-primary/15 text-primary ring-1 ring-primary/25">
+                  <Icon className="size-5" />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
