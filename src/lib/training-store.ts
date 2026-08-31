@@ -75,7 +75,7 @@ export const categoryTone: Record<TrainingCategory, string> = {
   Tools: "bg-violet-500/15 text-violet-600 ring-violet-500/30 dark:text-violet-400",
 };
 
-const PROGRAMS_KEY = "omniwork.training.programs.v11";
+const PROGRAMS_KEY = "omniwork.training.programs.v12";
 const PROGRESS_KEY = "omniwork.training.progress.v1";
 const EVENT = "omniwork:training";
 
@@ -142,9 +142,9 @@ function defaultPrograms(): TrainingProgram[] {
 
         {
           id: "step-core-services",
-          title: "Our Core Services",
-          duration: "7 min",
-          summary: "The three services that drive performance for our clients.",
+          title: "Our Core Services & How We Help U.S. Companies",
+          duration: "15 min",
+          summary: "The three services that drive performance and the complete value chain from consumer demand to qualified business opportunities.",
           points: [],
           cards: [
             {
@@ -179,18 +179,6 @@ function defaultPrograms(): TrainingProgram[] {
                 "We focus on delivering relevant, high-intent calls based on campaign requirements, helping businesses turn customer demand into measurable opportunities and revenue.",
               ],
             },
-            { type: "action", label: "Session finished", icon: "arrow-right" },
-          ],
-          questions: [],
-        },
-
-        {
-          id: "step-value-chain",
-          title: "How Ray Advertising Helps U.S. Companies Get Real Customers",
-          duration: "10 min",
-          summary: "The complete value chain from consumer demand to qualified business opportunities.",
-          points: [],
-          cards: [
             {
               type: "prose",
               title: "How Ray Advertising Helps U.S. Companies Get Real Customers",
