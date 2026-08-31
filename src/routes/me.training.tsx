@@ -142,7 +142,7 @@ function Page() {
           <div>
             <h1 className="text-2xl font-semibold tracking-tight">Training & Orientation</h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              Work through each module step by step, then answer the questions to complete it.
+              Work through each module step by step, then click Session finished to complete it.
             </p>
           </div>
           {active && (
