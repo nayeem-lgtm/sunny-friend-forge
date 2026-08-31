@@ -449,7 +449,11 @@ export function useTrainingProgress(employeeId?: string) {
           : { employeeId: empId, programId, steps: {}, startedAt: now };
       const steps = {
         ...base.steps,
-        [stepId]: { answers, score, completedAt: score >= passMark ? now : undefined },
+        [stepId]: {
+          answers,
+          score,
+          ...(score >= passMark ? { completedAt: now } : {}),
+        } as StepProgress,
       };
       const done = programStepIds.every((id) => steps[id]?.completedAt);
       const next: ProgramProgress = {
