@@ -273,6 +273,82 @@ function defaultPrograms(): TrainingProgram[] {
         },
 
         {
+          id: "step-verticals",
+          title: "Verticals & Niches We Work In",
+          duration: "10 min",
+          summary:
+            "The high-intent, performance-driven verticals Ray Advertising operates across.",
+          points: [],
+          cards: [
+            {
+              type: "verticals",
+              title: "Verticals & Niches We Work In",
+              intro:
+                "Ray Advertising operates across a diverse range of high-intent, performance-driven verticals, enabling us to connect businesses with customers who are actively ready to convert.",
+              items: [
+                {
+                  number: "1",
+                  label: "Insurance",
+                  icon: "shield",
+                  points: [
+                    "Health Insurance",
+                    "Auto Insurance",
+                    "Life Insurance",
+                    "Home Insurance",
+                    "etc.",
+                  ],
+                },
+                {
+                  number: "2",
+                  label: "Home Services",
+                  icon: "home",
+                  points: ["Plumbing", "Roofing", "HVAC", "Gutter Services", "etc."],
+                },
+                {
+                  number: "3",
+                  label: "Financial Services",
+                  icon: "landmark",
+                  points: [
+                    "Credit & Debt Relief",
+                    "Tax & IRS Solutions",
+                    "Mortgage Services",
+                    "Real Estate",
+                    "etc.",
+                  ],
+                },
+                {
+                  number: "4",
+                  label: "Nutra & Wellness",
+                  icon: "heart",
+                  points: [
+                    "Weight Loss Product",
+                    "Supplements",
+                    "Wellness Products",
+                    "etc.",
+                  ],
+                },
+                {
+                  number: "5",
+                  label: "Additional & Emerging Verticals",
+                  icon: "file-plus",
+                  points: [
+                    "Gaming",
+                    "Performance Verticals",
+                    "Legal Services",
+                    "Car Accident Attorneys",
+                    "etc.",
+                  ],
+                },
+              ],
+            },
+            { type: "action", label: "Session finished", icon: "arrow-right" },
+          ],
+          questions: [],
+        },
+
+
+
+        {
           id: "step-welcome",
           title: "Welcome to RAY Advertising",
           duration: "10 min",
