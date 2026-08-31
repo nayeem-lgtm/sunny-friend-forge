@@ -667,12 +667,12 @@ function DivisionsCard({
   card: Extract<TrainingCard, { type: "divisions" }>;
 }) {
   return (
-    <div className="col-span-12 row-span-1 overflow-hidden rounded-3xl border border-border/50 bg-card p-5">
-      <div className="flex h-full flex-col justify-center gap-4">
+    <div className="rounded-2xl border border-border bg-card p-8">
+      <div className="flex flex-col gap-5">
         {card.title && (
-          <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          <h3 className="text-2xl font-semibold tracking-tight text-card-foreground">
             {card.title}
-          </p>
+          </h3>
         )}
         <div className="grid gap-3 sm:grid-cols-3">
           {card.items.map((item, idx) => (
