@@ -7,6 +7,7 @@ import {
   CheckCircle2,
   Circle,
   GraduationCap,
+  Lock,
   RotateCcw,
   Sparkles,
   XCircle,
