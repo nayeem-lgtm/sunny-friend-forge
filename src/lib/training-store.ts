@@ -562,54 +562,7 @@ function defaultPrograms(): TrainingProgram[] {
             },
             { type: "action", label: "Session finished", icon: "arrow-right" },
           ],
-          questions: [
-            {
-              id: "q-leave-policy-1",
-              prompt: "Can paid PTO be taken during the 180-day probationary period?",
-              options: [
-                "Yes, as soon as it accrues",
-                "No, but days accrue and become available after probation",
-                "Only with manager approval",
-                "Only for medical emergencies",
-              ],
-              answer: 1,
-              explanation:
-                "PTO accrues during probation but cannot be taken until the probationary period is successfully completed.",
-            },
-            {
-              id: "q-leave-policy-2",
-              prompt: "What is the maximum annual PTO for an employee in Year 4 and beyond?",
-              options: ["12 days", "15 days", "18 days", "20 days"],
-              answer: 2,
-              explanation: "Year 4 and beyond employees receive 18 days of PTO per year.",
-            },
-            {
-              id: "q-leave-policy-3",
-              prompt: "What happens to unused PTO at the end of the year?",
-              options: [
-                "It carries over to next year",
-                "It is paid out",
-                "It expires — there is no carryover",
-                "It converts to sick leave",
-              ],
-              answer: 2,
-              explanation:
-                "All unused PTO expires on December 31st; employees should plan to use it before year-end.",
-            },
-            {
-              id: "q-leave-policy-4",
-              prompt: "How far in advance should planned PTO be submitted?",
-              options: [
-                "No advance notice needed",
-                "At least 24 hours",
-                "At least 1 week",
-                "At least 1 month",
-              ],
-              answer: 1,
-              explanation:
-                "Planned leave requests should be submitted via the ERP at least 24 hours in advance.",
-            },
-          ],
+          questions: [],
         },
 
 
