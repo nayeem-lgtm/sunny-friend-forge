@@ -62,6 +62,13 @@ export type TrainingCard =
       intro?: string;
       items: { label: string; description?: string }[];
     }
+  | {
+      type: "image";
+      src: string;
+      alt: string;
+      caption?: string;
+      objectFit?: "contain" | "cover";
+    }
   | { type: "action"; label: string; icon?: string };
 
 export type TrainingStep = {
