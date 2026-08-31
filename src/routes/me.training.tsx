@@ -260,12 +260,15 @@ function ProgramRunner({
         <CardContent className="space-y-1">
           {program.steps.map((s, i) => {
             const isDone = completedSteps.includes(s.id);
+            const locked = i > maxUnlocked;
             return (
               <button
                 key={s.id}
                 onClick={() => goto(i)}
+                disabled={locked}
                 className={cn(
                   "flex w-full items-start gap-2 rounded-lg px-3 py-2 text-left text-sm transition-colors",
+                  locked && "cursor-not-allowed opacity-45",
                   i === index
                     ? "bg-primary/10 font-medium text-primary"
                     : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
@@ -273,6 +276,8 @@ function ProgramRunner({
               >
                 {isDone ? (
                   <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-emerald-500" />
+                ) : locked ? (
+                  <Lock className="mt-0.5 size-4 shrink-0 opacity-50" />
                 ) : (
                   <Circle className="mt-0.5 size-4 shrink-0 opacity-50" />
                 )}
