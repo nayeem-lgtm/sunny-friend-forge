@@ -328,17 +328,46 @@ function ProgramRunner({
               ))}
             </ul>
             <div className="mt-6 flex flex-wrap items-center gap-3 border-t border-border pt-5">
-              {sessionDone ? (
+              {done ? (
                 <span className="flex items-center gap-2 rounded-lg bg-emerald-500/10 px-3 py-2 text-sm font-medium text-emerald-600 dark:text-emerald-400">
-                  <CheckCircle2 className="size-4" /> Session finished — answer the questions below
+                  <CheckCircle2 className="size-4" /> Step completed
                 </span>
+              ) : sessionDone ? (
+                step.questions.length === 0 ? (
+                  <span className="flex items-center gap-2 rounded-lg bg-emerald-500/10 px-3 py-2 text-sm font-medium text-emerald-600 dark:text-emerald-400">
+                    <CheckCircle2 className="size-4" /> Session finished — step completed
+                  </span>
+                ) : (
+                  <span className="flex items-center gap-2 rounded-lg bg-emerald-500/10 px-3 py-2 text-sm font-medium text-emerald-600 dark:text-emerald-400">
+                    <CheckCircle2 className="size-4" /> Session finished — answer the questions below
+                  </span>
+                )
               ) : (
                 <>
-                  <Button size="lg" onClick={() => setSessionDone(true)}>
+                  <Button
+                    size="lg"
+                    onClick={() => {
+                      setSessionDone(true);
+                      if (step.questions.length === 0) {
+                        onRecord(
+                          employeeId,
+                          program.id,
+                          step.id,
+                          {},
+                          100,
+                          program.steps.map((x) => x.id),
+                          program.passMark,
+                        );
+                        toast.success("Step completed");
+                      }
+                    }}
+                  >
                     <CheckCircle2 className="size-4" /> Session finished
                   </Button>
                   <span className="text-xs text-muted-foreground">
-                    Read the full guide, then confirm to unlock the Q&amp;A for this step.
+                    {step.questions.length === 0
+                      ? "Read the full guide, then confirm to complete this step."
+                      : "Read the full guide, then confirm to unlock the Q&A for this step."}
                   </span>
                 </>
               )}
@@ -346,100 +375,97 @@ function ProgramRunner({
           </CardContent>
         </Card>
 
-        {sessionDone && (
-        <Card>
-          <CardHeader>
-            <div className="flex items-center gap-2">
-              <Sparkles className="size-4 text-primary" />
-              <CardTitle className="text-base">Question & answer session</CardTitle>
-            </div>
-            <CardDescription>
-              Answer every question — {program.passMark}% or higher completes this step.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            {step.questions.length === 0 && (
-              <p className="text-sm text-muted-foreground">No questions for this step.</p>
-            )}
-            {step.questions.map((q, qi) => {
-              const chosen = answers[q.id];
-              return (
-                <div key={q.id} className="rounded-xl border border-border p-4">
-                  <p className="text-sm font-medium">
-                    {qi + 1}. {q.prompt}
-                  </p>
-                  <RadioGroup
-                    className="mt-3 space-y-2"
-                    value={chosen === undefined ? "" : String(chosen)}
-                    onValueChange={(v) => {
-                      setAnswers((a) => ({ ...a, [q.id]: Number(v) }));
-                      setChecked(false);
-                    }}
-                  >
-                    {q.options.map((opt, oi) => {
-                      const state =
-                        checked && oi === q.answer
-                          ? "correct"
-                          : checked && chosen === oi
-                            ? "wrong"
-                            : "idle";
-                      return (
-                        <div
-                          key={oi}
-                          className={cn(
-                            "flex items-center gap-3 rounded-lg border px-3 py-2 text-sm transition-colors",
-                            state === "correct" && "border-emerald-500/40 bg-emerald-500/10",
-                            state === "wrong" && "border-destructive/40 bg-destructive/10",
-                            state === "idle" &&
-                              "border-border/70 bg-muted/30 hover:border-primary/30 hover:bg-primary/5",
-                          )}
-                        >
-                          <RadioGroupItem value={String(oi)} id={`${q.id}-${oi}`} />
-                          <Label htmlFor={`${q.id}-${oi}`} className="flex-1 cursor-pointer font-normal">
-                            {opt}
-                          </Label>
-                          {state === "correct" && <CheckCircle2 className="size-4 text-emerald-500" />}
-                          {state === "wrong" && <XCircle className="size-4 text-destructive" />}
-                        </div>
-                      );
-                    })}
-                  </RadioGroup>
-                  {checked && q.explanation && (
-                    <p className="mt-2 text-xs text-muted-foreground">{q.explanation}</p>
-                  )}
-                </div>
-              );
-            })}
-
-            <div className="flex flex-wrap items-center gap-3">
-              <Button onClick={submit} disabled={!answered && step.questions.length > 0}>
-                Submit answers
-              </Button>
-              {checked && (
-                <span
-                  className={cn(
-                    "text-sm font-medium",
-                    passed ? "text-emerald-600 dark:text-emerald-400" : "text-destructive",
-                  )}
-                >
-                  Score {score}% — {passed ? "step completed" : `needs ${program.passMark}%`}
-                </span>
-              )}
-              <div className="ml-auto flex gap-2">
-                <Button variant="outline" disabled={index === 0} onClick={() => goto(index - 1)}>
-                  <ArrowLeft className="size-4" /> Previous
-                </Button>
-                <Button
-                  variant="outline"
-                  disabled={index === program.steps.length - 1 || index + 1 > maxUnlocked}
-                  onClick={() => goto(index + 1)}
-                >
-                  Next <ArrowRight className="size-4" />
-                </Button>
+        {sessionDone && step.questions.length > 0 && (
+          <Card>
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <Sparkles className="size-4 text-primary" />
+                <CardTitle className="text-base">Question & answer session</CardTitle>
               </div>
-            </div>
-          </CardContent>
-        </Card>
+              <CardDescription>
+                Answer every question — {program.passMark}% or higher completes this step.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {step.questions.map((q, qi) => {
+                const chosen = answers[q.id];
+                return (
+                  <div key={q.id} className="rounded-xl border border-border p-4">
+                    <p className="text-sm font-medium">
+                      {qi + 1}. {q.prompt}
+                    </p>
+                    <RadioGroup
+                      className="mt-3 space-y-2"
+                      value={chosen === undefined ? "" : String(chosen)}
+                      onValueChange={(v) => {
+                        setAnswers((a) => ({ ...a, [q.id]: Number(v) }));
+                        setChecked(false);
+                      }}
+                    >
+                      {q.options.map((opt, oi) => {
+                        const state =
+                          checked && oi === q.answer
+                            ? "correct"
+                            : checked && chosen === oi
+                              ? "wrong"
+                              : "idle";
+                        return (
+                          <div
+                            key={oi}
+                            className={cn(
+                              "flex items-center gap-3 rounded-lg border px-3 py-2 text-sm transition-colors",
+                              state === "correct" && "border-emerald-500/40 bg-emerald-500/10",
+                              state === "wrong" && "border-destructive/40 bg-destructive/10",
+                              state === "idle" &&
+                                "border-border/70 bg-muted/30 hover:border-primary/30 hover:bg-primary/5",
+                            )}
+                          >
+                            <RadioGroupItem value={String(oi)} id={`${q.id}-${oi}`} />
+                            <Label htmlFor={`${q.id}-${oi}`} className="flex-1 cursor-pointer font-normal">
+                              {opt}
+                            </Label>
+                            {state === "correct" && <CheckCircle2 className="size-4 text-emerald-500" />}
+                            {state === "wrong" && <XCircle className="size-4 text-destructive" />}
+                          </div>
+                        );
+                      })}
+                    </RadioGroup>
+                    {checked && q.explanation && (
+                      <p className="mt-2 text-xs text-muted-foreground">{q.explanation}</p>
+                    )}
+                  </div>
+                );
+              })}
+
+              <div className="flex flex-wrap items-center gap-3">
+                <Button onClick={submit} disabled={!answered}>
+                  Submit answers
+                </Button>
+                {checked && (
+                  <span
+                    className={cn(
+                      "text-sm font-medium",
+                      passed ? "text-emerald-600 dark:text-emerald-400" : "text-destructive",
+                    )}
+                  >
+                    Score {score}% — {passed ? "step completed" : `needs ${program.passMark}%`}
+                  </span>
+                )}
+                <div className="ml-auto flex gap-2">
+                  <Button variant="outline" disabled={index === 0} onClick={() => goto(index - 1)}>
+                    <ArrowLeft className="size-4" /> Previous
+                  </Button>
+                  <Button
+                    variant="outline"
+                    disabled={index === program.steps.length - 1 || index + 1 > maxUnlocked}
+                    onClick={() => goto(index + 1)}
+                  >
+                    Next <ArrowRight className="size-4" />
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         )}
       </div>
     </div>
