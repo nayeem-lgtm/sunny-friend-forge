@@ -18,6 +18,17 @@ export type TrainingCard =
       title?: string;
       items: { number: string; label: string; description?: string }[];
     }
+  | {
+      type: "flow";
+      title?: string;
+      intro?: string;
+      stages: {
+        label: string;
+        sublabel?: string;
+        tags?: string[];
+        icon?: string;
+      }[];
+    }
   | { type: "info"; title: string; body: string; icon?: string; badge?: string }
   | { type: "action"; label: string; icon?: string };
 
@@ -75,7 +86,7 @@ export const categoryTone: Record<TrainingCategory, string> = {
   Tools: "bg-violet-500/15 text-violet-600 ring-violet-500/30 dark:text-violet-400",
 };
 
-const PROGRAMS_KEY = "omniwork.training.programs.v12";
+const PROGRAMS_KEY = "omniwork.training.programs.v13";
 const PROGRESS_KEY = "omniwork.training.progress.v1";
 const EVENT = "omniwork:training";
 
@@ -215,20 +226,37 @@ function defaultPrograms(): TrainingProgram[] {
               ],
             },
             {
-              type: "prose",
+              type: "flow",
               title: "The Ray Advertising Advantage",
-              paragraphs: [
-                "We build the bridge between consumer demand and business growth.",
-                "Consumers looking for help",
-                "↓",
-                "Ray Advertising",
-                "Media Buying + Lead Generation + Pay-Per-Call",
-                "↓",
-                "Targeting & Qualification",
-                "Intent • Verification • Quality • Fraud Monitoring • Campaign Requirements",
-                "↓",
-                "U.S. Businesses",
-                "More qualified customer opportunities",
+              intro: "We build the bridge between consumer demand and business growth.",
+              stages: [
+                {
+                  label: "Consumers looking for help",
+                  sublabel: "Active demand across digital channels",
+                  icon: "users",
+                },
+                {
+                  label: "Ray Advertising",
+                  sublabel: "Media Buying + Lead Generation + Pay-Per-Call",
+                  tags: ["Media Buying", "Lead Generation", "Pay-Per-Call"],
+                  icon: "zap",
+                },
+                {
+                  label: "Targeting & Qualification",
+                  tags: [
+                    "Intent",
+                    "Verification",
+                    "Quality",
+                    "Fraud Monitoring",
+                    "Campaign Requirements",
+                  ],
+                  icon: "shield",
+                },
+                {
+                  label: "U.S. Businesses",
+                  sublabel: "More qualified customer opportunities",
+                  icon: "trending-up",
+                },
               ],
             },
             {

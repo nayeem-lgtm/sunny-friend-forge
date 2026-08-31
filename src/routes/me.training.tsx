@@ -575,6 +575,8 @@ function BentoGuide({
             return <StatCard key={i} card={card} />;
           case "divisions":
             return <DivisionsCard key={i} card={card} />;
+          case "flow":
+            return <FlowCard key={i} card={card} />;
           case "info":
             return <InfoCard key={i} card={card} />;
           case "action":
@@ -590,6 +592,77 @@ function BentoGuide({
             return null;
         }
       })}
+    </div>
+  );
+}
+
+function FlowCard({ card }: { card: Extract<TrainingCard, { type: "flow" }> }) {
+  return (
+    <div className="relative overflow-hidden rounded-2xl border border-border bg-card p-8">
+      <div className="pointer-events-none absolute -right-16 -top-16 size-64 rounded-full bg-primary/10 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-20 -left-20 size-64 rounded-full bg-primary/5 blur-3xl" />
+      <div className="relative">
+        {card.title && (
+          <h3 className="text-2xl font-semibold tracking-tight text-card-foreground">
+            {card.title}
+          </h3>
+        )}
+        {card.intro && (
+          <p className="mt-2 max-w-2xl text-[15px] leading-7 text-muted-foreground">
+            {card.intro}
+          </p>
+        )}
+
+        <div className="relative mt-8 pl-6">
+          <div className="absolute bottom-6 left-[11px] top-6 w-px bg-gradient-to-b from-primary/60 via-primary/30 to-primary/60" />
+          <div className="space-y-4">
+            {card.stages.map((stage, idx) => {
+              const Icon = iconMap[stage.icon ?? ""] ?? Zap;
+              return (
+                <div key={idx} className="relative">
+                  <span className="absolute -left-6 top-6 flex size-[23px] items-center justify-center rounded-full border border-primary/40 bg-background">
+                    <span className="size-2 rounded-full bg-primary" />
+                  </span>
+                  <div className="group rounded-2xl border border-border/70 bg-background/60 p-5 backdrop-blur-sm transition-colors hover:border-primary/40">
+                    <div className="flex items-start gap-4">
+                      <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary/12 text-primary">
+                        <Icon className="size-5" />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2">
+                          <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-primary/70">
+                            {String(idx + 1).padStart(2, "0")}
+                          </span>
+                          <p className="text-base font-semibold text-card-foreground">
+                            {stage.label}
+                          </p>
+                        </div>
+                        {stage.sublabel && (
+                          <p className="mt-1 text-sm leading-6 text-muted-foreground">
+                            {stage.sublabel}
+                          </p>
+                        )}
+                        {stage.tags && stage.tags.length > 0 && (
+                          <div className="mt-3 flex flex-wrap gap-2">
+                            {stage.tags.map((tag) => (
+                              <span
+                                key={tag}
+                                className="rounded-full border border-primary/20 bg-primary/10 px-2.5 py-1 text-[11px] font-medium text-primary"
+                              >
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
