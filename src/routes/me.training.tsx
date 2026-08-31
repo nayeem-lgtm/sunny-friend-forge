@@ -367,19 +367,42 @@ function ProgramRunner({
             />
           </div>
           <CardContent className="pt-6">
-            <ul className="grid gap-3">
-              {step.points.map((p, i) => (
-                <li
-                  key={i}
-                  className="flex gap-3 rounded-xl border border-border/70 bg-muted/30 p-4 text-sm transition-colors hover:border-primary/30 hover:bg-primary/5"
-                >
-                  <span className="flex size-6 shrink-0 items-center justify-center rounded-lg bg-primary/12 text-[11px] font-semibold text-primary">
-                    {i + 1}
-                  </span>
-                  <span className="leading-relaxed text-foreground/85">{p}</span>
-                </li>
-              ))}
-            </ul>
+            {step.cards ? (
+              <BentoGuide
+                cards={step.cards}
+                done={done}
+                sessionDone={sessionDone}
+                onSessionDone={() => {
+                  setSessionDone(true);
+                  if (step.questions.length === 0) {
+                    onRecord(
+                      employeeId,
+                      program.id,
+                      step.id,
+                      {},
+                      100,
+                      program.steps.map((x) => x.id),
+                      program.passMark,
+                    );
+                    toast.success("Step completed");
+                  }
+                }}
+              />
+            ) : (
+              <ul className="grid gap-3">
+                {step.points.map((p, i) => (
+                  <li
+                    key={i}
+                    className="flex gap-3 rounded-xl border border-border/70 bg-muted/30 p-4 text-sm transition-colors hover:border-primary/30 hover:bg-primary/5"
+                  >
+                    <span className="flex size-6 shrink-0 items-center justify-center rounded-lg bg-primary/12 text-[11px] font-semibold text-primary">
+                      {i + 1}
+                    </span>
+                    <span className="leading-relaxed text-foreground/85">{p}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
             <div className="mt-6 flex flex-wrap items-center gap-3 border-t border-border pt-5">
               {done ? (
                 <span className="flex items-center gap-2 rounded-lg bg-emerald-500/10 px-3 py-2 text-sm font-medium text-emerald-600 dark:text-emerald-400">
@@ -395,6 +418,10 @@ function ProgramRunner({
                     <CheckCircle2 className="size-4" /> Session finished — answer the questions below
                   </span>
                 )
+              ) : step.cards ? (
+                <span className="text-xs text-muted-foreground">
+                  Review the cards above, then click the action tile to finish this session.
+                </span>
               ) : (
                 <>
                   <Button
