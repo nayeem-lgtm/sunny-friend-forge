@@ -126,6 +126,102 @@ function defaultPrograms(): TrainingProgram[] {
           ],
         },
         {
+          id: "step-mission-vision",
+          title: "Our Mission & Vision",
+          duration: "8 min",
+          summary: "What we are working towards and the impact we want to create.",
+          points: [
+            "Mission: become a trusted growth partner for businesses seeking to scale, through innovative, data-driven performance marketing solutions.",
+            "We help leading U.S. companies connect with high-intent customers ready to take action — driving measurable results, sustainable revenue growth and long-term business success.",
+            "We are committed to a reliable performance marketing ecosystem where results — not promises — drive success, powered by technology, data, innovation and strong partnerships.",
+            "Vision: become one of the most respected and trusted performance marketing companies in the U.S. while creating a meaningful impact beyond revenue.",
+            "A key part of our vision is creating quality career opportunities for talented people worldwide — building valuable skills, sustainable careers and financial independence.",
+            "We aim for a global, performance-driven ecosystem where people grow, businesses scale and partnerships create lasting value through innovation, integrity, accountability and collaboration.",
+          ],
+          questions: [
+            {
+              id: "q-mission-1",
+              prompt: "What drives success in the ecosystem we are building?",
+              options: [
+                "Promises and proposals",
+                "Results, powered by technology, data, innovation and partnerships",
+                "The largest advertising budget",
+                "Seniority within the company",
+              ],
+              answer: 1,
+            },
+            {
+              id: "q-mission-2",
+              prompt: "Beyond revenue, what impact does our vision focus on?",
+              options: [
+                "Opening physical offices in every state",
+                "Creating quality career opportunities for talented people worldwide",
+                "Acquiring competitor agencies",
+                "Reducing marketing spend",
+              ],
+              answer: 1,
+            },
+            {
+              id: "q-mission-3",
+              prompt: "Which values underpin our global ecosystem?",
+              options: [
+                "Innovation, integrity, accountability and collaboration",
+                "Speed, secrecy and scale",
+                "Volume, discounts and upsells",
+                "Tradition, hierarchy and process",
+              ],
+              answer: 0,
+            },
+          ],
+        },
+        {
+          id: "step-core-services",
+          title: "Core Services",
+          duration: "7 min",
+          summary: "The three services that generate revenue for our clients and for us.",
+          points: [
+            "Media Buying — we plan, purchase and optimise paid traffic across channels to reach high-intent U.S. audiences at a profitable cost.",
+            "Pay-Per-Call — we drive qualified inbound phone calls to our partners, who pay per billable call rather than per impression.",
+            "Lead Generation — we capture and qualify consumer interest across insurance, home services, finance and other verticals, then deliver those leads to buyers.",
+            "All three services are measured on performance: quality, conversion and return, not just volume.",
+          ],
+          questions: [
+            {
+              id: "q-services-1",
+              prompt: "Which three offerings are our core services?",
+              options: [
+                "SEO, branding and print",
+                "Media buying, Pay-Per-Call and lead generation",
+                "Web design, hosting and support",
+                "Recruitment, payroll and training",
+              ],
+              answer: 1,
+            },
+            {
+              id: "q-services-2",
+              prompt: "In Pay-Per-Call, what does the partner pay for?",
+              options: [
+                "Every ad impression",
+                "A flat monthly retainer",
+                "Each billable inbound phone call",
+                "Every website visit",
+              ],
+              answer: 2,
+            },
+            {
+              id: "q-services-3",
+              prompt: "How are our services measured?",
+              options: [
+                "By volume alone",
+                "By performance — quality, conversion and return",
+                "By number of campaigns launched",
+                "By team headcount",
+              ],
+              answer: 1,
+            },
+          ],
+        },
+        {
           id: "step-welcome",
           title: "Welcome to RAY Advertising",
           duration: "10 min",
