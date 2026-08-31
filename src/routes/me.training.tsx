@@ -564,9 +564,11 @@ function BentoGuide({
   onSessionDone: () => void;
 }) {
   return (
-    <div className="grid grid-cols-12 gap-4 auto-rows-[160px]">
+    <div className="flex flex-col gap-5">
       {cards.map((card, i) => {
         switch (card.type) {
+          case "prose":
+            return <ProseCard key={i} card={card} />;
           case "hero":
             return <HeroCard key={i} card={card} />;
           case "stat":
@@ -591,6 +593,26 @@ function BentoGuide({
     </div>
   );
 }
+
+function ProseCard({ card }: { card: Extract<TrainingCard, { type: "prose" }> }) {
+  return (
+    <div className="rounded-2xl border border-border bg-card p-8">
+      {card.title && (
+        <h3 className="text-2xl font-semibold tracking-tight text-card-foreground">
+          {card.title}
+        </h3>
+      )}
+      <div className="mt-4 space-y-4">
+        {card.paragraphs.map((p, idx) => (
+          <p key={idx} className="text-[15px] leading-7 text-muted-foreground">
+            {p}
+          </p>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 
 function HeroCard({ card }: { card: Extract<TrainingCard, { type: "hero" }> }) {
   const Icon = iconMap[card.icon ?? ""] ?? Zap;
