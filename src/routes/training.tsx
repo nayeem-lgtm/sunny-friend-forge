@@ -123,7 +123,7 @@ function Page() {
         <StatCard label="Guide steps" value={String(totalSteps)} icon={BookOpen} />
         <StatCard label="Quiz questions" value={String(totalQuestions)} icon={ListChecks} />
         <StatCard
-          title="Fully trained"
+          label="Fully trained"
           value={`${completedCount}/${rows.length}`}
           icon={Users2}
         />
