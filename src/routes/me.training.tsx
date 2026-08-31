@@ -922,7 +922,7 @@ function FounderCard({
               {card.eyebrow}
             </p>
           )}
-          <h3 className="mt-4 text-2xl font-bold uppercase leading-tight tracking-tight text-card-foreground sm:text-[1.5rem] lg:text-[1.625rem]">
+          <h3 className="mt-4 text-2xl font-bold uppercase leading-tight tracking-tight text-card-foreground sm:text-[1.5rem] lg:text-[1.5rem]">
             {card.title}
           </h3>
           <div className="mt-6 space-y-4">
