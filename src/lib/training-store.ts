@@ -118,7 +118,7 @@ export const categoryTone: Record<TrainingCategory, string> = {
   Tools: "bg-violet-500/15 text-violet-600 ring-violet-500/30 dark:text-violet-400",
 };
 
-const PROGRAMS_KEY = "omniwork.training.programs.v18";
+const PROGRAMS_KEY = "omniwork.training.programs.v19";
 const PROGRESS_KEY = "omniwork.training.progress.v1";
 const EVENT = "omniwork:training";
 
@@ -696,6 +696,120 @@ function defaultPrograms(): TrainingProgram[] {
           ],
           questions: [],
         },
+
+        {
+          id: "step-job-grade",
+          title: "Know Your Job Grade",
+          duration: "8 min",
+          summary:
+            "The RAY grading framework — from General Support Staff up to the Executive band — and where every role sits.",
+          points: [],
+          cards: [
+            {
+              type: "prose",
+              title: "Why grades exist",
+              paragraphs: [
+                "Every role at RAY is mapped to a grade (L9 – L22) and a band. Your grade defines your level of responsibility, decision-making authority, reporting line and career path.",
+                "Grades keep promotions, compensation and expectations transparent. When you know your grade, you know exactly what the next step looks like.",
+              ],
+            },
+            {
+              type: "table",
+              title: "RAY Grade Structure",
+              intro: "Find your level title and the roles that sit inside it.",
+              headers: ["Grade", "Band", "Level Title", "Positions / Roles"],
+              rows: [
+                ["L22", "Executive", "Chief Executive Officer", "Chief Executive Officer (CEO)"],
+                ["L21", "Executive", "Managing Director / President", "Managing Director (MD), President"],
+                ["L20", "Executive", "C-Suite Officers", "CHRO, COO, CFO, CTO, CMO"],
+                [
+                  "L19",
+                  "Senior Mgmt",
+                  "Director / VP",
+                  "Director of E-Commerce, Director of Affiliates, VP/SVP HR",
+                ],
+                [
+                  "L18",
+                  "Senior Mgmt",
+                  "Senior Manager / AVP",
+                  "Branch & Operations Manager, Assistant Director, Senior Affiliate Manager, QA/QC Head, Sr. Manager/AVP HR",
+                ],
+                [
+                  "L17",
+                  "Senior Mgmt",
+                  "Manager / Head of Function",
+                  "Head of Media Buying, Project Manager, Business Development Manager, Manager HR, Senior Affiliate Manager",
+                ],
+                [
+                  "L16",
+                  "Middle Mgmt",
+                  "Technical Lead",
+                  "Full Stack Developer, Back-End Developer, AI Engineer, Senior Accountant, Deputy Manager HR",
+                ],
+                [
+                  "L15",
+                  "Middle Mgmt",
+                  "Senior Creative & Ops Manager",
+                  "E-com Operations Supervisor, Team Lead (E-Commerce), Assistant Manager HR",
+                ],
+                [
+                  "L14",
+                  "Specialist",
+                  "Mid-Level Specialist",
+                  "Front-End Developer, API Developer, UI/UX Designer, SEO Expert, Digital Marketing Specialist, Brand Visibility Specialist, Affiliate Manager, Advertiser Account Manager, Media Buyer, Senior Executive HR",
+                ],
+                [
+                  "L13",
+                  "Specialist",
+                  "Associate Specialist",
+                  "Accountant, Content Writer, Graphic Designer, Video Editor, Sales Executive, Executive HR",
+                ],
+                [
+                  "L12",
+                  "Junior Prof.",
+                  "Junior Professional",
+                  "Junior Graphic Designer, Junior Associate, Affiliate Coordinator, Virtual / Administrative Assistant, QC Agent, Junior Executive HR",
+                ],
+                ["L11", "Junior Prof.", "Entry / Trainee", "Receptionist, Intern (Fixed Term)"],
+                ["L10", "Skilled Support", "Skilled Support Staff", "Store Keeper, Driver"],
+                ["L9", "General Staff", "General Support Staff", "Office Assistant, Guard, Peon, Aya, MLSS"],
+              ],
+            },
+            {
+              type: "checklist",
+              title: "How to use your grade",
+              intro: "Three things every team member should know about their level.",
+              items: [
+                {
+                  label: "Know your band",
+                  description:
+                    "Executive, Senior Management, Middle Management, Specialist, Junior Professional, Skilled Support or General Staff — your band sets the scope of your decisions.",
+                },
+                {
+                  label: "Know your reporting line",
+                  description:
+                    "You escalate to the grade above yours. Skipping levels without a valid reason breaks the reporting structure.",
+                },
+                {
+                  label: "Know your next step",
+                  description:
+                    "Promotion moves you to the next grade once you consistently deliver the KPIs and responsibilities of that level.",
+                },
+              ],
+            },
+            {
+              type: "info",
+              title: "Not sure of your grade?",
+              body: "Your grade is listed on your appointment letter and in your OmniWork profile. If it is missing or looks incorrect, contact HR.",
+              icon: "users",
+              badge: "HR",
+            },
+            { type: "action", label: "Session finished", icon: "arrow-right" },
+          ],
+          questions: [],
+        },
+
+
 
         {
           id: "step-welcome",
