@@ -56,6 +56,12 @@ export type TrainingCard =
       headers: string[];
       rows: string[][];
     }
+  | {
+      type: "checklist";
+      title?: string;
+      intro?: string;
+      items: { label: string; description?: string }[];
+    }
   | { type: "action"; label: string; icon?: string };
 
 export type TrainingStep = {
@@ -565,6 +571,111 @@ function defaultPrograms(): TrainingProgram[] {
           questions: [],
         },
 
+        {
+          id: "step-discipline-conduct",
+          title: "Discipline and Code of Conduct",
+          duration: "12 min",
+          summary:
+            "The standards of behaviour, professionalism and remote-work discipline expected from every RAY team member.",
+          points: [],
+          cards: [
+            {
+              type: "prose",
+              title: "Why discipline matters",
+              paragraphs: [
+                "A high-performance culture is built on trust, accountability and consistent behaviour. This step outlines the general code of conduct that applies to everyone, plus the additional expectations for remote staff.",
+                "Read each standard carefully. These rules protect our team, our clients and the company assets we all rely on.",
+              ],
+            },
+            {
+              type: "info",
+              title: "Be hyper active",
+              body: "Stay engaged, responsive and proactive throughout the workday. Hyper activity means taking initiative, replying promptly and keeping momentum on every task.",
+              icon: "zap",
+              badge: "Mindset",
+            },
+            {
+              type: "checklist",
+              title: "10.1 Code of Conduct — General",
+              intro: "These standards apply to every employee, in every location and role.",
+              items: [
+                {
+                  label: "Avoid non-work activities during working hours",
+                  description:
+                    "Limit personal errands, social media or entertainment so team productivity stays high.",
+                },
+                {
+                  label: "Communicate through official channels",
+                  description:
+                    "Use company-approved tools such as email, Omni Chat and project systems. Personal emails and unofficial channels are prohibited.",
+                },
+                {
+                  label: "Provide regular updates",
+                  description:
+                    "Share progress on tasks, ask questions early and raise issues promptly.",
+                },
+                {
+                  label: "Always join meetings with camera on",
+                  description: "No exceptions. Video presence builds trust and keeps meetings focused.",
+                },
+                {
+                  label: "Maintain professionalism and integrity",
+                  description:
+                    "Treat colleagues, clients and stakeholders with respect. Be honest and avoid conflicts of interest.",
+                },
+                {
+                  label: "Protect company assets",
+                  description:
+                    "Safeguard physical assets (equipment, laptops, vehicles, office supplies) and digital assets (data, software, systems, intellectual property).",
+                },
+                {
+                  label: "Follow reporting structures",
+                  description:
+                    "Report to assigned supervisors, escalate through the proper hierarchy and avoid bypassing authority without a valid reason.",
+                },
+                {
+                  label: "Achieve assigned KPIs",
+                  description:
+                    "Understand your goals, work efficiently to meet targets and monitor progress to keep improving.",
+                },
+                {
+                  label: "Maintain confidentiality",
+                  description:
+                    "Keep business strategies, financial data, client information and internal communications secure.",
+                },
+              ],
+            },
+            {
+              type: "checklist",
+              title: "10.2 Code of Conduct — Remote Staff",
+              intro: "Additional expectations for team members working outside the office.",
+              items: [
+                {
+                  label: "Maintain regular working hours and availability",
+                  description:
+                    "Be online and reachable during scheduled hours. Inform managers in advance about any absence or schedule change.",
+                },
+                {
+                  label: "Attend meetings professionally",
+                  description:
+                    "Join on time, be prepared, dress appropriately when video is required and use a quiet, well-lit space.",
+                },
+                {
+                  label: "Ensure a distraction-free work environment",
+                  description:
+                    "Minimize background noise and interruptions. Avoid multitasking with non-work activities and set boundaries with household members.",
+                },
+                {
+                  label: "Protect company data and systems",
+                  description:
+                    "Use secure internet connections, follow IT security policies (VPNs, strong passwords, device locks) and avoid accessing company systems on shared or public devices.",
+                },
+              ],
+            },
+            { type: "action", label: "Session finished", icon: "arrow-right" },
+          ],
+          questions: [],
+        },
 
         {
           id: "step-welcome",

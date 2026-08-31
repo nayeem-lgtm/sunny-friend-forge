@@ -594,6 +594,8 @@ function BentoGuide({
             return <InfoCard key={i} card={card} />;
           case "table":
             return <TableCard key={i} card={card} />;
+          case "checklist":
+            return <ChecklistCard key={i} card={card} />;
           case "action":
             return (
               <ActionCard
@@ -953,6 +955,42 @@ function VerticalsCard({
   );
 }
 
+function ChecklistCard({
+  card,
+}: {
+  card: Extract<TrainingCard, { type: "checklist" }>;
+}) {
+  return (
+    <div className="rounded-2xl border border-border bg-card p-8">
+      {card.title && (
+        <h3 className="text-2xl font-semibold tracking-tight text-card-foreground">
+          {card.title}
+        </h3>
+      )}
+      {card.intro && (
+        <p className="mt-2 max-w-2xl text-[15px] leading-7 text-muted-foreground">
+          {card.intro}
+        </p>
+      )}
+      <ul className="mt-6 grid gap-3 sm:grid-cols-2">
+        {card.items.map((item, idx) => (
+          <li
+            key={idx}
+            className="flex items-start gap-3 rounded-xl border border-border/70 bg-background/60 p-4 transition-colors hover:border-primary/30 hover:bg-primary/5"
+          >
+            <CheckCircle2 className="mt-0.5 size-5 shrink-0 text-primary" />
+            <div>
+              <p className="text-sm font-semibold text-card-foreground">{item.label}</p>
+              {item.description && (
+                <p className="mt-1 text-xs leading-5 text-muted-foreground">{item.description}</p>
+              )}
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
 
 function FounderCard({
   card,
