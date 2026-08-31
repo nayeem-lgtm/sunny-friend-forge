@@ -293,38 +293,48 @@ function ProgramRunner({
       </Card>
 
       <div className="space-y-6">
-        <Card>
-          <CardHeader>
-            <div className="flex items-center gap-2 text-xs text-muted-foreground">
-              Step {index + 1} of {program.steps.length}
+        <Card className="overflow-hidden">
+          <div className="border-b border-border bg-primary/5 px-6 py-5">
+            <div className="flex flex-wrap items-center gap-2 text-xs font-medium text-muted-foreground">
+              <span className="rounded-full bg-primary/10 px-2.5 py-1 text-primary">
+                Step {index + 1} of {program.steps.length}
+              </span>
+              <span>{step.duration}</span>
               {done && (
                 <Badge variant="outline" className="ring-1 ring-emerald-500/30 text-emerald-600 dark:text-emerald-400">
                   Completed
                 </Badge>
               )}
             </div>
-            <CardTitle className="text-xl">{step.title}</CardTitle>
-            <CardDescription>{step.summary}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ul className="space-y-3">
+            <h2 className="mt-3 text-2xl font-semibold tracking-tight">{step.title}</h2>
+            <p className="mt-1 max-w-2xl text-sm text-muted-foreground">{step.summary}</p>
+            <Progress
+              value={((index + (done ? 1 : 0)) / program.steps.length) * 100}
+              className="mt-4 h-1.5"
+            />
+          </div>
+          <CardContent className="pt-6">
+            <ul className="grid gap-3">
               {step.points.map((p, i) => (
-                <li key={i} className="flex gap-3 text-sm">
-                  <span className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-primary/12 text-[11px] font-semibold text-primary">
+                <li
+                  key={i}
+                  className="flex gap-3 rounded-xl border border-border/70 bg-muted/30 p-4 text-sm transition-colors hover:border-primary/30 hover:bg-primary/5"
+                >
+                  <span className="flex size-6 shrink-0 items-center justify-center rounded-lg bg-primary/12 text-[11px] font-semibold text-primary">
                     {i + 1}
                   </span>
-                  <span className="text-muted-foreground">{p}</span>
+                  <span className="leading-relaxed text-foreground/85">{p}</span>
                 </li>
               ))}
             </ul>
-            <div className="mt-6 flex flex-wrap items-center gap-3 border-t border-border pt-4">
+            <div className="mt-6 flex flex-wrap items-center gap-3 border-t border-border pt-5">
               {sessionDone ? (
-                <span className="flex items-center gap-2 text-sm text-emerald-600 dark:text-emerald-400">
+                <span className="flex items-center gap-2 rounded-lg bg-emerald-500/10 px-3 py-2 text-sm font-medium text-emerald-600 dark:text-emerald-400">
                   <CheckCircle2 className="size-4" /> Session finished — answer the questions below
                 </span>
               ) : (
                 <>
-                  <Button onClick={() => setSessionDone(true)}>
+                  <Button size="lg" onClick={() => setSessionDone(true)}>
                     <CheckCircle2 className="size-4" /> Session finished
                   </Button>
                   <span className="text-xs text-muted-foreground">
@@ -380,7 +390,8 @@ function ProgramRunner({
                             "flex items-center gap-3 rounded-lg border px-3 py-2 text-sm transition-colors",
                             state === "correct" && "border-emerald-500/40 bg-emerald-500/10",
                             state === "wrong" && "border-destructive/40 bg-destructive/10",
-                            state === "idle" && "border-transparent bg-muted/40",
+                            state === "idle" &&
+                              "border-border/70 bg-muted/30 hover:border-primary/30 hover:bg-primary/5",
                           )}
                         >
                           <RadioGroupItem value={String(oi)} id={`${q.id}-${oi}`} />
