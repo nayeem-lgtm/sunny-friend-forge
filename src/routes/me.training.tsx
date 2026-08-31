@@ -7,6 +7,7 @@ import {
   CheckCircle2,
   Circle,
   GraduationCap,
+  Lock,
   RotateCcw,
   Sparkles,
   XCircle,
@@ -201,6 +202,11 @@ function ProgramRunner({
   const [index, setIndex] = useState(firstIncomplete);
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [checked, setChecked] = useState(false);
+  const [sessionDone, setSessionDone] = useState(
+    completedSteps.includes(program.steps[firstIncomplete]?.id ?? ""),
+  );
+  const unlockedUpTo = program.steps.findIndex((s) => !completedSteps.includes(s.id));
+  const maxUnlocked = unlockedUpTo === -1 ? program.steps.length - 1 : unlockedUpTo;
 
   const step = program.steps[index];
   if (!step) {
@@ -235,9 +241,14 @@ function ProgramRunner({
   };
 
   const goto = (i: number) => {
+    if (i > maxUnlocked) {
+      toast.error("Finish the current step first");
+      return;
+    }
     setIndex(i);
     setAnswers({});
     setChecked(false);
+    setSessionDone(completedSteps.includes(program.steps[i]?.id ?? ""));
   };
 
   return (
@@ -250,12 +261,15 @@ function ProgramRunner({
         <CardContent className="space-y-1">
           {program.steps.map((s, i) => {
             const isDone = completedSteps.includes(s.id);
+            const locked = i > maxUnlocked;
             return (
               <button
                 key={s.id}
                 onClick={() => goto(i)}
+                disabled={locked}
                 className={cn(
                   "flex w-full items-start gap-2 rounded-lg px-3 py-2 text-left text-sm transition-colors",
+                  locked && "cursor-not-allowed opacity-45",
                   i === index
                     ? "bg-primary/10 font-medium text-primary"
                     : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
@@ -263,6 +277,8 @@ function ProgramRunner({
               >
                 {isDone ? (
                   <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-emerald-500" />
+                ) : locked ? (
+                  <Lock className="mt-0.5 size-4 shrink-0 opacity-50" />
                 ) : (
                   <Circle className="mt-0.5 size-4 shrink-0 opacity-50" />
                 )}
@@ -301,9 +317,26 @@ function ProgramRunner({
                 </li>
               ))}
             </ul>
+            <div className="mt-6 flex flex-wrap items-center gap-3 border-t border-border pt-4">
+              {sessionDone ? (
+                <span className="flex items-center gap-2 text-sm text-emerald-600 dark:text-emerald-400">
+                  <CheckCircle2 className="size-4" /> Session finished — answer the questions below
+                </span>
+              ) : (
+                <>
+                  <Button onClick={() => setSessionDone(true)}>
+                    <CheckCircle2 className="size-4" /> Session finished
+                  </Button>
+                  <span className="text-xs text-muted-foreground">
+                    Read the full guide, then confirm to unlock the Q&amp;A for this step.
+                  </span>
+                </>
+              )}
+            </div>
           </CardContent>
         </Card>
 
+        {sessionDone && (
         <Card>
           <CardHeader>
             <div className="flex items-center gap-2">
@@ -387,7 +420,7 @@ function ProgramRunner({
                 </Button>
                 <Button
                   variant="outline"
-                  disabled={index === program.steps.length - 1}
+                  disabled={index === program.steps.length - 1 || index + 1 > maxUnlocked}
                   onClick={() => goto(index + 1)}
                 >
                   Next <ArrowRight className="size-4" />
@@ -396,6 +429,7 @@ function ProgramRunner({
             </div>
           </CardContent>
         </Card>
+        )}
       </div>
     </div>
   );
