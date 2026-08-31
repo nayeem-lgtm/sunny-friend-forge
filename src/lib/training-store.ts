@@ -98,69 +98,34 @@ function defaultPrograms(): TrainingProgram[] {
         {
           id: "step-company-overview",
           title: "Company Overview",
-          duration: "5 min",
-          summary: "Who Ray Advertising is and what we do.",
+          duration: "8 min",
+          summary: "Company overview, business divisions, mission and vision.",
           points: [],
           cards: [
             {
               type: "prose",
               title: "Company Overview",
               paragraphs: [
-                "Ray Advertising is a company with global operations, specializing in performance marketing, insurance, and e-commerce. Our ecosystem is designed to help leading U.S. businesses scale efficiently while meeting the insurance needs of American consumers.",
-                "As a lead generation and performance marketing company, Ray Advertising connects America's top brands with high-intent customers who are ready to buy. We serve over 5,000 U.S. companies through Pay-Per-Call and lead generation solutions across insurance, home services, finance, and multiple other verticals.",
-                "Through our subsidiary, Policy Bear, we further support American families by providing access to affordable health, auto, and life insurance solutions.",
+                "Ray Advertising is a company with global operations, specializing in performance marketing, insurance, and e-commerce. Our ecosystem is designed to help leading U.S. businesses scale efficiently while meeting the insurance needs of American consumers. As a lead generation and performance marketing company, Ray Advertising connects America's top brands with high-intent customers who are ready to buy. We serve over 5,000 U.S. companies through Pay-Per-Call and lead generation solutions across insurance, home services, finance, and multiple other verticals. Through our subsidiary, Policy Bear, we further support American families by providing access to affordable health, auto, and life insurance solutions.",
               ],
             },
-            { type: "action", label: "Session finished", icon: "arrow-right" },
-          ],
-          questions: [],
-        },
-        {
-          id: "step-business-divisions",
-          title: "Business Divisions",
-          duration: "3 min",
-          summary: "The three divisions that make up our ecosystem.",
-          points: [],
-          cards: [
             {
               type: "divisions",
               title: "Business Divisions",
               items: [
-                { number: "01", label: "Marketing Company", description: "Performance media, Pay-Per-Call and lead generation" },
-                { number: "02", label: "Insurance Agency", description: "Health, auto and life insurance through Policy Bear" },
-                { number: "03", label: "E-Commerce", description: "Direct-to-consumer digital retail" },
+                { number: "01", label: "Marketing Company" },
+                { number: "02", label: "Insurance Agency" },
+                { number: "03", label: "E-Commerce" },
               ],
             },
-            { type: "action", label: "Session finished", icon: "arrow-right" },
-          ],
-          questions: [],
-        },
-        {
-          id: "step-mission",
-          title: "Our Mission",
-          duration: "3 min",
-          summary: "The promise we make to every business that partners with us.",
-          points: [],
-          cards: [
             {
               type: "prose",
               title: "Our Mission",
               paragraphs: [
                 "Our mission is to become a trusted growth partner for businesses seeking to scale by delivering innovative, data-driven performance marketing solutions. We help leading U.S. companies connect with high-intent customers who are ready to take action, driving measurable results, sustainable revenue growth, and long-term business success.",
-                "We are committed to building a reliable performance marketing ecosystem where results — not promises — drive success, powered by technology, data, innovation and strong partnerships.",
+                "We are committed to building a reliable performance marketing ecosystem where results—not promises—drive success, powered by technology, data, innovation and strong partnerships.",
               ],
             },
-            { type: "action", label: "Session finished", icon: "arrow-right" },
-          ],
-          questions: [],
-        },
-        {
-          id: "step-vision",
-          title: "Our Vision",
-          duration: "3 min",
-          summary: "The impact we want to create beyond revenue.",
-          points: [],
-          cards: [
             {
               type: "prose",
               title: "Our Vision",
@@ -174,6 +139,7 @@ function defaultPrograms(): TrainingProgram[] {
           ],
           questions: [],
         },
+
         {
           id: "step-core-services",
           title: "Core Services",
