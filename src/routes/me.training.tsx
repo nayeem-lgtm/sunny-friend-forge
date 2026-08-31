@@ -77,7 +77,7 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   layers: Layers,
   home: Home,
   landmark: Landmark,
-  heart: HeartPulse,
+  "heart-pulse": HeartPulse,
   "file-plus": FilePlus2,
   "arrow-right": ArrowRightCircle,
   "book-open": BookOpenText,
