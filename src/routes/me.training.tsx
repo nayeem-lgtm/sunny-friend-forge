@@ -317,9 +317,26 @@ function ProgramRunner({
                 </li>
               ))}
             </ul>
+            <div className="mt-6 flex flex-wrap items-center gap-3 border-t border-border pt-4">
+              {sessionDone ? (
+                <span className="flex items-center gap-2 text-sm text-emerald-600 dark:text-emerald-400">
+                  <CheckCircle2 className="size-4" /> Session finished — answer the questions below
+                </span>
+              ) : (
+                <>
+                  <Button onClick={() => setSessionDone(true)}>
+                    <CheckCircle2 className="size-4" /> Session finished
+                  </Button>
+                  <span className="text-xs text-muted-foreground">
+                    Read the full guide, then confirm to unlock the Q&amp;A for this step.
+                  </span>
+                </>
+              )}
+            </div>
           </CardContent>
         </Card>
 
+        {sessionDone && (
         <Card>
           <CardHeader>
             <div className="flex items-center gap-2">
