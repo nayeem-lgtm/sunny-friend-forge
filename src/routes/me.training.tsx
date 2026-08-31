@@ -390,7 +390,8 @@ function ProgramRunner({
                             "flex items-center gap-3 rounded-lg border px-3 py-2 text-sm transition-colors",
                             state === "correct" && "border-emerald-500/40 bg-emerald-500/10",
                             state === "wrong" && "border-destructive/40 bg-destructive/10",
-                            state === "idle" && "border-transparent bg-muted/40",
+                            state === "idle" &&
+                              "border-border/70 bg-muted/30 hover:border-primary/30 hover:bg-primary/5",
                           )}
                         >
                           <RadioGroupItem value={String(oi)} id={`${q.id}-${oi}`} />
