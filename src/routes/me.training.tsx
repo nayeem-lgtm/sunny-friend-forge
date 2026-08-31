@@ -62,6 +62,7 @@ import {
 } from "@/lib/training-store";
 import { cn } from "@/lib/utils";
 import founderAsset from "@/assets/founder-ripon-kumar.png.asset.json";
+import offerVaultBadge from "@/assets/offervault-winner-badge.png.asset.json";
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   zap: Zap,
@@ -596,6 +597,8 @@ function BentoGuide({
             return <TableCard key={i} card={card} />;
           case "checklist":
             return <ChecklistCard key={i} card={card} />;
+          case "image":
+            return <ImageCard key={i} card={card} />;
           case "action":
             return (
               <ActionCard
