@@ -860,38 +860,43 @@ function VerticalsCard({
           </p>
         )}
 
-        <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+        <div className="mt-8 grid auto-rows-fr gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {card.items.map((item) => {
             const Icon = iconMap[item.icon ?? ""] ?? Layers;
             return (
               <div
                 key={item.number}
-                className="group relative flex flex-col overflow-hidden rounded-2xl border border-primary/25 bg-primary/[0.06] p-5 pb-14 transition-all hover:-translate-y-1 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10"
+                className="group flex h-full flex-col rounded-2xl border border-border/70 bg-background/60 p-5 transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md hover:shadow-primary/5"
               >
-                <span className="pointer-events-none absolute -bottom-2 right-2 select-none text-[76px] font-bold leading-none text-primary/10">
-                  {item.number}
-                </span>
-                <p className="relative text-base font-semibold text-card-foreground">
-                  {item.label}
-                </p>
-                <ul className="relative mt-3 space-y-1.5">
+                <div className="flex items-center gap-3 border-b border-border/60 pb-4">
+                  <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/12 text-primary ring-1 ring-primary/20">
+                    <Icon className="size-5" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-primary/70">
+                      Vertical {item.number.padStart(2, "0")}
+                    </p>
+                    <p className="truncate text-base font-semibold text-card-foreground">
+                      {item.label}
+                    </p>
+                  </div>
+                </div>
+                <ul className="mt-4 space-y-2">
                   {item.points.map((p) => (
                     <li
                       key={p}
-                      className="flex items-start gap-2 text-sm leading-6 text-muted-foreground"
+                      className="flex items-start gap-2.5 text-sm leading-6 text-muted-foreground"
                     >
                       <span className="mt-[9px] size-1.5 shrink-0 rounded-full bg-primary/60" />
                       <span>{p}</span>
                     </li>
                   ))}
                 </ul>
-                <div className="absolute bottom-4 left-5 flex size-10 items-center justify-center rounded-xl bg-primary/15 text-primary ring-1 ring-primary/25">
-                  <Icon className="size-5" />
-                </div>
               </div>
             );
           })}
         </div>
+
       </div>
     </div>
   );
