@@ -29,6 +29,17 @@ export type TrainingCard =
         icon?: string;
       }[];
     }
+  | {
+      type: "verticals";
+      title?: string;
+      intro?: string;
+      items: {
+        number: string;
+        label: string;
+        icon?: string;
+        points: string[];
+      }[];
+    }
   | { type: "info"; title: string; body: string; icon?: string; badge?: string }
   | { type: "action"; label: string; icon?: string };
 
