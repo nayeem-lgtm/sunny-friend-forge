@@ -97,7 +97,7 @@ export const categoryTone: Record<TrainingCategory, string> = {
   Tools: "bg-violet-500/15 text-violet-600 ring-violet-500/30 dark:text-violet-400",
 };
 
-const PROGRAMS_KEY = "omniwork.training.programs.v13";
+const PROGRAMS_KEY = "omniwork.training.programs.v14";
 const PROGRESS_KEY = "omniwork.training.progress.v1";
 const EVENT = "omniwork:training";
 
