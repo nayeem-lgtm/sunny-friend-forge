@@ -727,7 +727,7 @@ function ActionCard({
           <CheckCircle2 className="size-6" />
         </div>
         <div className="text-left">
-          <p className="text-base font-semibold text-primary-foreground">{card.label}</p>
+          <p className="text-base font-semibold text-card-foreground">{card.label}</p>
           <p className="text-xs text-muted-foreground">
             {disabled ? "Already finished" : "Click to mark this step complete"}
           </p>
