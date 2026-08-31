@@ -226,20 +226,37 @@ function defaultPrograms(): TrainingProgram[] {
               ],
             },
             {
-              type: "prose",
+              type: "flow",
               title: "The Ray Advertising Advantage",
-              paragraphs: [
-                "We build the bridge between consumer demand and business growth.",
-                "Consumers looking for help",
-                "↓",
-                "Ray Advertising",
-                "Media Buying + Lead Generation + Pay-Per-Call",
-                "↓",
-                "Targeting & Qualification",
-                "Intent • Verification • Quality • Fraud Monitoring • Campaign Requirements",
-                "↓",
-                "U.S. Businesses",
-                "More qualified customer opportunities",
+              intro: "We build the bridge between consumer demand and business growth.",
+              stages: [
+                {
+                  label: "Consumers looking for help",
+                  sublabel: "Active demand across digital channels",
+                  icon: "users",
+                },
+                {
+                  label: "Ray Advertising",
+                  sublabel: "Media Buying + Lead Generation + Pay-Per-Call",
+                  tags: ["Media Buying", "Lead Generation", "Pay-Per-Call"],
+                  icon: "zap",
+                },
+                {
+                  label: "Targeting & Qualification",
+                  tags: [
+                    "Intent",
+                    "Verification",
+                    "Quality",
+                    "Fraud Monitoring",
+                    "Campaign Requirements",
+                  ],
+                  icon: "shield",
+                },
+                {
+                  label: "U.S. Businesses",
+                  sublabel: "More qualified customer opportunities",
+                  icon: "trending-up",
+                },
               ],
             },
             {
