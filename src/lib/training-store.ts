@@ -10,6 +10,7 @@ export type QuizQuestion = {
 };
 
 export type TrainingCard =
+  | { type: "prose"; title?: string; paragraphs: string[] }
   | { type: "hero"; title: string; body: string; icon?: string }
   | { type: "stat"; value: string; label: string; sublabel?: string }
   | {
