@@ -11,6 +11,7 @@ import {
   Video,
   Megaphone,
   Wallet,
+  GraduationCap,
   UserRound,
   type LucideIcon,
 } from "lucide-react";
@@ -67,6 +68,7 @@ export const employeeNav: EmployeeNavItem[] = [
   { title: "Holiday Calendar", url: "/me/holidays", icon: CalendarDays },
   { title: "Workboard", url: "/me/board", icon: FolderKanban },
   { title: "My KPI", url: "/me/kpi", icon: Activity },
+  { title: "Training & Orientation", url: "/me/training", icon: GraduationCap },
   { title: "Omni Chat By Ray", url: "/me/chat", icon: MessagesSquare },
   { title: "Meetings", url: "/me/meetings", icon: Video },
   { title: "Announcements", url: "/me/announcements", icon: Megaphone },
