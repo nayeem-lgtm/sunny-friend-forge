@@ -915,31 +915,34 @@ function FounderCard({
     <div className="relative overflow-hidden rounded-2xl border border-border bg-card">
       <div className="pointer-events-none absolute -right-24 -top-28 size-80 rounded-full bg-primary/10 blur-3xl" />
       <div className="pointer-events-none absolute -bottom-28 -left-24 size-80 rounded-full bg-primary/5 blur-3xl" />
-      <div className="relative grid gap-8 p-8 lg:grid-cols-[1.35fr_1fr] lg:gap-10">
-        <div className="min-w-0">
+      <div className="relative grid items-stretch gap-8 p-8 lg:grid-cols-[2fr_1fr] lg:gap-10">
+        <div className="flex min-w-0 flex-col justify-center">
           {card.eyebrow && (
             <p className="text-[11px] font-semibold uppercase tracking-[0.35em] text-primary">
               {card.eyebrow}
             </p>
           )}
-          <h3 className="mt-4 text-3xl font-bold uppercase leading-tight tracking-tight text-card-foreground sm:text-4xl">
+          <h3 className="mt-4 text-2xl font-bold uppercase leading-tight tracking-tight text-card-foreground sm:text-[1.625rem] lg:text-[1.75rem]">
             {card.title}
           </h3>
           <div className="mt-6 space-y-4">
             {card.paragraphs.map((p, i) => (
-              <p key={i} className="text-[15px] leading-7 text-muted-foreground">
+              <p
+                key={i}
+                className="text-pretty text-[15px] leading-7 text-muted-foreground"
+              >
                 {p}
               </p>
             ))}
           </div>
         </div>
 
-        <div className="relative flex items-end justify-center">
-          <div className="relative w-full max-w-sm overflow-hidden rounded-2xl bg-primary/5">
+        <div className="relative flex min-h-[420px] justify-center lg:min-h-full">
+          <div className="relative h-full w-full max-w-sm overflow-hidden rounded-2xl bg-primary/5">
             <img
               src={founderAsset.url}
               alt="Ripon Kumar, Founder and CEO of Ray Advertising & Policy Bear"
-              className="h-full w-full object-cover"
+              className="h-full w-full object-cover object-center"
               loading="lazy"
             />
             <div className="absolute inset-x-4 bottom-4 rounded-xl border border-border/60 bg-background/80 px-4 py-3 backdrop-blur-md">
