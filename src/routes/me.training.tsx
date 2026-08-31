@@ -701,6 +701,52 @@ function ProseCard({ card }: { card: Extract<TrainingCard, { type: "prose" }> })
   );
 }
 
+function TableCard({ card }: { card: Extract<TrainingCard, { type: "table" }> }) {
+  return (
+    <div className="rounded-2xl border border-border bg-card p-8">
+      {card.title && (
+        <h3 className="text-2xl font-semibold tracking-tight text-card-foreground">
+          {card.title}
+        </h3>
+      )}
+      {card.intro && (
+        <p className="mt-2 max-w-2xl text-[15px] leading-7 text-muted-foreground">
+          {card.intro}
+        </p>
+      )}
+      <div className="mt-5 overflow-hidden rounded-xl border border-border/70">
+        <table className="w-full text-sm">
+          <thead className="bg-muted/50 text-left">
+            <tr>
+              {card.headers.map((h, idx) => (
+                <th
+                  key={idx}
+                  className="px-4 py-3 font-semibold text-card-foreground"
+                >
+                  {h}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-border/70">
+            {card.rows.map((row, rIdx) => (
+              <tr key={rIdx} className="bg-background/40">
+                {row.map((cell, cIdx) => (
+                  <td
+                    key={cIdx}
+                    className="px-4 py-3 text-muted-foreground"
+                  >
+                    {cell}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
 
 function HeroCard({ card }: { card: Extract<TrainingCard, { type: "hero" }> }) {
   const Icon = iconMap[card.icon ?? ""] ?? Zap;
