@@ -49,6 +49,13 @@ export type TrainingCard =
       role: string;
     }
   | { type: "info"; title: string; body: string; icon?: string; badge?: string }
+  | {
+      type: "table";
+      title?: string;
+      intro?: string;
+      headers: string[];
+      rows: string[][];
+    }
   | { type: "action"; label: string; icon?: string };
 
 export type TrainingStep = {
