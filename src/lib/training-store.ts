@@ -18,6 +18,17 @@ export type TrainingCard =
       title?: string;
       items: { number: string; label: string; description?: string }[];
     }
+  | {
+      type: "flow";
+      title?: string;
+      intro?: string;
+      stages: {
+        label: string;
+        sublabel?: string;
+        tags?: string[];
+        icon?: string;
+      }[];
+    }
   | { type: "info"; title: string; body: string; icon?: string; badge?: string }
   | { type: "action"; label: string; icon?: string };
 
