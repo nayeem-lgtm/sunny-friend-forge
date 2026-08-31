@@ -915,14 +915,14 @@ function FounderCard({
     <div className="relative overflow-hidden rounded-2xl border border-border bg-card">
       <div className="pointer-events-none absolute -right-24 -top-28 size-80 rounded-full bg-primary/10 blur-3xl" />
       <div className="pointer-events-none absolute -bottom-28 -left-24 size-80 rounded-full bg-primary/5 blur-3xl" />
-      <div className="relative grid items-stretch gap-8 p-8 lg:grid-cols-[2fr_1fr] lg:gap-10">
+      <div className="relative grid items-stretch gap-8 p-8 lg:grid-cols-[1fr_1fr] lg:gap-10">
         <div className="flex min-w-0 flex-col justify-center">
           {card.eyebrow && (
             <p className="text-[11px] font-semibold uppercase tracking-[0.35em] text-primary">
               {card.eyebrow}
             </p>
           )}
-          <h3 className="mt-4 text-2xl font-bold uppercase leading-tight tracking-tight text-card-foreground sm:text-[1.625rem] lg:text-[1.75rem]">
+          <h3 className="mt-4 text-2xl font-bold uppercase leading-tight tracking-tight text-card-foreground sm:text-[1.5rem] lg:text-[1.625rem]">
             {card.title}
           </h3>
           <div className="mt-6 space-y-4">
