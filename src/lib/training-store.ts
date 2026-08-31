@@ -497,6 +497,120 @@ function defaultPrograms(): TrainingProgram[] {
           ],
         },
 
+        {
+          id: "step-leave-policy",
+          title: "Employee Leave Policy",
+          duration: "10 min",
+          summary:
+            "PTO, probation rules, annual entitlement, carryover and how to request leave.",
+          points: [],
+          cards: [
+            {
+              type: "prose",
+              title: "Purpose & Scope",
+              paragraphs: [
+                "This policy establishes the leave entitlements for all employees of RAY Advertising. It is designed to be competitive, straightforward to administer, and compliant with applicable laws across all countries where RAY employees are located.",
+                "RAY operates a single unified Paid Time Off (PTO) policy for all employees. There are no separate sick, vacation or personal leave buckets — all paid time off comes from one combined PTO balance.",
+              ],
+            },
+            {
+              type: "prose",
+              title: "How PTO Works",
+              paragraphs: [
+                "PTO is a single bank of paid days that employees can use for any reason, including vacation, personal errands, family obligations, illness, medical appointments or mental health days.",
+                "Employees do not need to specify or justify the reason for taking PTO. Whether it is a sick day or a holiday trip, it all comes from the same balance, keeping the policy simple and flexible.",
+              ],
+            },
+            {
+              type: "prose",
+              title: "Eligibility & Probationary Period",
+              paragraphs: [
+                "All permanent full-time and part-time employees are eligible for PTO, subject to the conditions below.",
+                "New employees are subject to a 180-day probationary period from their date of hire. During probation, no PTO may be taken even though days accrue. Accrued days are held and only become available upon successful completion of probation.",
+                "Any time off taken during the probationary period will be treated as unpaid leave, subject to manager and HR approval.",
+                "After probation, employees are immediately eligible to use their accrued PTO balance.",
+              ],
+            },
+            {
+              type: "table",
+              title: "PTO Entitlement",
+              intro: "Annual PTO grows with tenure at RAY.",
+              headers: ["Years of Service", "Annual PTO Days", "Leave Limitation"],
+              rows: [
+                ["Year 1 (first 12 months)", "12 days", "1 day per month"],
+                ["Year 2 – Year 3", "15 days", "Max 2 days per month"],
+                ["Year 4 and beyond", "18 days", "Max 2 days per month"],
+              ],
+            },
+            {
+              type: "info",
+              title: "Carryover",
+              body: "There is no carryover. All unused PTO expires at the end of the calendar year. Employees are encouraged to plan and use their PTO balance before December 31st.",
+              icon: "calendar",
+              badge: "Use it or lose it",
+            },
+            {
+              type: "prose",
+              title: "Requesting PTO or Unpaid Leave",
+              paragraphs: [
+                "Submit a leave request via the ERP at least 24 hours in advance for planned leave.",
+                "Manager approval is required and subject to business needs and team coverage. PTO requests during high-volume periods (e.g., campaign launches, Q4) may be limited at manager discretion.",
+                "Until your leave is approved or denied, do not intentionally take the day off — doing so may result in a penalty of 2 days.",
+                "Attach supporting documents and a proper explanation in the leave application.",
+                "Select handover colleagues if applicable so work continues smoothly while you are away.",
+              ],
+            },
+            { type: "action", label: "Session finished", icon: "arrow-right" },
+          ],
+          questions: [
+            {
+              id: "q-leave-policy-1",
+              prompt: "Can paid PTO be taken during the 180-day probationary period?",
+              options: [
+                "Yes, as soon as it accrues",
+                "No, but days accrue and become available after probation",
+                "Only with manager approval",
+                "Only for medical emergencies",
+              ],
+              answer: 1,
+              explanation:
+                "PTO accrues during probation but cannot be taken until the probationary period is successfully completed.",
+            },
+            {
+              id: "q-leave-policy-2",
+              prompt: "What is the maximum annual PTO for an employee in Year 4 and beyond?",
+              options: ["12 days", "15 days", "18 days", "20 days"],
+              answer: 2,
+              explanation: "Year 4 and beyond employees receive 18 days of PTO per year.",
+            },
+            {
+              id: "q-leave-policy-3",
+              prompt: "What happens to unused PTO at the end of the year?",
+              options: [
+                "It carries over to next year",
+                "It is paid out",
+                "It expires — there is no carryover",
+                "It converts to sick leave",
+              ],
+              answer: 2,
+              explanation:
+                "All unused PTO expires on December 31st; employees should plan to use it before year-end.",
+            },
+            {
+              id: "q-leave-policy-4",
+              prompt: "How far in advance should planned PTO be submitted?",
+              options: [
+                "No advance notice needed",
+                "At least 24 hours",
+                "At least 1 week",
+                "At least 1 month",
+              ],
+              answer: 1,
+              explanation:
+                "Planned leave requests should be submitted via the ERP at least 24 hours in advance.",
+            },
+          ],
+        },
 
 
         {
