@@ -75,7 +75,7 @@ export const categoryTone: Record<TrainingCategory, string> = {
   Tools: "bg-violet-500/15 text-violet-600 ring-violet-500/30 dark:text-violet-400",
 };
 
-const PROGRAMS_KEY = "omniwork.training.programs.v10";
+const PROGRAMS_KEY = "omniwork.training.programs.v11";
 const PROGRESS_KEY = "omniwork.training.progress.v1";
 const EVENT = "omniwork:training";
 
@@ -142,6 +142,50 @@ function defaultPrograms(): TrainingProgram[] {
 
         {
           id: "step-core-services",
+          title: "Our Core Services",
+          duration: "7 min",
+          summary: "The three services that drive performance for our clients.",
+          points: [],
+          cards: [
+            {
+              type: "prose",
+              title: "Our Core Services",
+              paragraphs: [
+                "Ray Advertising delivers performance-driven marketing solutions through three core service lines: Media Buying, Lead Generation and Pay-Per-Call. Each service is built to connect U.S. businesses with high-intent customers and deliver measurable, profitable results.",
+              ],
+            },
+            {
+              type: "prose",
+              title: "Media Buying",
+              paragraphs: [
+                "Performance-driven advertising that connects businesses with high-intent customers.",
+                "Ray Advertising's expert media buying team manages advertising campaigns across leading digital channels to reach potential customers who are actively searching for products and services. We combine strategic targeting, creative testing, audience analysis, and continuous campaign optimization to maximize performance and generate measurable results for U.S. businesses.",
+              ],
+            },
+            {
+              type: "prose",
+              title: "Lead Generation",
+              paragraphs: [
+                "Finding the right customers and turning their interest into actionable leads.",
+                "Our lead generation solutions connect businesses with consumers who are actively interested in their products or services. We use targeted digital marketing strategies to attract high-intent prospects, capture their information with appropriate consent, and deliver qualified leads to businesses that are ready to engage with potential customers.",
+              ],
+            },
+            {
+              type: "prose",
+              title: "Pay-Per-Call",
+              paragraphs: [
+                "Connecting businesses with customers through high-intent phone calls.",
+                "Pay-Per-Call is a performance marketing model where businesses pay for qualified customer calls rather than simply paying for advertising exposure or clicks. Ray Advertising connects businesses with consumers who are actively seeking a specific product or service and are ready to speak with a representative.",
+                "We focus on delivering relevant, high-intent calls based on campaign requirements, helping businesses turn customer demand into measurable opportunities and revenue.",
+              ],
+            },
+            { type: "action", label: "Session finished", icon: "arrow-right" },
+          ],
+          questions: [],
+        },
+
+        {
+          id: "step-value-chain",
           title: "How Ray Advertising Helps U.S. Companies Get Real Customers",
           duration: "10 min",
           summary: "The complete value chain from consumer demand to qualified business opportunities.",
