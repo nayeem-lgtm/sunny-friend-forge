@@ -737,27 +737,21 @@ function ActionCard({
       onClick={onClick}
       disabled={disabled}
       className={cn(
-        "group relative col-span-12 row-span-1 flex items-center justify-between overflow-hidden rounded-3xl border border-primary/30 bg-primary/10 p-5 transition-all md:col-span-5",
-        disabled
-          ? "cursor-default opacity-80"
-          : "hover:border-primary/50 hover:bg-primary/15 active:scale-[0.99]"
+        "flex items-center justify-between gap-4 rounded-2xl border border-primary/30 bg-primary/10 px-6 py-4 text-left transition-colors",
+        disabled ? "cursor-default opacity-70" : "hover:bg-primary/15"
       )}
     >
-      <div className="absolute -right-6 -top-6 size-32 rounded-full bg-primary/20 blur-2xl transition-all duration-700 group-hover:scale-110" />
-      <div className="relative flex items-center gap-3">
-        <div className="flex size-12 items-center justify-center rounded-2xl bg-primary/20 text-primary">
-          <CheckCircle2 className="size-6" />
-        </div>
-        <div className="text-left">
-          <p className="text-base font-semibold text-card-foreground">{card.label}</p>
+      <div className="flex items-center gap-3">
+        <CheckCircle2 className="size-5 text-primary" />
+        <div>
+          <p className="text-sm font-semibold text-card-foreground">{card.label}</p>
           <p className="text-xs text-muted-foreground">
             {disabled ? "Already finished" : "Click to mark this step complete"}
           </p>
         </div>
       </div>
-      <div className="relative flex size-10 items-center justify-center rounded-full bg-primary/20 text-primary transition-transform group-hover:translate-x-1">
-        <Icon className="size-5" />
-      </div>
+      <Icon className="size-5 text-primary" />
     </button>
   );
 }
+
