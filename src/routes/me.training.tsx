@@ -575,6 +575,8 @@ function BentoGuide({
             return <StatCard key={i} card={card} />;
           case "divisions":
             return <DivisionsCard key={i} card={card} />;
+          case "flow":
+            return <FlowCard key={i} card={card} />;
           case "info":
             return <InfoCard key={i} card={card} />;
           case "action":
