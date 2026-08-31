@@ -75,7 +75,7 @@ export const categoryTone: Record<TrainingCategory, string> = {
   Tools: "bg-violet-500/15 text-violet-600 ring-violet-500/30 dark:text-violet-400",
 };
 
-const PROGRAMS_KEY = "omniwork.training.programs.v9";
+const PROGRAMS_KEY = "omniwork.training.programs.v10";
 const PROGRESS_KEY = "omniwork.training.progress.v1";
 const EVENT = "omniwork:training";
 
@@ -142,41 +142,69 @@ function defaultPrograms(): TrainingProgram[] {
 
         {
           id: "step-core-services",
-          title: "Our Core Services",
-          duration: "7 min",
-          summary: "The three services that drive performance for our clients.",
+          title: "How Ray Advertising Helps U.S. Companies Get Real Customers",
+          duration: "10 min",
+          summary: "The complete value chain from consumer demand to qualified business opportunities.",
           points: [],
           cards: [
             {
               type: "prose",
-              title: "Our Core Services",
+              title: "How Ray Advertising Helps U.S. Companies Get Real Customers",
               paragraphs: [
-                "Ray Advertising delivers performance-driven marketing solutions through three core service lines: Media Buying, Lead Generation and Pay-Per-Call. Each service is built to connect U.S. businesses with high-intent customers and deliver measurable, profitable results.",
+                "Ray Advertising combines media buying, lead generation, and Pay-Per-Call solutions to help U.S. businesses connect with consumers who are actively looking for their products and services.",
+                "We don't simply generate traffic—we focus on finding high-intent consumers, validating their interest, and connecting them with businesses that are ready to serve them.",
               ],
             },
             {
               type: "prose",
-              title: "Media Buying",
+              title: "1. Media Buying — We Find the Right Customers",
               paragraphs: [
-                "Performance-driven advertising that connects businesses with high-intent customers.",
-                "Ray Advertising's expert media buying team manages advertising campaigns across leading digital channels to reach potential customers who are actively searching for products and services. We combine strategic targeting, creative testing, audience analysis, and continuous campaign optimization to maximize performance and generate measurable results for U.S. businesses.",
+                "Our in-house media buying team runs targeted advertising campaigns across digital channels to reach consumers who are actively searching for solutions.",
+                "Through audience targeting, creative testing, campaign optimization, and performance analysis, we continuously work to identify high-intent traffic that has a genuine potential to convert into customers.",
+                "Businesses get: High-intent consumers → Targeted traffic → More opportunities",
               ],
             },
             {
               type: "prose",
-              title: "Lead Generation",
+              title: "2. Lead Generation — We Turn Interest Into Qualified Leads",
               paragraphs: [
-                "Finding the right customers and turning their interest into actionable leads.",
-                "Our lead generation solutions connect businesses with consumers who are actively interested in their products or services. We use targeted digital marketing strategies to attract high-intent prospects, capture their information with appropriate consent, and deliver qualified leads to businesses that are ready to engage with potential customers.",
+                "Once consumers show interest, our lead generation solutions help capture that demand and turn it into actionable leads.",
+                "We focus on connecting businesses with consumers who have demonstrated interest in a specific product or service. Leads can be filtered and validated against campaign requirements before being delivered to the appropriate business.",
+                "Businesses get: Consumer interest → Lead capture → Verification → Qualified leads",
               ],
             },
             {
               type: "prose",
-              title: "Pay-Per-Call",
+              title: "3. Pay-Per-Call — We Connect Businesses With Ready-to-Talk Customers",
               paragraphs: [
-                "Connecting businesses with customers through high-intent phone calls.",
-                "Pay-Per-Call is a performance marketing model where businesses pay for qualified customer calls rather than simply paying for advertising exposure or clicks. Ray Advertising connects businesses with consumers who are actively seeking a specific product or service and are ready to speak with a representative.",
-                "We focus on delivering relevant, high-intent calls based on campaign requirements, helping businesses turn customer demand into measurable opportunities and revenue.",
+                "For businesses where a phone conversation is the most valuable conversion, Ray Advertising connects high-intent consumers directly with businesses through Pay-Per-Call campaigns.",
+                "Our call qualification process can evaluate factors such as intent, duration, geographic eligibility, and potential fraud signals according to campaign requirements. This helps businesses focus their resources on calls that meet their defined criteria.",
+                "Businesses get: High-intent consumer → Qualified call → Business representative → Sales opportunity",
+              ],
+            },
+            {
+              type: "prose",
+              title: "The Ray Advertising Advantage",
+              paragraphs: [
+                "We build the bridge between consumer demand and business growth.",
+                "Consumers looking for help",
+                "↓",
+                "Ray Advertising",
+                "Media Buying + Lead Generation + Pay-Per-Call",
+                "↓",
+                "Targeting & Qualification",
+                "Intent • Verification • Quality • Fraud Monitoring • Campaign Requirements",
+                "↓",
+                "U.S. Businesses",
+                "More qualified customer opportunities",
+              ],
+            },
+            {
+              type: "prose",
+              title: "Our goal is simple:",
+              paragraphs: [
+                "Find the right people. Qualify the opportunity. Connect them with the right business.",
+                "This is stronger than saying “we generate leads” because it explains the complete value chain of Ray Advertising—from acquiring demand → qualifying it → delivering it to U.S. businesses.",
               ],
             },
             { type: "action", label: "Session finished", icon: "arrow-right" },
