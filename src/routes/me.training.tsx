@@ -201,6 +201,11 @@ function ProgramRunner({
   const [index, setIndex] = useState(firstIncomplete);
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [checked, setChecked] = useState(false);
+  const [sessionDone, setSessionDone] = useState(
+    completedSteps.includes(program.steps[firstIncomplete]?.id ?? ""),
+  );
+  const unlockedUpTo = program.steps.findIndex((s) => !completedSteps.includes(s.id));
+  const maxUnlocked = unlockedUpTo === -1 ? program.steps.length - 1 : unlockedUpTo;
 
   const step = program.steps[index];
   if (!step) {
