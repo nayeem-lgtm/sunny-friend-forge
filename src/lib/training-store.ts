@@ -125,7 +125,7 @@ export const categoryTone: Record<TrainingCategory, string> = {
   Tools: "bg-violet-500/15 text-violet-600 ring-violet-500/30 dark:text-violet-400",
 };
 
-const PROGRAMS_KEY = "omniwork.training.programs.v19";
+const PROGRAMS_KEY = "omniwork.training.programs.v20";
 const PROGRESS_KEY = "omniwork.training.progress.v1";
 const EVENT = "omniwork:training";
 
@@ -480,34 +480,7 @@ function defaultPrograms(): TrainingProgram[] {
             },
             { type: "action", label: "Session finished", icon: "arrow-right" },
           ],
-          questions: [
-            {
-              id: "q-office-hours-1",
-              prompt: "What is the correct order of attendance actions?",
-              options: [
-                "Sign In → Break Out → Break In → Sign Out",
-                "Sign In → Break In → Break Out → Sign Out",
-                "Break In → Sign In → Sign Out → Break Out",
-                "Sign Out → Break In → Break Out → Sign In",
-              ],
-              answer: 1,
-              explanation:
-                "The correct flow is Sign In, Break In, Break Out, Sign Out.",
-            },
-            {
-              id: "q-office-hours-2",
-              prompt: "What happens if you accumulate 3 late attendance logs?",
-              options: [
-                "It counts as 1 day absent",
-                "Nothing",
-                "You get a bonus deduction",
-                "It is automatically corrected",
-              ],
-              answer: 0,
-              explanation:
-                "3 late logs are counted as 1 absent day and affect both KPI and payroll.",
-            },
-          ],
+          questions: [],
         },
 
         {
