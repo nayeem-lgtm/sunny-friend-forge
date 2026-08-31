@@ -10,6 +10,7 @@ export type QuizQuestion = {
 };
 
 export type TrainingCard =
+  | { type: "prose"; title?: string; paragraphs: string[] }
   | { type: "hero"; title: string; body: string; icon?: string }
   | { type: "stat"; value: string; label: string; sublabel?: string }
   | {
@@ -74,7 +75,7 @@ export const categoryTone: Record<TrainingCategory, string> = {
   Tools: "bg-violet-500/15 text-violet-600 ring-violet-500/30 dark:text-violet-400",
 };
 
-const PROGRAMS_KEY = "omniwork.training.programs.v6";
+const PROGRAMS_KEY = "omniwork.training.programs.v7";
 const PROGRESS_KEY = "omniwork.training.progress.v1";
 const EVENT = "omniwork:training";
 
@@ -97,44 +98,38 @@ function defaultPrograms(): TrainingProgram[] {
         {
           id: "step-company-overview",
           title: "Company Overview",
-          duration: "8 min",
-          summary: "Who Ray Advertising is, what we do and the divisions that make up our ecosystem.",
-          points: [
-            "Ray Advertising is a USA-based company with global operations, specializing in performance marketing, insurance and e-commerce.",
-            "Our ecosystem helps leading U.S. businesses scale efficiently while meeting the insurance needs of American consumers.",
-            "As a lead generation and performance marketing company, we connect America's top brands with high-intent customers ready to buy.",
-            "We serve over 5,000 U.S. companies through Pay-Per-Call and lead generation solutions across insurance, home services, finance and other verticals.",
-            "Through our subsidiary Policy Bear, we support American families with affordable health, auto and life insurance solutions.",
-            "Business divisions: 1) Marketing Company, 2) Insurance Agency, 3) E-Commerce.",
-          ],
+          duration: "5 min",
+          summary: "Who Ray Advertising is and what we do.",
+          points: [],
           cards: [
             {
-              type: "hero",
-              title: "Performance Marketing at Global Scale",
-              body: "Ray Advertising is a USA-based powerhouse dedicated to data-driven marketing results and innovative brand scaling strategy.",
-              icon: "zap",
-            },
-            {
-              type: "stat",
-              value: "5,000+",
-              label: "U.S. Based Clients",
-              sublabel: "Trusted across 50 states for performance reliability",
-            },
-            {
-              type: "divisions",
-              title: "Three Strategic Business Divisions",
-              items: [
-                { number: "01", label: "Marketing Company", description: "Performance media & lead generation" },
-                { number: "02", label: "Insurance Agency", description: "Protection & policy solutions" },
-                { number: "03", label: "E-Commerce", description: "Direct-to-consumer digital retail" },
+              type: "prose",
+              title: "Company Overview",
+              paragraphs: [
+                "Ray Advertising is a company with global operations, specializing in performance marketing, insurance, and e-commerce. Our ecosystem is designed to help leading U.S. businesses scale efficiently while meeting the insurance needs of American consumers.",
+                "As a lead generation and performance marketing company, Ray Advertising connects America's top brands with high-intent customers who are ready to buy. We serve over 5,000 U.S. companies through Pay-Per-Call and lead generation solutions across insurance, home services, finance, and multiple other verticals.",
+                "Through our subsidiary, Policy Bear, we further support American families by providing access to affordable health, auto, and life insurance solutions.",
               ],
             },
+            { type: "action", label: "Session finished", icon: "arrow-right" },
+          ],
+          questions: [],
+        },
+        {
+          id: "step-business-divisions",
+          title: "Business Divisions",
+          duration: "3 min",
+          summary: "The three divisions that make up our ecosystem.",
+          points: [],
+          cards: [
             {
-              type: "info",
-              title: "Policy Bear",
-              body: "Our specialized subsidiary anchors our insurance efforts, supporting American families with affordable health, auto and life coverage.",
-              icon: "shield",
-              badge: "Official Brand",
+              type: "divisions",
+              title: "Business Divisions",
+              items: [
+                { number: "01", label: "Marketing Company", description: "Performance media, Pay-Per-Call and lead generation" },
+                { number: "02", label: "Insurance Agency", description: "Health, auto and life insurance through Policy Bear" },
+                { number: "03", label: "E-Commerce", description: "Direct-to-consumer digital retail" },
+              ],
             },
             { type: "action", label: "Session finished", icon: "arrow-right" },
           ],
@@ -143,28 +138,17 @@ function defaultPrograms(): TrainingProgram[] {
         {
           id: "step-mission",
           title: "Our Mission",
-          duration: "5 min",
+          duration: "3 min",
           summary: "The promise we make to every business that partners with us.",
           points: [],
           cards: [
             {
-              type: "hero",
-              title: "A trusted growth partner for businesses that want to scale",
-              body: "We deliver innovative, data-driven performance marketing solutions that connect leading U.S. companies with high-intent customers ready to take action — driving measurable results, sustainable revenue growth and long-term business success.",
-              icon: "target",
-            },
-            {
-              type: "stat",
-              value: "Results",
-              label: "Not promises",
-              sublabel: "Every engagement is judged on measurable outcomes",
-            },
-            {
-              type: "info",
-              title: "A reliable performance ecosystem",
-              body: "We are committed to building a performance marketing ecosystem where results — not promises — drive success, powered by technology, data, innovation and strong partnerships.",
-              icon: "trending-up",
-              badge: "Our commitment",
+              type: "prose",
+              title: "Our Mission",
+              paragraphs: [
+                "Our mission is to become a trusted growth partner for businesses seeking to scale by delivering innovative, data-driven performance marketing solutions. We help leading U.S. companies connect with high-intent customers who are ready to take action, driving measurable results, sustainable revenue growth, and long-term business success.",
+                "We are committed to building a reliable performance marketing ecosystem where results — not promises — drive success, powered by technology, data, innovation and strong partnerships.",
+              ],
             },
             { type: "action", label: "Session finished", icon: "arrow-right" },
           ],
@@ -173,37 +157,18 @@ function defaultPrograms(): TrainingProgram[] {
         {
           id: "step-vision",
           title: "Our Vision",
-          duration: "5 min",
+          duration: "3 min",
           summary: "The impact we want to create beyond revenue.",
           points: [],
           cards: [
             {
-              type: "hero",
-              title: "Among the most respected performance marketing companies in the U.S.",
-              body: "Our vision goes beyond revenue: we want to create a meaningful impact for the businesses we serve and the people who build this company.",
-              icon: "globe",
-            },
-            {
-              type: "stat",
-              value: "Global",
-              label: "Career opportunities",
-              sublabel: "Skills, sustainable careers and financial independence",
-            },
-            {
-              type: "divisions",
-              title: "The values behind the vision",
-              items: [
-                { number: "01", label: "Innovation", description: "New thinking, better performance" },
-                { number: "02", label: "Integrity", description: "Honest, transparent partnerships" },
-                { number: "03", label: "Accountability", description: "We own the outcome, together" },
+              type: "prose",
+              title: "Our Vision",
+              paragraphs: [
+                "Our vision is to become one of the most respected and trusted performance marketing companies in the U.S. while creating a meaningful impact beyond revenue.",
+                "A key part of our vision is to create quality career opportunities for talented individuals around the world, empowering them to develop valuable skills, build sustainable careers, and achieve financial independence.",
+                "We aim to create a global, performance-driven ecosystem where people grow, businesses scale, and partnerships create lasting value through innovation, integrity, accountability, and collaboration.",
               ],
-            },
-            {
-              type: "info",
-              title: "People grow, businesses scale",
-              body: "We aim to create a global, performance-driven ecosystem where people grow, businesses scale and partnerships create lasting value through collaboration.",
-              icon: "users",
-              badge: "Long term",
             },
             { type: "action", label: "Session finished", icon: "arrow-right" },
           ],
@@ -212,54 +177,24 @@ function defaultPrograms(): TrainingProgram[] {
         {
           id: "step-core-services",
           title: "Core Services",
-          duration: "7 min",
-          summary: "The three services that generate revenue for our clients and for us.",
+          duration: "3 min",
+          summary: "The three services we deliver.",
           points: [],
           cards: [
             {
-              type: "hero",
-              title: "Three services, one performance standard",
-              body: "Media buying, Pay-Per-Call and lead generation all run on the same principle: quality, conversion and return — never volume alone.",
-              icon: "zap",
-            },
-            {
-              type: "stat",
-              value: "3",
-              label: "Core services",
-              sublabel: "Performance measured end to end",
-            },
-            {
               type: "divisions",
-              title: "What we deliver",
+              title: "Core Services",
               items: [
-                {
-                  number: "01",
-                  label: "Media Buying",
-                  description: "Plan, purchase and optimise paid traffic at a profitable cost",
-                },
-                {
-                  number: "02",
-                  label: "Pay-Per-Call",
-                  description: "Qualified inbound calls — partners pay per billable call",
-                },
-                {
-                  number: "03",
-                  label: "Lead Generation",
-                  description: "Qualified consumer interest across insurance, home services and finance",
-                },
+                { number: "01", label: "Media Buying", description: "Plan, purchase and optimise paid traffic at a profitable cost" },
+                { number: "02", label: "Pay-Per-Call", description: "Qualified inbound calls — partners pay per billable call" },
+                { number: "03", label: "Lead Generation", description: "Qualified consumer interest across insurance, home services and finance" },
               ],
-            },
-            {
-              type: "info",
-              title: "Measured on performance",
-              body: "Every service is evaluated on lead quality, conversion rate and return for the buyer — that is what keeps partners with us.",
-              icon: "trending-up",
-              badge: "How we win",
             },
             { type: "action", label: "Session finished", icon: "arrow-right" },
           ],
           questions: [],
         },
+
         {
           id: "step-welcome",
           title: "Welcome to RAY Advertising",
