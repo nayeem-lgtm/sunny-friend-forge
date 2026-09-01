@@ -869,20 +869,15 @@ function InfoCard({ card }: { card: Extract<TrainingCard, { type: "info" }> }) {
 function ActionCard({
   card,
   disabled,
-  onClick,
   onNext,
 }: {
   card: Extract<TrainingCard, { type: "action" }>;
   disabled: boolean;
-  onClick: () => void;
   onNext: () => void;
 }) {
   return (
     <button
-      onClick={() => {
-        onClick();
-        onNext();
-      }}
+      onClick={onNext}
       disabled={disabled}
       className={cn(
         "ml-auto flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-2 text-left text-sm font-medium text-card-foreground transition-colors",
