@@ -565,11 +565,13 @@ function BentoGuide({
   done,
   sessionDone,
   onSessionDone,
+  onNext,
 }: {
   cards: TrainingCard[];
   done: boolean;
   sessionDone: boolean;
   onSessionDone: () => void;
+  onNext: () => void;
 }) {
   return (
     <div className="flex flex-col gap-5">
@@ -604,6 +606,7 @@ function BentoGuide({
                 card={card}
                 disabled={done || sessionDone}
                 onClick={onSessionDone}
+                onNext={onNext}
               />
             );
           default:
