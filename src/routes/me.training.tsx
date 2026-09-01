@@ -405,18 +405,10 @@ function ProgramRunner({
                 onSessionDone={() => {
                   setSessionDone(true);
                   if (step.questions.length === 0) {
-                    onRecord(
-                      employeeId,
-                      program.id,
-                      step.id,
-                      {},
-                      100,
-                      program.steps.map((x) => x.id),
-                      program.passMark,
-                    );
-                    toast.success("Step completed");
+                    finishAndAdvance({}, 100);
                   }
                 }}
+                onNext={() => finishAndAdvance({}, 100)}
               />
             ) : (
               <ul className="grid gap-3">
@@ -433,7 +425,7 @@ function ProgramRunner({
                 ))}
               </ul>
             )}
-            <div className="mt-6 flex flex-wrap items-center gap-3 border-t border-border pt-5">
+            <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-border pt-5">
               {done ? (
                 <span className="flex items-center gap-2 rounded-lg bg-emerald-500/10 px-3 py-2 text-sm font-medium text-emerald-600 dark:text-emerald-400">
                   <CheckCircle2 className="size-4" /> Step completed
@@ -453,33 +445,19 @@ function ProgramRunner({
                   Review the cards above, then click the action tile to finish this session.
                 </span>
               ) : (
-                <>
-                  <Button
-                    size="lg"
-                    onClick={() => {
-                      setSessionDone(true);
-                      if (step.questions.length === 0) {
-                        onRecord(
-                          employeeId,
-                          program.id,
-                          step.id,
-                          {},
-                          100,
-                          program.steps.map((x) => x.id),
-                          program.passMark,
-                        );
-                        toast.success("Step completed");
-                      }
-                    }}
-                  >
-                    <CheckCircle2 className="size-4" /> Session finished
-                  </Button>
-                  <span className="text-xs text-muted-foreground">
-                    {step.questions.length === 0
-                      ? "Read the full guide, then confirm to complete this step."
-                      : "Read the full guide, then confirm to unlock the Q&A for this step."}
-                  </span>
-                </>
+                <Button
+                  size="lg"
+                  onClick={() => finishAndAdvance({}, 100)}
+                >
+                  Session finished <ArrowRight className="size-4" />
+                </Button>
+              )}
+              {!done && !sessionDone && (
+                <span className="text-xs text-muted-foreground">
+                  {step.questions.length === 0
+                    ? "Read the full guide, then confirm to complete this step."
+                    : "Read the full guide, then confirm to unlock the Q&A for this step."}
+                </span>
               )}
             </div>
           </CardContent>
