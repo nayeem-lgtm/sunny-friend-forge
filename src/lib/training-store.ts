@@ -125,7 +125,7 @@ export const categoryTone: Record<TrainingCategory, string> = {
   Tools: "bg-violet-500/15 text-violet-600 ring-violet-500/30 dark:text-violet-400",
 };
 
-const PROGRAMS_KEY = "omniwork.training.programs.v20";
+const PROGRAMS_KEY = "omniwork.training.programs.v21";
 const PROGRESS_KEY = "omniwork.training.progress.v1";
 const EVENT = "omniwork:training";
 
@@ -791,121 +791,6 @@ function defaultPrograms(): TrainingProgram[] {
 
 
 
-        {
-          id: "step-welcome",
-          title: "Welcome to RAY Advertising",
-          duration: "10 min",
-          summary: "Our story, what we build and the teams you will work with every day.",
-          points: [
-            "RAY Advertising is a performance-first agency; OmniWork is our internal ERP for people, work and payroll.",
-            "Departments: Admin, Media, IT, Affiliate, Business Development, QA and Accounting.",
-            "Your line manager runs your weekly 1:1 — HR owns onboarding, payroll and leave.",
-            "Company hours are 10:00–19:00 unless your schedule says otherwise.",
-          ],
-          questions: [
-            {
-              id: "q-welcome-1",
-              prompt: "Which platform do you use for attendance, leave and payslips?",
-              options: ["Email to HR", "OmniWork", "A shared spreadsheet", "Your manager's calendar"],
-              answer: 1,
-              explanation: "OmniWork is the single source of truth for all HR workflows.",
-            },
-            {
-              id: "q-welcome-2",
-              prompt: "Who owns onboarding, payroll and leave?",
-              options: ["The IT department", "Your teammates", "HR", "The QA department"],
-              answer: 2,
-            },
-          ],
-        },
-        {
-          id: "step-attendance",
-          title: "Attendance, worklogs and EOD reports",
-          duration: "12 min",
-          summary: "How your day is recorded and why the daily worklog matters.",
-          points: [
-            "Clock in from your dashboard when you start; the day closes automatically at logout.",
-            "Submit an EOD worklog every working day — it feeds your KPI score.",
-            "Two late arrivals count as one absent day.",
-            "Three days of missing worklogs also count as one absent day.",
-          ],
-          questions: [
-            {
-              id: "q-att-1",
-              prompt: "How many late arrivals equal one absent day?",
-              options: ["Two", "Three", "Five", "Late arrivals are never counted"],
-              answer: 0,
-            },
-            {
-              id: "q-att-2",
-              prompt: "How often should you submit a worklog?",
-              options: ["Weekly", "Only when asked", "Every working day", "Monthly"],
-              answer: 2,
-            },
-          ],
-        },
-        {
-          id: "step-leave",
-          title: "Leave and time off",
-          duration: "8 min",
-          summary: "Applying for PTO or unpaid leave, and handing over your work.",
-          points: [
-            "Two leave types exist: PTO and Unpaid.",
-            "Maximum two days of leave per month — anything beyond needs HR approval in advance.",
-            "If handover is required, pick the colleagues who will cover your tasks.",
-            "Never take leave before it is approved: unauthorised absence after a rejection counts as two absents.",
-          ],
-          questions: [
-            {
-              id: "q-leave-1",
-              prompt: "What is the standard monthly leave limit?",
-              options: ["One day", "Two days", "Four days", "Unlimited"],
-              answer: 1,
-            },
-            {
-              id: "q-leave-2",
-              prompt: "What does 'handover' mean on a leave request?",
-              options: [
-                "Returning your laptop",
-                "Transferring your ongoing work to a teammate for your absence",
-                "Signing a document at reception",
-                "Nothing, it is optional paperwork",
-              ],
-              answer: 1,
-            },
-          ],
-        },
-        {
-          id: "step-conduct",
-          title: "Code of conduct and data security",
-          duration: "10 min",
-          summary: "How we treat each other, our clients and our data.",
-          points: [
-            "Treat every colleague and client with respect; harassment of any kind is a zero-tolerance issue.",
-            "Client data never leaves approved company tools — no personal drives or messengers.",
-            "Screens are monitored during working hours for security and billing accuracy.",
-            "Report any suspected data leak to IT immediately.",
-          ],
-          questions: [
-            {
-              id: "q-conduct-1",
-              prompt: "Where may client data be stored?",
-              options: [
-                "Any personal cloud drive",
-                "Approved company tools only",
-                "A personal messenger chat",
-                "A USB stick at home",
-              ],
-              answer: 1,
-            },
-            {
-              id: "q-conduct-2",
-              prompt: "You suspect a data leak. What do you do first?",
-              options: ["Wait and see", "Tell IT immediately", "Post in the chat room", "Ignore it"],
-              answer: 1,
-            },
-          ],
-        },
         {
           id: "step-ray-advertising-achievement",
           title: "Ray Advertising — A Champion's Place",
