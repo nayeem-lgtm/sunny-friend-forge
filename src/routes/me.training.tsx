@@ -525,31 +525,35 @@ function ProgramRunner({
                 );
               })}
 
-              <div className="flex flex-wrap items-center gap-3">
-                <Button onClick={submit} disabled={!answered}>
-                  Submit answers
-                </Button>
-                {checked && (
-                  <span
-                    className={cn(
-                      "text-sm font-medium",
-                      passed ? "text-emerald-600 dark:text-emerald-400" : "text-destructive",
-                    )}
-                  >
-                    Score {score}% — {passed ? "step completed" : "review the guide and try again"}
-                  </span>
-                )}
-                <div className="ml-auto flex gap-2">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div className="flex flex-wrap items-center gap-3">
+                  {!passed && (
+                    <>
+                      <Button onClick={submit} disabled={!answered}>
+                        Submit answers
+                      </Button>
+                      {checked && (
+                        <span
+                          className={cn(
+                            "text-sm font-medium",
+                            passed ? "text-emerald-600 dark:text-emerald-400" : "text-destructive",
+                          )}
+                        >
+                          Score {score}% — {passed ? "step completed" : "review the guide and try again"}
+                        </span>
+                      )}
+                    </>
+                  )}
+                </div>
+                <div className="flex gap-2">
                   <Button variant="outline" disabled={index === 0} onClick={() => goto(index - 1)}>
                     <ArrowLeft className="size-4" /> Previous
                   </Button>
-                  <Button
-                    variant="outline"
-                    disabled={index === program.steps.length - 1 || index + 1 > maxUnlocked}
-                    onClick={() => goto(index + 1)}
-                  >
-                    Next <ArrowRight className="size-4" />
-                  </Button>
+                  {passed && (
+                    <Button onClick={() => finishAndAdvance(answers, score)}>
+                      Session finished <ArrowRight className="size-4" />
+                    </Button>
+                  )}
                 </div>
               </div>
             </CardContent>
