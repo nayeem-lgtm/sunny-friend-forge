@@ -866,22 +866,27 @@ function ActionCard({
   card,
   disabled,
   onClick,
+  onNext,
 }: {
   card: Extract<TrainingCard, { type: "action" }>;
   disabled: boolean;
   onClick: () => void;
+  onNext: () => void;
 }) {
   return (
     <button
-      onClick={onClick}
+      onClick={() => {
+        onClick();
+        onNext();
+      }}
       disabled={disabled}
       className={cn(
-        "mt-2 flex items-center justify-center gap-2 self-end rounded-full border border-primary/30 bg-primary/10 px-4 py-2 text-left text-sm font-medium text-card-foreground transition-colors",
+        "ml-auto flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-2 text-left text-sm font-medium text-card-foreground transition-colors",
         disabled ? "cursor-default opacity-70" : "hover:bg-primary/15"
       )}
     >
-      <CheckCircle2 className="size-4 text-primary" />
       {card.label}
+      <ArrowRight className="size-4 text-primary" />
     </button>
   );
 }
