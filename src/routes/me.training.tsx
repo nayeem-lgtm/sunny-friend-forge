@@ -285,6 +285,31 @@ function ProgramRunner({
   const passed = checked && score >= program.passMark;
   const done = completedSteps.includes(step.id);
 
+  const advance = (nextIndex: number) => {
+    setIndex(nextIndex);
+    setAnswers({});
+    setChecked(false);
+    setSessionDone(completedSteps.includes(program.steps[nextIndex]?.id ?? ""));
+  };
+
+  const finishAndAdvance = (finalAnswers?: Record<string, number>, finalScore?: number) => {
+    onRecord(
+      employeeId,
+      program.id,
+      step.id,
+      finalAnswers ?? {},
+      finalScore ?? 100,
+      program.steps.map((x) => x.id),
+      program.passMark,
+    );
+    if (index < program.steps.length - 1) {
+      advance(index + 1);
+      toast.success("Step completed");
+    } else {
+      toast.success("Program completed");
+    }
+  };
+
   const submit = () => {
     const s = scoreQuiz(step, answers);
     setChecked(true);
@@ -306,10 +331,7 @@ function ProgramRunner({
       toast.error("Finish the current step first");
       return;
     }
-    setIndex(i);
-    setAnswers({});
-    setChecked(false);
-    setSessionDone(completedSteps.includes(program.steps[i]?.id ?? ""));
+    advance(i);
   };
 
   return (
