@@ -402,12 +402,6 @@ function ProgramRunner({
                 cards={step.cards}
                 done={done}
                 sessionDone={sessionDone}
-                onSessionDone={() => {
-                  setSessionDone(true);
-                  if (step.questions.length === 0) {
-                    finishAndAdvance({}, 100);
-                  }
-                }}
                 onNext={() => finishAndAdvance({}, 100)}
               />
             ) : (
