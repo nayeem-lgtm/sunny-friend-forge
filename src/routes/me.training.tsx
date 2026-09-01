@@ -550,7 +550,7 @@ function ProgramRunner({
                     <ArrowLeft className="size-4" /> Previous
                   </Button>
                   {passed && (
-                    <Button onClick={() => finishAndAdvance(answers, score)}>
+                    <Button onClick={() => advance(index + 1)}>
                       Session finished <ArrowRight className="size-4" />
                     </Button>
                   )}
