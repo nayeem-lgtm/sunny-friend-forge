@@ -562,13 +562,11 @@ function BentoGuide({
   cards,
   done,
   sessionDone,
-  onSessionDone,
   onNext,
 }: {
   cards: TrainingCard[];
   done: boolean;
   sessionDone: boolean;
-  onSessionDone: () => void;
   onNext: () => void;
 }) {
   return (
