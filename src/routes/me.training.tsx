@@ -285,6 +285,31 @@ function ProgramRunner({
   const passed = checked && score >= program.passMark;
   const done = completedSteps.includes(step.id);
 
+  const advance = (nextIndex: number) => {
+    setIndex(nextIndex);
+    setAnswers({});
+    setChecked(false);
+    setSessionDone(completedSteps.includes(program.steps[nextIndex]?.id ?? ""));
+  };
+
+  const finishAndAdvance = (finalAnswers?: Record<string, number>, finalScore?: number) => {
+    onRecord(
+      employeeId,
+      program.id,
+      step.id,
+      finalAnswers ?? {},
+      finalScore ?? 100,
+      program.steps.map((x) => x.id),
+      program.passMark,
+    );
+    if (index < program.steps.length - 1) {
+      advance(index + 1);
+      toast.success("Step completed");
+    } else {
+      toast.success("Program completed");
+    }
+  };
+
   const submit = () => {
     const s = scoreQuiz(step, answers);
     setChecked(true);
@@ -306,10 +331,7 @@ function ProgramRunner({
       toast.error("Finish the current step first");
       return;
     }
-    setIndex(i);
-    setAnswers({});
-    setChecked(false);
-    setSessionDone(completedSteps.includes(program.steps[i]?.id ?? ""));
+    advance(i);
   };
 
   return (
@@ -380,21 +402,7 @@ function ProgramRunner({
                 cards={step.cards}
                 done={done}
                 sessionDone={sessionDone}
-                onSessionDone={() => {
-                  setSessionDone(true);
-                  if (step.questions.length === 0) {
-                    onRecord(
-                      employeeId,
-                      program.id,
-                      step.id,
-                      {},
-                      100,
-                      program.steps.map((x) => x.id),
-                      program.passMark,
-                    );
-                    toast.success("Step completed");
-                  }
-                }}
+                onNext={() => finishAndAdvance({}, 100)}
               />
             ) : (
               <ul className="grid gap-3">
@@ -411,7 +419,7 @@ function ProgramRunner({
                 ))}
               </ul>
             )}
-            <div className="mt-6 flex flex-wrap items-center gap-3 border-t border-border pt-5">
+            <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-border pt-5">
               {done ? (
                 <span className="flex items-center gap-2 rounded-lg bg-emerald-500/10 px-3 py-2 text-sm font-medium text-emerald-600 dark:text-emerald-400">
                   <CheckCircle2 className="size-4" /> Step completed
@@ -431,33 +439,19 @@ function ProgramRunner({
                   Review the cards above, then click the action tile to finish this session.
                 </span>
               ) : (
-                <>
-                  <Button
-                    size="lg"
-                    onClick={() => {
-                      setSessionDone(true);
-                      if (step.questions.length === 0) {
-                        onRecord(
-                          employeeId,
-                          program.id,
-                          step.id,
-                          {},
-                          100,
-                          program.steps.map((x) => x.id),
-                          program.passMark,
-                        );
-                        toast.success("Step completed");
-                      }
-                    }}
-                  >
-                    <CheckCircle2 className="size-4" /> Session finished
-                  </Button>
-                  <span className="text-xs text-muted-foreground">
-                    {step.questions.length === 0
-                      ? "Read the full guide, then confirm to complete this step."
-                      : "Read the full guide, then confirm to unlock the Q&A for this step."}
-                  </span>
-                </>
+                <Button
+                  size="lg"
+                  onClick={() => finishAndAdvance({}, 100)}
+                >
+                  Session finished <ArrowRight className="size-4" />
+                </Button>
+              )}
+              {!done && !sessionDone && (
+                <span className="text-xs text-muted-foreground">
+                  {step.questions.length === 0
+                    ? "Read the full guide, then confirm to complete this step."
+                    : "Read the full guide, then confirm to unlock the Q&A for this step."}
+                </span>
               )}
             </div>
           </CardContent>
@@ -525,31 +519,35 @@ function ProgramRunner({
                 );
               })}
 
-              <div className="flex flex-wrap items-center gap-3">
-                <Button onClick={submit} disabled={!answered}>
-                  Submit answers
-                </Button>
-                {checked && (
-                  <span
-                    className={cn(
-                      "text-sm font-medium",
-                      passed ? "text-emerald-600 dark:text-emerald-400" : "text-destructive",
-                    )}
-                  >
-                    Score {score}% — {passed ? "step completed" : "review the guide and try again"}
-                  </span>
-                )}
-                <div className="ml-auto flex gap-2">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div className="flex flex-wrap items-center gap-3">
+                  {!passed && (
+                    <>
+                      <Button onClick={submit} disabled={!answered}>
+                        Submit answers
+                      </Button>
+                      {checked && (
+                        <span
+                          className={cn(
+                            "text-sm font-medium",
+                            passed ? "text-emerald-600 dark:text-emerald-400" : "text-destructive",
+                          )}
+                        >
+                          Score {score}% — {passed ? "step completed" : "review the guide and try again"}
+                        </span>
+                      )}
+                    </>
+                  )}
+                </div>
+                <div className="flex gap-2">
                   <Button variant="outline" disabled={index === 0} onClick={() => goto(index - 1)}>
                     <ArrowLeft className="size-4" /> Previous
                   </Button>
-                  <Button
-                    variant="outline"
-                    disabled={index === program.steps.length - 1 || index + 1 > maxUnlocked}
-                    onClick={() => goto(index + 1)}
-                  >
-                    Next <ArrowRight className="size-4" />
-                  </Button>
+                  {passed && (
+                    <Button onClick={() => advance(index + 1)}>
+                      Session finished <ArrowRight className="size-4" />
+                    </Button>
+                  )}
                 </div>
               </div>
             </CardContent>
@@ -564,12 +562,12 @@ function BentoGuide({
   cards,
   done,
   sessionDone,
-  onSessionDone,
+  onNext,
 }: {
   cards: TrainingCard[];
   done: boolean;
   sessionDone: boolean;
-  onSessionDone: () => void;
+  onNext: () => void;
 }) {
   return (
     <div className="flex flex-col gap-5">
@@ -603,7 +601,7 @@ function BentoGuide({
                 key={i}
                 card={card}
                 disabled={done || sessionDone}
-                onClick={onSessionDone}
+                onNext={onNext}
               />
             );
           default:
@@ -862,23 +860,23 @@ function InfoCard({ card }: { card: Extract<TrainingCard, { type: "info" }> }) {
 function ActionCard({
   card,
   disabled,
-  onClick,
+  onNext,
 }: {
   card: Extract<TrainingCard, { type: "action" }>;
   disabled: boolean;
-  onClick: () => void;
+  onNext: () => void;
 }) {
   return (
     <button
-      onClick={onClick}
+      onClick={onNext}
       disabled={disabled}
       className={cn(
-        "mt-2 flex items-center justify-center gap-2 self-end rounded-full border border-primary/30 bg-primary/10 px-4 py-2 text-left text-sm font-medium text-card-foreground transition-colors",
+        "ml-auto flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-2 text-left text-sm font-medium text-card-foreground transition-colors",
         disabled ? "cursor-default opacity-70" : "hover:bg-primary/15"
       )}
     >
-      <CheckCircle2 className="size-4 text-primary" />
       {card.label}
+      <ArrowRight className="size-4 text-primary" />
     </button>
   );
 }
