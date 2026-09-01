@@ -93,6 +93,8 @@ export type TrainingProgram = {
   audience: string;
   /** minimum % of correct answers required to pass each quiz */
   passMark: number;
+  /** when set, the program is locked and requires this code to open */
+  lockCode?: string;
   steps: TrainingStep[];
 };
 
@@ -125,7 +127,7 @@ export const categoryTone: Record<TrainingCategory, string> = {
   Tools: "bg-violet-500/15 text-violet-600 ring-violet-500/30 dark:text-violet-400",
 };
 
-const PROGRAMS_KEY = "omniwork.training.programs.v21";
+const PROGRAMS_KEY = "omniwork.training.programs.v22";
 const PROGRESS_KEY = "omniwork.training.progress.v1";
 const EVENT = "omniwork:training";
 
@@ -916,6 +918,306 @@ function defaultPrograms(): TrainingProgram[] {
               answer: 3,
             },
           ],
+        },
+      ],
+    },
+    {
+      id: "prog-it",
+      title: "IT Department Training",
+      category: "Tools",
+      description: "Systems, security and support standards for the IT team.",
+      audience: "IT department",
+      passMark: 70,
+      lockCode: "it2026",
+      steps: [
+        {
+          id: "step-it-1",
+          title: "Systems & Access",
+          duration: "10 min",
+          summary: "Accounts, devices and access management.",
+          points: [
+            "Every employee account is provisioned through the IT ticket queue — never share credentials.",
+            "Device baseline: full-disk encryption, auto-lock after 5 minutes, approved antivirus.",
+            "Access follows least privilege; elevated access is time-boxed and reviewed monthly.",
+            "Offboarding access removal must be completed within 2 hours of notice.",
+          ],
+          questions: [],
+        },
+        {
+          id: "step-it-2",
+          title: "Security & Incident Response",
+          duration: "12 min",
+          summary: "How we prevent, detect and respond to incidents.",
+          points: [
+            "Phishing reports go to the security channel immediately — do not forward to colleagues.",
+            "Severity 1 incidents require an on-call page and a written timeline within 24 hours.",
+            "Backups are verified weekly with a quarterly restore test.",
+            "No production credentials in chat, tickets or documents.",
+          ],
+          questions: [],
+        },
+        {
+          id: "step-it-3",
+          title: "Support Standards",
+          duration: "8 min",
+          summary: "Response times and escalation.",
+          points: [
+            "First response within 30 minutes during office hours (6 AM – 3 PM PT).",
+            "Blockers that stop revenue work are escalated to the IT lead immediately.",
+            "Every ticket closes with a root cause note so we can spot repeats.",
+            "Document any fix that took more than 30 minutes in the knowledge base.",
+          ],
+          questions: [],
+        },
+      ],
+    },
+    {
+      id: "prog-affiliate",
+      title: "Affiliate Department Training",
+      category: "Skills",
+      description: "Partner onboarding, traffic quality and payout discipline for the affiliate team.",
+      audience: "Affiliate department",
+      passMark: 70,
+      lockCode: "affiliate2026",
+      steps: [
+        {
+          id: "step-affiliate-1",
+          title: "Partner Onboarding",
+          duration: "10 min",
+          summary: "Vetting and activating publishers.",
+          points: [
+            "Every partner is vetted for traffic source, compliance history and references.",
+            "Signed IO and W-9/W-8 must be on file before the first click is sent.",
+            "Set caps and test budgets for the first 14 days of any new partner.",
+            "Assign each partner a named account owner on day one.",
+          ],
+          questions: [],
+        },
+        {
+          id: "step-affiliate-2",
+          title: "Traffic Quality",
+          duration: "12 min",
+          summary: "Detecting and handling bad traffic.",
+          points: [
+            "Monitor duplicate rate, short-call rate and conversion anomalies daily.",
+            "Any suspicious spike is paused first and investigated second.",
+            "Incentivized, co-registration and bot traffic are prohibited unless approved in writing.",
+            "Buyer complaints must be answered with call logs within one business day.",
+          ],
+          questions: [],
+        },
+        {
+          id: "step-affiliate-3",
+          title: "Payouts & Reporting",
+          duration: "8 min",
+          summary: "Margins, invoices and reconciliation.",
+          points: [
+            "Payout changes require lead approval and a documented margin check.",
+            "Weekly reconciliation between platform numbers and buyer-reported conversions.",
+            "Invoices are issued on the agreed cycle — no off-cycle manual payments.",
+            "Escalate any negative-margin campaign the same day.",
+          ],
+          questions: [],
+        },
+      ],
+    },
+    {
+      id: "prog-bizdev",
+      title: "Business Development Training",
+      category: "Skills",
+      description: "Prospecting, pitching and account growth playbook.",
+      audience: "Business Development department",
+      passMark: 70,
+      lockCode: "bizdev2026",
+      steps: [
+        {
+          id: "step-bizdev-1",
+          title: "Prospecting",
+          duration: "10 min",
+          summary: "Building a qualified pipeline.",
+          points: [
+            "Target accounts are scored on vertical fit, spend potential and buying cycle.",
+            "Minimum activity: documented outreach in the CRM for every contacted account.",
+            "Use the vertical one-pagers — never improvise pricing in a first touch.",
+            "Qualify with budget, authority, need and timeline before booking a demo.",
+          ],
+          questions: [],
+        },
+        {
+          id: "step-bizdev-2",
+          title: "Pitching Ray Advertising",
+          duration: "12 min",
+          summary: "Positioning our Pay-Per-Call and lead gen offering.",
+          points: [
+            "Lead with outcomes: intent quality, compliance and scale — not channel jargon.",
+            "Always present the call flow, filters and return policy up front.",
+            "Custom terms require approval from the department lead before being shared.",
+            "Send a written recap within 24 hours of every call.",
+          ],
+          questions: [],
+        },
+        {
+          id: "step-bizdev-3",
+          title: "Account Growth",
+          duration: "8 min",
+          summary: "Retention and expansion.",
+          points: [
+            "Run a performance review with each active buyer at least monthly.",
+            "Flag volume drops of more than 20% week over week.",
+            "Expansion happens by adding verticals or geos, not by discounting.",
+            "Log all commitments in the CRM so delivery teams can see them.",
+          ],
+          questions: [],
+        },
+      ],
+    },
+    {
+      id: "prog-qa",
+      title: "QA Department Training",
+      category: "Compliance",
+      description: "Call scoring, compliance checks and reporting standards for quality assurance.",
+      audience: "QA department",
+      passMark: 70,
+      lockCode: "qa2026",
+      steps: [
+        {
+          id: "step-qa-1",
+          title: "Call Scoring",
+          duration: "12 min",
+          summary: "How calls and leads are reviewed.",
+          points: [
+            "Score a representative daily sample from every active campaign.",
+            "Use the standard scorecard: intent, disclosure, data accuracy, agent conduct.",
+            "Any score below threshold triggers a partner notification the same day.",
+            "Keep evidence — recording ID and timestamp — with every score.",
+          ],
+          questions: [],
+        },
+        {
+          id: "step-qa-2",
+          title: "Compliance Checks",
+          duration: "12 min",
+          summary: "TCPA-minded consent and disclosure review.",
+          points: [
+            "Verify consent language and timestamps before a lead is billable.",
+            "Disclosures must be clear, audible and unedited.",
+            "Do not approve leads with missing or altered consent records.",
+            "Escalate repeat violations to the compliance lead immediately.",
+          ],
+          questions: [],
+        },
+        {
+          id: "step-qa-3",
+          title: "Reporting",
+          duration: "8 min",
+          summary: "Turning findings into action.",
+          points: [
+            "Publish a weekly quality summary per partner and per buyer.",
+            "Track corrective actions to closure — an open finding is never dropped silently.",
+            "Trends matter more than single calls: report patterns, not anecdotes.",
+            "Archive all reports for audit retention.",
+          ],
+          questions: [],
+        },
+      ],
+    },
+    {
+      id: "prog-accounting",
+      title: "Accounting Department Training",
+      category: "Compliance",
+      description: "Invoicing, reconciliation and payroll controls.",
+      audience: "Accounting department",
+      passMark: 70,
+      lockCode: "accounting2026",
+      steps: [
+        {
+          id: "step-accounting-1",
+          title: "Invoicing & Receivables",
+          duration: "10 min",
+          summary: "Billing buyers accurately and on time.",
+          points: [
+            "Invoices are generated from platform data, then cross-checked against buyer reports.",
+            "Disputes must be acknowledged within one business day and logged.",
+            "Aging over 30 days is escalated to the account owner and the finance lead.",
+            "No invoice adjustment without written approval.",
+          ],
+          questions: [],
+        },
+        {
+          id: "step-accounting-2",
+          title: "Payables & Reconciliation",
+          duration: "12 min",
+          summary: "Partner payouts and month-end close.",
+          points: [
+            "Match payouts to approved margin sheets before release.",
+            "Bank file exports must be reviewed by a second person before submission.",
+            "Month-end close checklist is completed within five business days.",
+            "All journal entries carry a supporting document reference.",
+          ],
+          questions: [],
+        },
+        {
+          id: "step-accounting-3",
+          title: "Payroll Controls",
+          duration: "8 min",
+          summary: "Salary, deductions and confidentiality.",
+          points: [
+            "Attendance and absence rules feed deductions — verify with HR before finalizing.",
+            "Bonus and incentive changes require documented approval.",
+            "Payroll data is strictly confidential and shared on a need-to-know basis.",
+            "Payslips are issued through OmniWork only.",
+          ],
+          questions: [],
+        },
+      ],
+    },
+    {
+      id: "prog-compliance",
+      title: "Compliance Department Training",
+      category: "Compliance",
+      description: "Regulatory standards, consent, data privacy and audit readiness.",
+      audience: "Compliance department",
+      passMark: 70,
+      lockCode: "compliance2026",
+      steps: [
+        {
+          id: "step-compliance-1",
+          title: "Regulatory Foundations",
+          duration: "12 min",
+          summary: "The rules that govern our traffic.",
+          points: [
+            "Understand TCPA-minded consent, DNC handling and state-level restrictions.",
+            "Every marketing partner must operate under approved disclosure language.",
+            "Record retention follows the published schedule — no early deletion.",
+            "When in doubt, pause and ask; never assume an exception.",
+          ],
+          questions: [],
+        },
+        {
+          id: "step-compliance-2",
+          title: "Data Privacy",
+          duration: "10 min",
+          summary: "Handling consumer and employee data.",
+          points: [
+            "Collect only the data a campaign genuinely needs.",
+            "Consumer data is never exported to personal devices or accounts.",
+            "Access requests and opt-outs are honored within the required window.",
+            "Report any suspected data exposure within one hour.",
+          ],
+          questions: [],
+        },
+        {
+          id: "step-compliance-3",
+          title: "Audit Readiness",
+          duration: "8 min",
+          summary: "Being ready before the request arrives.",
+          points: [
+            "Keep consent records, call recordings and partner agreements retrievable.",
+            "Run an internal spot audit each month and document the outcome.",
+            "Corrective actions have an owner and a due date.",
+            "Audit findings are reviewed with department leads quarterly.",
+          ],
+          questions: [],
         },
       ],
     },

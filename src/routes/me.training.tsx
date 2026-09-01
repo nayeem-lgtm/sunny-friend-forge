@@ -48,6 +48,15 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Input } from "@/components/ui/input";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { useEmployeeSession } from "@/lib/employee-session";
 import {
@@ -121,6 +130,47 @@ function Page() {
   const { programs } = useTrainingPrograms();
   const { progress, recordStep, resetProgram } = useTrainingProgress(employee.id);
   const [openId, setOpenId] = useState<string | null>(null);
+  const [unlocked, setUnlocked] = useState<string[]>(() => {
+    if (typeof window === "undefined") return [];
+    try {
+      return JSON.parse(sessionStorage.getItem("omniwork.training.unlocked") ?? "[]");
+    } catch {
+      return [];
+    }
+  });
+  const [lockTarget, setLockTarget] = useState<TrainingProgram | null>(null);
+  const [code, setCode] = useState("");
+  const [codeError, setCodeError] = useState(false);
+
+  const isLocked = (p: TrainingProgram) => !!p.lockCode && !unlocked.includes(p.id);
+
+  const openProgram = (p: TrainingProgram) => {
+    if (isLocked(p)) {
+      setCode("");
+      setCodeError(false);
+      setLockTarget(p);
+      return;
+    }
+    setOpenId(p.id);
+  };
+
+  const submitCode = () => {
+    if (!lockTarget) return;
+    if (code.trim() !== lockTarget.lockCode) {
+      setCodeError(true);
+      return;
+    }
+    const next = [...unlocked, lockTarget.id];
+    setUnlocked(next);
+    try {
+      sessionStorage.setItem("omniwork.training.unlocked", JSON.stringify(next));
+    } catch {
+      /* ignore */
+    }
+    setOpenId(lockTarget.id);
+    setLockTarget(null);
+    toast.success(`${lockTarget.title} unlocked`);
+  };
 
   const active = programs.find((p) => p.id === openId) ?? null;
   const progressFor = (programId: string) => progress.find((p) => p.programId === programId);
@@ -177,10 +227,16 @@ function Page() {
               {programs.map((program) => {
                 const pct = programCompletion(program, progressFor(program.id));
                 return (
-                  <Card key={program.id} className="flex flex-col">
+                  <Card
+                    key={program.id}
+                    className={cn("flex flex-col", isLocked(program) && "border-dashed bg-muted/30")}
+                  >
                     <CardHeader>
                       <div className="flex items-start justify-between gap-3">
-                        <CardTitle className="text-base">{program.title}</CardTitle>
+                        <CardTitle className="flex items-center gap-2 text-base">
+                          {isLocked(program) && <Lock className="size-4 text-muted-foreground" />}
+                          {program.title}
+                        </CardTitle>
                         <Badge
                           variant="outline"
                           className={cn("shrink-0 ring-1", categoryTone[program.category])}
@@ -203,9 +259,21 @@ function Page() {
                         <Progress value={pct} className="h-2" />
                       </div>
                       <div className="flex gap-2">
-                        <Button className="flex-1" onClick={() => setOpenId(program.id)}>
-                          {pct === 0 ? "Start" : pct === 100 ? "Review" : "Continue"}
-                          <ArrowRight className="size-4" />
+                        <Button
+                          className="flex-1"
+                          variant={isLocked(program) ? "outline" : "default"}
+                          onClick={() => openProgram(program)}
+                        >
+                          {isLocked(program) ? (
+                            <>
+                              <Lock className="size-4" /> Unlock
+                            </>
+                          ) : (
+                            <>
+                              {pct === 0 ? "Start" : pct === 100 ? "Review" : "Continue"}
+                              <ArrowRight className="size-4" />
+                            </>
+                          )}
                         </Button>
                         {pct > 0 && (
                           <Button
@@ -241,6 +309,41 @@ function Page() {
           />
         )}
       </div>
+
+      <Dialog open={!!lockTarget} onOpenChange={(v) => !v && setLockTarget(null)}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Lock className="size-4" /> {lockTarget?.title}
+            </DialogTitle>
+            <DialogDescription>
+              This training is restricted. Enter the access code shared by your department lead.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-2">
+            <Label htmlFor="training-code">Access code</Label>
+            <Input
+              id="training-code"
+              type="password"
+              autoFocus
+              value={code}
+              onChange={(e) => {
+                setCode(e.target.value);
+                setCodeError(false);
+              }}
+              onKeyDown={(e) => e.key === "Enter" && submitCode()}
+              placeholder="Enter code"
+            />
+            {codeError && <p className="text-xs text-destructive">Incorrect code — try again.</p>}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setLockTarget(null)}>
+              Cancel
+            </Button>
+            <Button onClick={submitCode}>Unlock training</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </EmployeeShell>
   );
 }
