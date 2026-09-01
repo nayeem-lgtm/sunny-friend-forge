@@ -609,7 +609,6 @@ function BentoGuide({
                 key={i}
                 card={card}
                 disabled={done || sessionDone}
-                onClick={onSessionDone}
                 onNext={onNext}
               />
             );
